@@ -35,8 +35,27 @@ class _HomeState extends State<Home> {
           },
         ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 10),
-          child: AnimatedSlogan(sloganWords: sloganWords),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AnimatedSlogan(sloganWords: sloganWords),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Image.asset(
+                      'assets/img/slogan/pepper_slogan.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         backgroundColor: isLightTheme ? Colors.white : Colors.black,
         bottomNavigationBar: CustomBottomBar(
