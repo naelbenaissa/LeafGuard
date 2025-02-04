@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
 import 'bar/custom_appbar.dart';
 import 'bar/custom_bottombar.dart';
 
@@ -12,6 +13,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool isLightTheme = true;
   int _selectedIndex = 0;
+  final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -32,11 +34,9 @@ class _HomeState extends State<Home> {
             });
           },
         ),
-        body: Center(
-          child: Text(
-            'Home Page',
-            style: TextStyle(color: isLightTheme ? Colors.black : Colors.white),
-          ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 10),
+          child: AnimatedSlogan(sloganWords: sloganWords),
         ),
         backgroundColor: isLightTheme ? Colors.white : Colors.black,
         bottomNavigationBar: CustomBottomBar(
