@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-
 import '../views/home/home.dart';
 
 class Routes {

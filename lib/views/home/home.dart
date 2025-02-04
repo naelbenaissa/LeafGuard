@@ -59,7 +59,6 @@ class _HomeState extends State<Home> {
         backgroundColor: isLightTheme ? Colors.white : Colors.black,
         bottomNavigationBar: CustomBottomBar(
           selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
         ),
       ),
     );
