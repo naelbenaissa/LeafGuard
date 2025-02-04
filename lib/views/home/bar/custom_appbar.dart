@@ -22,7 +22,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: CircleAvatar(
               radius: 24,
-              backgroundImage: AssetImage('assets/profile.jpg'),
+              backgroundImage: NetworkImage(
+                "https://img.freepik.com/photos-gratuite/portrait-jeune-homme-affaires-afro-americain-confiant-prospere-portant-lunettes-elegantes_273609-9178.jpg",
+              ),
             ),
           ),
           const Spacer(),

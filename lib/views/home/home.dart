@@ -37,10 +37,9 @@ class _HomeState extends State<Home> {
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AnimatedSlogan(sloganWords: sloganWords),
-
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: ClipRRect(

@@ -31,13 +31,13 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
   @override
   Widget build(BuildContext context) {
     final colors = [
-      Color(0xFF9DB33E),  // #9db33e (une nuance de vert clair)
-      Color(0xFF55761A),  // #55761a (une nuance de vert moyen)
-      Color(0xFF264E2C),  // #264e2c (une nuance de vert foncé)
+      const Color(0xFF9DB33E),
+      const Color(0xFF55761A),
+      const Color(0xFF264E2C),
     ];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: List.generate(
         currentIndex,
             (index) => Padding(
@@ -45,7 +45,7 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
           child: Text(
             widget.sloganWords[index],
             style: TextStyle(
-              fontSize: 40,
+              fontSize: 35,
               fontWeight: FontWeight.bold,
               color: colors[index % colors.length], // Applique une couleur différente à chaque mot
             ),
