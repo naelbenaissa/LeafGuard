@@ -12,26 +12,36 @@ class Routes {
           pageBuilder: (context, state) =>
               NoTransitionPage(child: const Home()),
         ),
-        // GoRoute(
-        //   path: '/menuHebdo',
-        //   builder: (context, state) => const MenuHebdo(),
-        //   pageBuilder: (context, state) =>
-        //       NoTransitionPage(child: const MenuHebdo()),
-        // ),é
-        // GoRoute(
-        //   path: '/detail/:jour/:semaine/:annee',
-        //   builder: (context, state) {
-        //     final jour = state.pathParameters['jour']!;
-        //     final semaine = state.pathParameters['semaine']!;
-        //     final annee = state.pathParameters['annee']!;
-        //     return DetailMenu(
-        //       jour: jour,
-        //       semaine: semaine,
-        //       annee: annee,
-        //     );
-        //   },
-        // ),
-      ],
+        GoRoute(
+          path: '/calendar',
+          builder: (context, state) => const Home(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const Home()),
+        ),
+        GoRoute(
+          path: '/camera',
+          builder: (context, state) => const Home(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const Home()),
+        ),
+        GoRoute(
+          path: '/favorites',
+          builder: (context, state) => const Home(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const Home()),
+        ),
+        GoRoute(
+          path: '/plantsguide',
+          builder: (context, state) => const Home(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const Home()),
+        ),
+        GoRoute(
+          path: '/account',
+          builder: (context, state) => const Home(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const Home()),
+        ),],
     );
   }
 }
@@ -39,8 +49,8 @@ class Routes {
 class NoTransitionPage extends CustomTransitionPage<void> {
   NoTransitionPage({required super.child})
       : super(
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return child;
-    },
-  );
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
 }
