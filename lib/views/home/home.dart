@@ -14,8 +14,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  bool isLightTheme = true;
   int _selectedIndex = 0;
+  final ScrollController _scrollController = ScrollController();
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
   late TabController _tabController;
 
@@ -34,19 +34,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: isLightTheme ? ThemeData.light() : ThemeData.dark(),
       home: Scaffold(
         appBar: CustomAppBar(
-          isLightTheme: isLightTheme,
-          onThemeChanged: (bool value) {
-            setState(() {
-              isLightTheme = value;
-            });
-          },
+          scrollController: _scrollController,
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -97,7 +92,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
-        backgroundColor: isLightTheme ? Colors.white : Colors.black,
+        backgroundColor: Colors.white,
         bottomNavigationBar: CustomBottomBar(
           selectedIndex: _selectedIndex,
         ),

@@ -14,7 +14,6 @@ class CustomBottomBar extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Bottom Navigation Bar
         Container(
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(

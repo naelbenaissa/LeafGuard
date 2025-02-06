@@ -15,7 +15,7 @@ class _DotPainter extends BoxPainter {
       ..style = PaintingStyle.fill;
 
     final double circleX = configuration.size!.width / 2 + offset.dx;
-    final double circleY = configuration.size!.height - 4; // Position du point
+    final double circleY = configuration.size!.height - 4;
 
     canvas.drawCircle(Offset(circleX, circleY), 4, paint);
   }

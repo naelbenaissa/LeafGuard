@@ -41,7 +41,7 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
       children: List.generate(
         currentIndex,
             (index) => Padding(
-          padding: const EdgeInsets.only(bottom: 5), // Espacement entre les mots
+          padding: const EdgeInsets.only(bottom: 5),
           child: Text(
             widget.sloganWords[index],
             style: TextStyle(
