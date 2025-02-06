@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
+import 'package:ui_leafguard/views/home/widgets/section/mesPlantesSection.dart';
+import 'package:ui_leafguard/views/home/widgets/section/mesTachesSection.dart';
 import 'bar/custom_appbar.dart';
 import 'bar/custom_bottombar.dart';
 
@@ -10,15 +12,22 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isLightTheme = true;
   int _selectedIndex = 0;
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
+  late TabController _tabController;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,6 +60,25 @@ class _HomeState extends State<Home> {
                       fit: BoxFit.cover,
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: "Mes Plantes"),
+                  Tab(text: "Mes Tâches"),
+                ],
+                labelColor: Colors.green,
+                unselectedLabelColor: Colors.grey,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    mesPlantesSection(),
+                    mesTachesSection(),
+                  ],
                 ),
               ),
             ],
