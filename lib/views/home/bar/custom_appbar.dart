@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isLightTheme;
@@ -18,12 +19,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: CircleAvatar(
-              radius: 24,
-              backgroundImage: NetworkImage(
-                "https://img.freepik.com/photos-gratuite/portrait-jeune-homme-affaires-afro-americain-confiant-prospere-portant-lunettes-elegantes_273609-9178.jpg",
+          GestureDetector(
+            onTap: () {
+              context.go('/account'); // Navigation vers la page du compte
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: CircleAvatar(
+                radius: 24,
+                backgroundImage: NetworkImage(
+                  "https://img.freepik.com/photos-gratuite/portrait-jeune-homme-affaires-afro-americain-confiant-prospere-portant-lunettes-elegantes_273609-9178.jpg",
+                ),
               ),
             ),
           ),

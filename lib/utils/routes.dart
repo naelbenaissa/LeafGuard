@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:ui_leafguard/views/account/account.dart';
 import '../views/home/home.dart';
 
 class Routes {
@@ -37,9 +38,9 @@ class Routes {
         ),
         GoRoute(
           path: '/account',
-          builder: (context, state) => const Home(),
+          builder: (context, state) => const AccountPage(),
           pageBuilder: (context, state) =>
-              NoTransitionPage(child: const Home()),
+              NoTransitionPage(child: const AccountPage()),
         ),],
     );
   }
