@@ -25,3 +25,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/slogan/pepper_slogan.png
+    - assets/img/plantes/pink_gerbera.png
+    - assets/img/plantes/nest_fern.png
+    - assets/img/plantes/young_banana.png
+    - assets/img/plantes/dahlia.png
