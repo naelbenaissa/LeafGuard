@@ -3,6 +3,7 @@ import 'package:ui_leafguard/views/account/account.dart';
 import 'package:ui_leafguard/views/favorites/favorites.dart';
 import 'package:ui_leafguard/views/plant_guide/plant_guide.dart';
 import '../views/home/home.dart';
+import '../views/tasks_calendar/tasks_calendar.dart';
 
 class Routes {
   static GoRouter routerConfiguration() {
@@ -16,9 +17,9 @@ class Routes {
         ),
         GoRoute(
           path: '/calendar',
-          builder: (context, state) => const HomePage(),
+          builder: (context, state) => const TasksCalendarPage(),
           pageBuilder: (context, state) =>
-              NoTransitionPage(child: const HomePage()),
+              NoTransitionPage(child: const TasksCalendarPage()),
         ),
         GoRoute(
           path: '/camera',
