@@ -1,16 +1,6 @@
-# ui_leafguard
+# LeafGuard
 
-A new Flutter project.
+- Il faut regler page home détail sur fond blanc mettre transparent / trouver une solution.
+- bloquer position image page home pour qu'il s'affiche direct a sa place avant animation slogan.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
