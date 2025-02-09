@@ -39,7 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: const CircleAvatar(
                 radius: 22,
                 backgroundImage: NetworkImage(
-                  "https://img.freepik.com/photos-gratuite/portrait-jeune-homme-affaires-afro-americain-confiant-prospere-portant-lunettes-elegantes_273609-9178.jpg",
+                  "https://media.istockphoto.com/id/1288538088/fr/photo/jeune-homme-daffaires-asiatique-intelligent-confiant-de-verticale-regardent-lappareil-photo.jpg?s=612x612&w=0&k=20&c=1ZhXBoyM_AlLuuCR2nyYocCEWsNmx23eKjGhHlfp8E8=",
                 ),
               ),
             ),

@@ -2,15 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomBottomBar extends StatelessWidget {
-  final int selectedIndex;
+  const CustomBottomBar({super.key});
 
-  const CustomBottomBar({
-    super.key,
-    required this.selectedIndex,
-  });
+  int _getSelectedIndex(BuildContext context) {
+    String location = GoRouter.of(context).routeInformationProvider.value.location ?? '/';
+    switch (location) {
+      case '/':
+        return 0;
+      case '/calendar':
+        return 1;
+      case '/favorites':
+        return 2;
+      case '/plantsguide':
+        return 3;
+      default:
+        return 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    int selectedIndex = _getSelectedIndex(context);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
