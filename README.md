@@ -1,5 +1,6 @@
 # LeafGuard
 
+- Appbar en faire une base puis add des choses en fonction des pages.
 - Plus tard réaliser theme dark et light.
 
 ## Home
