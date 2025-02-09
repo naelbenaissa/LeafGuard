@@ -30,6 +30,7 @@
 ## Compte
 
 - corriger design appbar.
-- notifications radio a configurer
+- bouton retour fonctionne pas.
+- notifications radio a configurer.
 - données supabase a mettre en lien.
 - configurer page pour creer compte et se connecter.
