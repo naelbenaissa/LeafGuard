@@ -6,15 +6,14 @@ import 'package:ui_leafguard/views/home/widgets/section/mesTachesSection.dart';
 import 'bar/custom_appbar.dart';
 import 'bar/custom_bottombar.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomePage> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
+class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
   late TabController _tabController;
@@ -93,9 +92,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
         ),
         backgroundColor: Colors.white,
-        bottomNavigationBar: CustomBottomBar(
-          selectedIndex: _selectedIndex,
-        ),
+        bottomNavigationBar: const CustomBottomBar(),
       ),
     );
   }
