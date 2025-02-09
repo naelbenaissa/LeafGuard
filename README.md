@@ -4,7 +4,7 @@
 
 ## Home
 
-- Il faut regler page home détail sur fond blanc mettre transparent / trouver une solution.
+- Il faut regler page home bar sur fond blanc mettre transparent / trouver une solution.
 - bloquer position image page home pour qu'il s'affiche direct a sa place avant animation slogan.
 
 ## Plant Guide
@@ -16,7 +16,7 @@
 
 ## Favoris
 
-
+- base de données à créer pour enregistrer favoris et scan
 
 ## Calendar
 
