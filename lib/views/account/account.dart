@@ -44,9 +44,9 @@ class _AccountPageState extends State<AccountPage> {
             const SizedBox(height: 10),
             const Text("johndoe@example.com", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 20),
-            const Divider(),
+            const Divider(color: Colors.green, thickness: 2),
             ListTile(
-              leading: const Icon(Icons.lock, color: Colors.green),
+              leading: Icon(Icons.lock, color: _expandedSection == "password" ? Colors.green : Colors.black),
               title: const Text("Changer le mot de passe"),
               onTap: () => _toggleSection("password"),
             ),
@@ -73,7 +73,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
             ListTile(
-              leading: const Icon(Icons.notifications, color: Colors.green),
+              leading: Icon(Icons.notifications, color: _expandedSection == "notifications" ? Colors.green : Colors.black),
               title: const Text("Gérer les notifications"),
               onTap: () => _toggleSection("notifications"),
             ),
@@ -104,7 +104,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.green),
+              leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text("Se déconnecter"),
               onTap: () {},
             ),
