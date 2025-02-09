@@ -6,6 +6,7 @@
 
 - Il faut regler page home bar sur fond blanc mettre transparent / trouver une solution.
 - bloquer position image page home pour qu'il s'affiche direct a sa place avant animation slogan.
+- configurer si connecter ou non pour afficher certaines options.
 
 ## Plant Guide
 
@@ -16,11 +17,19 @@
 
 ## Favoris
 
-- base de données à créer pour enregistrer favoris et scan
+- base de données à créer pour enregistrer favoris et scan.
+- pas accès si pas de compte.
 
 ## Calendar
 
+- Scroll a corriger.
+- bar avec icon notifications a faire ici.
+- ajouter un bouton pour créer tâches.
+- pas acces si pas de compte.
 
 ## Compte
 
-
+- corriger design appbar.
+- notifications radio a configurer
+- données supabase a mettre en lien.
+- configurer page pour creer compte et se connecter.
