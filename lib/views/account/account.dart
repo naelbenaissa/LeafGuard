@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../home/bar/custom_bottombar.dart';
+import '../bar/custom_bottombar.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});

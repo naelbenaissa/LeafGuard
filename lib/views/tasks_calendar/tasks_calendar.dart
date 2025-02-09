@@ -3,8 +3,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import '../home/bar/custom_appbar.dart';
-import '../home/bar/custom_bottombar.dart';
+import '../bar/custom_appbar.dart';
+import '../bar/custom_bottombar.dart';
 
 class TasksCalendarPage extends StatefulWidget {
   const TasksCalendarPage({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui_leafguard/views/home/bar/custom_appbar.dart';
-import '../home/bar/custom_bottombar.dart';
+import '../bar/custom_appbar.dart';
+import '../bar/custom_bottombar.dart';
 import '../home/widgets/dotIndicator.dart';
 
 class FavoritesPage extends StatefulWidget {

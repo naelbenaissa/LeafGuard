@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ui_leafguard/views/home/bar/custom_appbar.dart';
-import '../home/bar/custom_bottombar.dart';
 import '../../services/plant_service.dart';
+import '../bar/custom_appbar.dart';
+import '../bar/custom_bottombar.dart';
 
 class PlantGuidePage extends StatefulWidget {
   const PlantGuidePage({super.key});
