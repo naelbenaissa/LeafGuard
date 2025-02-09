@@ -27,6 +27,10 @@
 - ajouter un bouton pour créer tâches.
 - pas acces si pas de compte.
 
+## Camera
+
+- Camera a configurer.
+
 ## Compte
 
 - corriger design appbar.
