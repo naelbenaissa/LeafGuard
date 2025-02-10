@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../bar/custom_appbar.dart';
+import '../home/appbar/custom_appbar.dart';
 import '../bar/custom_bottombar.dart';
-import '../home/widgets/dotIndicator.dart';
+import '../widgets/dotIndicator.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
