@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../home/appbar/custom_appbar.dart';
+import 'package:ui_leafguard/views/favorites/appbar/favorites_appbar.dart';
 import '../bar/custom_bottombar.dart';
 import '../widgets/dotIndicator.dart';
 
@@ -28,7 +28,7 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(scrollController: ScrollController()),
+      appBar: FavoritesAppbar(scrollController: ScrollController()),
       body: SingleChildScrollView(
         child: Column(
           children: [

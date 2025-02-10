@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import '../home/appbar/custom_appbar.dart';
+import 'package:ui_leafguard/views/tasks_calendar/appbar/tasksCalendar_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
 class TasksCalendarPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(scrollController: ScrollController()),
+      appBar: TasksCalendarAppBar(scrollController: ScrollController()),
       body: Column(
         children: [
           const Padding(

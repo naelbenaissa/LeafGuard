@@ -3,7 +3,7 @@ import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
 import 'package:ui_leafguard/views/widgets/dotIndicator.dart';
 import 'package:ui_leafguard/views/home/widgets/section/mesPlantesSection.dart';
 import 'package:ui_leafguard/views/home/widgets/section/mesTachesSection.dart';
-import 'appbar/custom_appbar.dart';
+import 'appbar/home_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: CustomAppBar(
+        appBar: HomeAppBar(
           scrollController: _scrollController,
         ),
         body: Padding(

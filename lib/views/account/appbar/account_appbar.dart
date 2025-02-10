@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ScrollController scrollController;
 
-  const CustomAppBar({super.key, required this.scrollController});
+  const AccountAppBar({super.key, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {

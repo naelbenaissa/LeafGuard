@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ui_leafguard/views/plant_guide/appbar/plantGuide_appbar.dart';
 import '../../services/plant_service.dart';
-import '../home/appbar/custom_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
 class PlantGuidePage extends StatefulWidget {
@@ -62,7 +62,7 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(scrollController: ScrollController()),
+      appBar: PlantGuideAppBar(scrollController: ScrollController()),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
