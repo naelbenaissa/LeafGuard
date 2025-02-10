@@ -38,7 +38,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
           scrollController: _scrollController,
         ),
         body: Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 0),
           child: SingleChildScrollView(
             controller: _scrollController,
             child: Column(
@@ -91,7 +91,6 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
-        backgroundColor: Colors.white,
         bottomNavigationBar: const CustomBottomBar(),
       ),
     );
