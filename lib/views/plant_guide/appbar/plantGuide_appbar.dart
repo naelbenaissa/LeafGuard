@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ScrollController scrollController;
-
-  const PlantGuideAppBar({super.key, required this.scrollController});
+  const PlantGuideAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isScrolled = scrollController.hasClients && scrollController.offset > 50;
-
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: Stack(
@@ -24,7 +20,7 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(isScrolled ? 0.9 : 1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -46,19 +42,21 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  const Spacer(),
-                  ToggleButtons(
-                    isSelected: [false, false],
-                    onPressed: (int index) {},
-                    selectedColor: Colors.white,
-                    color: Colors.black,
-                    fillColor: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(30),
-                    constraints: const BoxConstraints(minWidth: 50, minHeight: 40),
-                    children: const [
-                      Icon(Icons.light_mode),
-                      Icon(Icons.dark_mode),
-                    ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Rechercher...",
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

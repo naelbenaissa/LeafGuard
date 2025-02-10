@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui_leafguard/views/account/appbar/account_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
 class AccountPage extends StatefulWidget {
@@ -22,14 +23,7 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
-        title: const Text("Mon Compte"),
-        centerTitle: true,
-      ),
+      appBar: AccountAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

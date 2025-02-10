@@ -62,26 +62,11 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PlantGuideAppBar(scrollController: ScrollController()),
+      appBar: const PlantGuideAppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8, right: 8),
         child: Column(
           children: [
-            TextField(
-              controller: _searchController,
-              onSubmitted: (_) => _searchPlants(),
-              decoration: InputDecoration(
-                labelText: "Rechercher une plante...",
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _fetchAllPlants)
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 10),
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -94,8 +79,8 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  crossAxisSpacing: 16.0,
-                                  mainAxisSpacing: 16.0,
+                                  crossAxisSpacing: 8.0,
+                                  mainAxisSpacing: 8.0,
                                   childAspectRatio: 0.8,
                                 ),
                                 itemCount: plants.length,

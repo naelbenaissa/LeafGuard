@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final ScrollController scrollController;
-
-  const FavoritesAppbar({super.key, required this.scrollController});
+  const FavoritesAppbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isScrolled = scrollController.hasClients && scrollController.offset > 50;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
@@ -24,7 +21,7 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(isScrolled ? 0.9 : 1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -47,18 +44,19 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   const Spacer(),
-                  ToggleButtons(
-                    isSelected: [false, false],
-                    onPressed: (int index) {},
-                    selectedColor: Colors.white,
-                    color: Colors.black,
-                    fillColor: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(30),
-                    constraints: const BoxConstraints(minWidth: 50, minHeight: 40),
-                    children: const [
-                      Icon(Icons.light_mode),
-                      Icon(Icons.dark_mode),
-                    ],
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.filter_list),
+                      color: Colors.black,
+                    ),
                   ),
                 ],
               ),

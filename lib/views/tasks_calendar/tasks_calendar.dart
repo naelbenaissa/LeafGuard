@@ -26,7 +26,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TasksCalendarAppBar(scrollController: ScrollController()),
+      appBar: const TasksCalendarAppBar(),
       body: Column(
         children: [
           const Padding(

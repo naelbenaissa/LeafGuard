@@ -28,7 +28,7 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: FavoritesAppbar(scrollController: ScrollController()),
+      appBar: const FavoritesAppbar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
