@@ -19,14 +19,14 @@
 ## Favoris
 
 - base de données à créer pour enregistrer favoris et scan.
-- pas accès si pas de compte.
+- pas accès si pas de compte.✅
 
 ## Calendar
 
 - Scroll a corriger.
 - bar avec icon notifications a faire ici.
 - ajouter un bouton pour créer tâches.
-- pas acces si pas de compte.
+- pas acces si pas de compte.✅
 
 ## Camera
 
@@ -37,5 +37,5 @@
 - corriger design appbar.✅
 - bouton retour fonctionne pas.
 - notifications radio a configurer.
-- données supabase a mettre en lien.
+- données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.

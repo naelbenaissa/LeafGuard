@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomBottomBar extends StatelessWidget {
   const CustomBottomBar({super.key});
@@ -23,13 +24,15 @@ class CustomBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int selectedIndex = _getSelectedIndex(context);
+    final user = Supabase.instance.client.auth.currentUser;
+    final bool isAuthenticated = user != null;
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
         BottomAppBar(
           color: Colors.white,
-          elevation: 0,
+          elevation: 3,
           shape: const CircularNotchedRectangle(),
           notchMargin: 10,
           child: Padding(
@@ -41,15 +44,17 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icon(Icons.home, color: selectedIndex == 0 ? Colors.green : Colors.grey),
                   onPressed: () => context.go('/'),
                 ),
-                IconButton(
-                  icon: Icon(Icons.calendar_month, color: selectedIndex == 1 ? Colors.green : Colors.grey),
-                  onPressed: () => context.go('/calendar'),
-                ),
+                if (isAuthenticated)
+                  IconButton(
+                    icon: Icon(Icons.calendar_month, color: selectedIndex == 1 ? Colors.green : Colors.grey),
+                    onPressed: () => context.go('/calendar'),
+                  ),
                 const SizedBox(width: 50),
-                IconButton(
-                  icon: Icon(Icons.favorite, color: selectedIndex == 2 ? Colors.green : Colors.grey),
-                  onPressed: () => context.go('/favorites'),
-                ),
+                if (isAuthenticated)
+                  IconButton(
+                    icon: Icon(Icons.favorite, color: selectedIndex == 2 ? Colors.green : Colors.grey),
+                    onPressed: () => context.go('/favorites'),
+                  ),
                 IconButton(
                   icon: Icon(Icons.menu_book, color: selectedIndex == 3 ? Colors.green : Colors.grey),
                   onPressed: () => context.go('/plantsguide'),
