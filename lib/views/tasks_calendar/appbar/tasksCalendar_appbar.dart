@@ -43,7 +43,7 @@ class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
       child: Stack(
         children: [
           AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             elevation: 0,
           ),
           Positioned(
