@@ -22,10 +22,11 @@
 
 ## Calendar
 
-- Scroll a corriger.
+- Scroll a corriger.✅
 - bar avec icon notifications a faire ici.✅
 - ajouter un bouton pour créer tâches.
 - pas acces si pas de compte.✅
+- Associer les tâches a un compte.
 
 ## Camera
 
