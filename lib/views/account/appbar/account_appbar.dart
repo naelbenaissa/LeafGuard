@@ -35,7 +35,7 @@ class AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: const Icon(Icons.arrow_back, color: Colors.black, size: 18),
                   ),
                   const SizedBox(width: 8),
-                  const Text("Retour"),
+                  const Text("Retour", style: TextStyle(fontSize: 18),),
                 ],
               ),
             ),

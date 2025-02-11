@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
   late TabController _tabController;
 
@@ -34,13 +33,13 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: HomeAppBar(
-          scrollController: _scrollController,
+        /// Provoque des erreurs inopinées
+        // extendBodyBehindAppBar: true,
+        appBar: const HomeAppBar(
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
           child: SingleChildScrollView(
-            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -78,7 +77,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height *
-                      0.7, // Hauteur fixe pour le TabBarView
+                      0.7,
                   child: TabBarView(
                     controller: _tabController,
                     children: [

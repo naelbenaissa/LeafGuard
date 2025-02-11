@@ -62,9 +62,10 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: const PlantGuideAppBar(),
       body: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8),
+        padding: const EdgeInsets.only(top: 24),
         child: Column(
           children: [
             Expanded(

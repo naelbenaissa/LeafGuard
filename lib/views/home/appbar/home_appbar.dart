@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ScrollController scrollController;
-
-  const HomeAppBar({super.key, required this.scrollController});
+  const HomeAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isScrolled = scrollController.hasClients && scrollController.offset > 50;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: Stack(
         children: [
           AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             elevation: 0,
           ),
           Positioned(
@@ -24,7 +21,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(isScrolled ? 0.9 : 1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
