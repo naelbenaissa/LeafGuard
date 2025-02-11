@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:ui_leafguard/views/account/account.dart';
+import 'package:ui_leafguard/views/auth/auth.dart';
 import 'package:ui_leafguard/views/favorites/favorites.dart';
 import 'package:ui_leafguard/views/plant_guide/plant_guide.dart';
 import '../views/home/home.dart';
@@ -44,6 +45,12 @@ class Routes {
           builder: (context, state) => const AccountPage(),
           pageBuilder: (context, state) =>
               NoTransitionPage(child: const AccountPage()),
+        ),
+        GoRoute(
+          path: '/auth',
+          builder: (context, state) => const AuthPage(),
+          pageBuilder: (context, state) =>
+              NoTransitionPage(child: const AuthPage()),
         ),],
     );
   }

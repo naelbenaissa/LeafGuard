@@ -1,11 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+import '../../../services/user_service.dart';
+
+class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
   @override
+  _HomeAppBarState createState() => _HomeAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(80);
+}
+
+class _HomeAppBarState extends State<HomeAppBar> {
+  String? profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      final userData = await UserService().fetchUserData(user.id);
+      if (userData != null && userData['profile_image'] != null) {
+        setState(() {
+          profileImageUrl = userData['profile_image'];
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = Supabase.instance.client.auth.currentUser;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
@@ -35,12 +67,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.go('/account'),
-                    child: const CircleAvatar(
+                    onTap: () => context.go(user != null ? '/account' : '/auth'),
+                    child: CircleAvatar(
                       radius: 22,
-                      backgroundImage: NetworkImage(
-                        "https://media.istockphoto.com/id/1288538088/fr/photo/jeune-homme-daffaires-asiatique-intelligent-confiant-de-verticale-regardent-lappareil-photo.jpg?s=612x612&w=0&k=20&c=1ZhXBoyM_AlLuuCR2nyYocCEWsNmx23eKjGhHlfp8E8=",
-                      ),
+                      backgroundColor: Colors.grey.shade200,
+                      backgroundImage: profileImageUrl != null && profileImageUrl!.isNotEmpty
+                          ? NetworkImage(profileImageUrl!)
+                          : null,
+                      child: profileImageUrl == null || profileImageUrl!.isEmpty
+                          ? const Icon(Icons.person, size: 28, color: Colors.grey)
+                          : null,
                     ),
                   ),
                   const Spacer(),
@@ -65,7 +101,4 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(80);
 }

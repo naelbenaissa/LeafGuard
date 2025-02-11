@@ -11,9 +11,9 @@
 
 ## Plant Guide
 
-- Plant Guide barre de recherche ameliorer.
+- Plant Guide barre de recherche ameliorer.✅
 - Pagination a faire.
-- circularprogressbar a ameliorer.
+- circularprogressbar a ameliorer.✅
 - Realiser detail page de chaque plante.
 
 ## Favoris
@@ -34,7 +34,7 @@
 
 ## Compte
 
-- corriger design appbar.
+- corriger design appbar.✅
 - bouton retour fonctionne pas.
 - notifications radio a configurer.
 - données supabase a mettre en lien.

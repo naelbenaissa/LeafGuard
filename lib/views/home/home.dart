@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
 import 'package:ui_leafguard/views/widgets/dotIndicator.dart';
 import 'package:ui_leafguard/views/home/widgets/section/mesPlantesSection.dart';
@@ -16,11 +17,34 @@ class HomePage extends StatefulWidget {
 class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
   late TabController _tabController;
+  bool isAuthenticated = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _checkAuthStatus(); // Vérifie l'authentification aux démarrage
+  }
+
+  void _checkAuthStatus() {
+    final session = Supabase.instance.client.auth.currentSession;
+    setState(() {
+      isAuthenticated = session != null;
+    });
+
+    // Écouter les changements d'état de l'authentification
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed) {
+        setState(() {
+          isAuthenticated = true;
+        });
+      } else if (event == AuthChangeEvent.signedOut) {
+        setState(() {
+          isAuthenticated = false;
+        });
+      }
+    });
   }
 
   @override
