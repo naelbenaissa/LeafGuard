@@ -1,13 +1,12 @@
 # LeafGuard
 
-- Appbar en faire une base puis add des choses en fonction des pages.
 - Plus tard réaliser theme dark et light.
 
 ## Home
 
-- Il faut regler page home bar sur fond blanc mettre transparent / trouver une solution.
+- Il faut regler page home bar sur fond blanc mettre transparent / trouver une solution.✅
 - bloquer position image page home pour qu'il s'affiche direct a sa place avant animation slogan.
-- configurer si connecter ou non pour afficher certaines options.
+- configurer si connecter ou non pour afficher certaines options.✅
 
 ## Plant Guide
 
@@ -24,7 +23,7 @@
 ## Calendar
 
 - Scroll a corriger.
-- bar avec icon notifications a faire ici.
+- bar avec icon notifications a faire ici.✅
 - ajouter un bouton pour créer tâches.
 - pas acces si pas de compte.✅
 
@@ -38,4 +37,4 @@
 - bouton retour fonctionne pas.
 - notifications radio a configurer.
 - données supabase a mettre en lien.✅
-- configurer page pour creer compte et se connecter.
+- configurer page pour creer compte et se connecter.✅
