@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
-class PlantGuideAppBar extends StatefulWidget implements PreferredSizeWidget {
+class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PlantGuideAppBar({super.key});
 
   @override
-  _PlantGuideAppBarState createState() => _PlantGuideAppBarState();
-
-  @override
   Size get preferredSize => const Size.fromHeight(80);
-}
-
-class _PlantGuideAppBarState extends State<PlantGuideAppBar> {
-  String? profileImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

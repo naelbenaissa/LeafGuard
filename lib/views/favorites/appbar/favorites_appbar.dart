@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
-class FavoritesAppbar extends StatefulWidget implements PreferredSizeWidget {
+class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
   const FavoritesAppbar({super.key});
 
   @override
-  _FavoritesAppbarState createState() => _FavoritesAppbarState();
-
-  @override
   Size get preferredSize => const Size.fromHeight(80);
-}
-
-class _FavoritesAppbarState extends State<FavoritesAppbar> {
-  String? profileImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

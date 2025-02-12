@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
-class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
   @override
-  _HomeAppBarState createState() => _HomeAppBarState();
-
-  @override
   Size get preferredSize => const Size.fromHeight(80);
-}
-
-class _HomeAppBarState extends State<HomeAppBar> {
-  String? profileImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

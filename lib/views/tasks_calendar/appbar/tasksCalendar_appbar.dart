@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
-class TasksCalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
+class TasksCalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TasksCalendarAppBar({super.key});
 
   @override
-  _TasksCalendarAppBarState createState() => _TasksCalendarAppBarState();
-
-  @override
   Size get preferredSize => const Size.fromHeight(80);
-}
-
-class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
-  String? profileImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
