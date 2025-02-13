@@ -171,7 +171,7 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
                       },
                     ),
                   ),
-                  _buildPaginationControls(),
+                  if (_searchQuery.isEmpty) _buildPaginationControls(), // Pagination masquée en mode recherche
                 ],
               ),
             ),
