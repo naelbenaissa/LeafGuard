@@ -35,4 +35,24 @@ class TrefleApiService {
       return {"data": [], "total": 0};
     }
   }
+
+  /// Récupère les détails d'une plante via son ID
+  Future<Map<String, dynamic>?> fetchPlantDetails(int plantId) async {
+    String url = "$_baseUrl/$plantId?token=$_apiKey";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      print("📩 Réponse API: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['data']; // Retourne directement les détails de la plante
+      } else {
+        throw Exception("Erreur ${response.statusCode} : Impossible de charger la plante.");
+      }
+    } catch (e) {
+      print("🚨 Erreur de chargement: $e");
+      return null;
+    }
+  }
 }

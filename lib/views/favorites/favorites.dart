@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_leafguard/views/favorites/appbar/favorites_appbar.dart';
+import 'package:ui_leafguard/views/favorites/widgets/section/mesFavorisSection.dart';
 import '../bar/custom_bottombar.dart';
 import '../widgets/dotIndicator.dart';
 
@@ -63,7 +64,7 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
                 controller: _tabController,
                 children: const [
                   Center(child: Text("Ici, la liste de vos scans")),
-                  Center(child: Text("Ici, la liste de vos favoris")),
+                  MesFavorisSection(),
                 ],
               ),
             ),

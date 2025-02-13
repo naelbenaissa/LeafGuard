@@ -25,6 +25,16 @@ class FavoriteService {
     });
   }
 
+  /// Récupère la liste des IDs des plantes favorites d'un utilisateur
+  Future<List<int>> getFavoritePlantIds(String userId) async {
+    final response = await supabase
+        .from('favorites')
+        .select('plant_id')
+        .eq('user_id', userId);
+
+    return response.map<int>((fav) => fav['plant_id'] as int).toList();
+  }
+
   /// Supprime une plante des favoris
   Future<void> removeFavorite(String userId, int plantId) async {
     await supabase.from('favorites').delete().match({
