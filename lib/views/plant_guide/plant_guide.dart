@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_leafguard/views/plant_guide/appbar/plantGuide_appbar.dart';
-import '../../services/plant_service.dart';
+import '../../services/trefle_api_service.dart';
 import '../bar/custom_bottombar.dart';
 
 class PlantGuidePage extends StatefulWidget {
@@ -11,7 +11,7 @@ class PlantGuidePage extends StatefulWidget {
 }
 
 class _PlantGuidePageState extends State<PlantGuidePage> {
-  final PlantService _plantService = PlantService();
+  final TrefleApiService _plantService = TrefleApiService();
   List<dynamic> plants = [];
   bool isLoading = false;
   final TextEditingController _searchController = TextEditingController();
