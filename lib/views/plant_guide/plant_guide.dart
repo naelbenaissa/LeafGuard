@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_leafguard/views/plant_guide/appbar/plantGuide_appbar.dart';
+import 'package:ui_leafguard/views/plant_guide/plant_detail.dart';
 import '../../services/trefle_api_service.dart';
 import '../bar/custom_bottombar.dart';
 import 'widgets/pagination_controls.dart';
@@ -13,8 +14,8 @@ class PlantGuidePage extends StatefulWidget {
 
 class _PlantGuidePageState extends State<PlantGuidePage> {
   final TrefleApiService _plantService = TrefleApiService();
-  List<dynamic> plants = []; // Plantes affichées
-  List<dynamic> allPlants = []; // Toutes les plantes stockées en cache
+  List<dynamic> plants = [];
+  List<dynamic> allPlants = [];
   bool isLoading = false;
   int _currentPage = 1;
   int _totalPages = 1;
@@ -23,20 +24,17 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   @override
   void initState() {
     super.initState();
-    _fetchAllPlants(); // Charge toutes les plantes
-    _fetchPlants(); // Charge la première page
+    _fetchAllPlants();
+    _fetchPlants();
   }
 
-  /// Charge **toutes** les plantes et les stocke en cache
   Future<void> _fetchAllPlants() async {
-    print("🔍 Chargement complet des plantes...");
     int page = 1;
     bool hasMoreData = true;
     _setLoading(true);
 
     try {
       allPlants.clear();
-
       while (hasMoreData) {
         final response = await _plantService.fetchPlants(page: page);
         final List<dynamic> newPlants = response['data'] ?? [];
@@ -53,12 +51,9 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
     }
 
     _setLoading(false);
-    print("✅ Chargement terminé, total: ${allPlants.length} plantes.");
   }
 
-  /// Charge uniquement une page de plantes pour l'affichage normal
   Future<void> _fetchPlants() async {
-    print("🔍 Chargement de la page $_currentPage...");
     _setLoading(true);
 
     try {
@@ -76,11 +71,9 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
     _setLoading(false);
   }
 
-  /// Filtre les plantes stockées en mémoire locale
   void _applyFilter(String query) {
     setState(() {
       _searchQuery = query;
-
       if (query.isEmpty) {
         _fetchPlants();
       } else {
@@ -90,8 +83,6 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
         }).toList();
       }
     });
-
-    print("📂 Plantes affichées après filtrage: ${plants.length}");
   }
 
   void _changePage(int page) {
@@ -115,7 +106,7 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
       extendBodyBehindAppBar: true,
       appBar: PlantGuideAppBar(onSearchChanged: _onSearchChanged),
       body: Padding(
-        padding: const EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.only(top: 20),
         child: Column(
           children: [
             Expanded(
@@ -129,49 +120,59 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
                     child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 0.8,
+                        crossAxisSpacing: 12.0,
+                        mainAxisSpacing: 12.0,
+                        childAspectRatio: 0.75,
                       ),
                       itemCount: plants.length,
                       itemBuilder: (context, index) {
                         final plant = plants[index];
 
-                        return Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: plant['image_url'] != null
-                                  ? Image.network(
-                                plant['image_url'],
-                                width: 160,
-                                height: 160,
-                                fit: BoxFit.cover,
-                              )
-                                  : Container(
-                                width: 160,
-                                height: 160,
-                                color: Colors.green[100],
-                                child: const Icon(
-                                    Icons.local_florist,
-                                    size: 50,
-                                    color: Colors.green),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(plant: plant),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              plant['common_name'] ?? "Nom inconnu",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: plant['image_url'] != null
+                                    ? Image.network(
+                                  plant['image_url'],
+                                  width: 180,
+                                  height: 180,
+                                  fit: BoxFit.cover,
+                                )
+                                    : Container(
+                                  width: 180,
+                                  height: 180,
+                                  color: Colors.green[200],
+                                  child: const Icon(Icons.local_florist, size: 60, color: Colors.green),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                plant['common_name'] ?? "Nom inconnu",
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "ID: ${plant['id'] ?? 'Inconnu'}",
+                                style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),
                   ),
-                  if (_searchQuery.isEmpty) _buildPaginationControls(), // Pagination masquée en mode recherche
+                  if (_searchQuery.isEmpty) _buildPaginationControls(),
                 ],
               ),
             ),
