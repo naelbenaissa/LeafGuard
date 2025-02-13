@@ -5,36 +5,34 @@ class TrefleApiService {
   static const String _apiKey = "Li9T6Q-Z5p9ZfAeOyKKKJMUPUbI0sr7JFYWavXwJ2yk";
   static const String _baseUrl = "https://trefle.io/api/v1/plants";
 
-  /// Récupère une liste de plantes avec pagination
-  Future<Map<String, dynamic>> fetchPlants({int page = 1}) async {
-    return _getPlantsData("$_baseUrl?token=$_apiKey&page=$page");
-  }
+  /// Récupère une liste de plantes via `/search`
+  Future<Map<String, dynamic>> fetchPlants({int page = 1, String query = ""}) async {
+    String url = query.isEmpty
+        ? "$_baseUrl?token=$_apiKey&page=$page"
+        : "$_baseUrl/search?token=$_apiKey&q=${Uri.encodeComponent(query)}";
 
-  /// Recherche une plante par nom
-  // Future<List<dynamic>> searchPlants(String query) async {
-  //   if (query.isEmpty) return fetchPlants(); // Si la recherche est vide, on récupère toutes les plantes
-  //   final url = "$_baseUrl/search?token=$_apiKey&q=${Uri.encodeComponent(query)}";
-  //   return _getPlantsData(url);
-  // }
+    print("🔗 URL de l'API: $url");
+    return _getPlantsData(url);
+  }
 
   /// Méthode privée pour gérer les requêtes HTTP
   Future<Map<String, dynamic>> _getPlantsData(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
+      print("📩 Réponse API: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
         return {
           "data": data['data'] ?? [],
-          "total": data['meta']?['total'] ?? 1 // Récupère le total des plantes
+          "total": data['meta']?['total'] ?? 0
         };
       } else {
         throw Exception("Erreur ${response.statusCode} : Impossible de charger les données.");
       }
     } catch (e) {
-      print("Erreur de chargement : $e");
-      return {"data": [], "total": 1}; // Retour sécurisé
+      print("🚨 Erreur de chargement: $e");
+      return {"data": [], "total": 0};
     }
   }
-
 }

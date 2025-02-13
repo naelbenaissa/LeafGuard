@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
 class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const PlantGuideAppBar({super.key});
+  final Function(String) onSearchChanged;
+
+  const PlantGuideAppBar({super.key, required this.onSearchChanged});
 
   @override
   Size get preferredSize => const Size.fromHeight(80);
@@ -40,8 +42,9 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
+                      onChanged: onSearchChanged,
                       decoration: InputDecoration(
-                        hintText: "Rechercher...",
+                        hintText: "Rechercher une plante...",
                         prefixIcon: const Icon(Icons.search, color: Colors.grey),
                         contentPadding: const EdgeInsets.symmetric(vertical: 10),
                         filled: true,
