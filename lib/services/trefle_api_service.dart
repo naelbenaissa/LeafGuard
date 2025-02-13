@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class PlantService {
+class TrefleApiService {
   static const String _apiKey = "Li9T6Q-Z5p9ZfAeOyKKKJMUPUbI0sr7JFYWavXwJ2yk";
   static const String _baseUrl = "https://trefle.io/api/v1/plants";
 
