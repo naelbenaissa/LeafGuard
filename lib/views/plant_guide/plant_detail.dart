@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/plant_guide/appbar/plantDetail_appbar.dart';
 import 'package:ui_leafguard/services/favorite_service.dart';
+import 'package:ui_leafguard/views/plant_guide/widgets/build_info_card.dart';
 
 class DetailPage extends StatefulWidget {
   final Map<String, dynamic> plant;
@@ -67,7 +68,6 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🌿 Image de la plante
             Stack(
               children: [
                 ClipRRect(
@@ -106,7 +106,6 @@ class _DetailPageState extends State<DetailPage> {
 
             const SizedBox(height: 20),
 
-            // 🌱 Nom de la plante + bouton favori ❤️
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -127,7 +126,6 @@ class _DetailPageState extends State<DetailPage> {
                     ],
                   ),
 
-                  // ❤️ Bouton favori interactif
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -142,19 +140,18 @@ class _DetailPageState extends State<DetailPage> {
 
             const SizedBox(height: 20),
 
-            // 📋 Cartes d'informations principales
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  _buildInfoCard(Icons.account_tree, "Famille", widget.plant['family'] ?? 'Non spécifiée'),
-                  _buildInfoCard(Icons.grass, "Genre", widget.plant['genus'] ?? 'Non spécifié'),
-                  _buildInfoCard(Icons.leaderboard, "Rang", widget.plant['rank'] ?? 'Inconnu'),
-                  _buildInfoCard(Icons.verified, "Statut", widget.plant['status'] ?? 'Non précisé'),
-                  _buildInfoCard(Icons.history, "Année de découverte", widget.plant['year']?.toString() ?? 'Inconnue'),
-                  _buildInfoCard(Icons.person, "Auteur", widget.plant['author'] ?? 'Non spécifié'),
-                  _buildInfoCard(Icons.menu_book, "Bibliographie", widget.plant['bibliography'] ?? 'Non disponible'),
-                  _buildInfoCard(Icons.map, "Distribution", widget.plant['distribution'] ?? 'Non disponible'),
+                  buildInfoCard(Icons.account_tree, "Famille", widget.plant['family'] ?? 'Non spécifiée'),
+                  buildInfoCard(Icons.grass, "Genre", widget.plant['genus'] ?? 'Non spécifié'),
+                  buildInfoCard(Icons.leaderboard, "Rang", widget.plant['rank'] ?? 'Inconnu'),
+                  buildInfoCard(Icons.verified, "Statut", widget.plant['status'] ?? 'Non précisé'),
+                  buildInfoCard(Icons.history, "Année de découverte", widget.plant['year']?.toString() ?? 'Inconnue'),
+                  buildInfoCard(Icons.person, "Auteur", widget.plant['author'] ?? 'Non spécifié'),
+                  buildInfoCard(Icons.menu_book, "Bibliographie", widget.plant['bibliography'] ?? 'Non disponible'),
+                  buildInfoCard(Icons.map, "Distribution", widget.plant['distribution'] ?? 'Non disponible'),
                 ],
               ),
             ),
@@ -162,45 +159,6 @@ class _DetailPageState extends State<DetailPage> {
             const SizedBox(height: 30),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 🏷️ Widget pour afficher une carte d'information
-  Widget _buildInfoCard(IconData icon, String title, String value) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 30, color: Colors.green),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 18),
-              textAlign: TextAlign.right,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       ),
     );
   }
