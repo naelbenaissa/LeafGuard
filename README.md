@@ -20,7 +20,7 @@
 - base de données à créer pour enregistrer favoris et scan.✅
 - pas accès si pas de compte.✅
 - favoris accès a detail plante.
-- Mes scans a configurer.
+- Mes scans a configurer.✅
 
 ## Calendar
 
@@ -28,7 +28,7 @@
 - bar avec icon notifications a faire ici.✅
 - ajouter un bouton pour créer tâches.✅
 - pas acces si pas de compte.✅
-- Associer les tâches a un compte.
+- Associer les tâches a un compte.✅
 
 ## Camera
 
@@ -37,7 +37,7 @@
 ## Compte
 
 - corriger design appbar.✅
-- bouton retour fonctionne pas.
+- bouton retour fonctionne pas.✅
 - notifications radio a configurer.
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
