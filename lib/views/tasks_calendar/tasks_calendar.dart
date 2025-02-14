@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/tasks_calendar/appbar/tasksCalendar_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
@@ -13,92 +14,47 @@ class TasksCalendarPage extends StatefulWidget {
 }
 
 class _TasksCalendarPageState extends State<TasksCalendarPage> {
+  final SupabaseClient supabase = Supabase.instance.client;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
+  Map<DateTime, List<Map<String, dynamic>>> _tasksByDate = {};
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('fr_FR', null);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchTasks());
   }
 
-  void _createTask() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        String title = "";
-        String description = "";
-        DateTime selectedDate = DateTime.now();
-        String priority = "Faible";
+  Future<void> _fetchTasks() async {
+    setState(() => _isLoading = true);
+    final user = supabase.auth.currentUser;
 
-        return AlertDialog(
-          title: const Text("Créer une nouvelle tâche"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: const InputDecoration(labelText: "Titre de la tâche"),
-                onChanged: (value) => title = value,
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: "Description"),
-                onChanged: (value) => description = value,
-              ),
-              ListTile(
-                title: Text("Date : \${DateFormat.yMMMMd('fr_FR').format(selectedDate)}"),
-                trailing: IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        selectedDate = pickedDate;
-                      });
-                    }
-                  },
-                ),
-              ),
-              DropdownButtonFormField<String>(
-                value: priority,
-                decoration: const InputDecoration(labelText: "Priorité"),
-                items: ["Faible", "Moyen", "Fort"].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      priority = value;
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Annuler"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Ajouter la logique d'enregistrement ici
-                Navigator.of(context).pop();
-              },
-              child: const Text("Créer"),
-            ),
-          ],
-        );
-      },
-    );
+    if (user != null) {
+      final response = await supabase.from('tasks').select('*').eq('user_id', user.id);
+
+      print("Réponse Supabase : $response");
+
+      if (response != null && response.isNotEmpty) {
+        Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
+        for (var task in response) {
+          DateTime dueDate = DateTime.parse(task['due_date']).toLocal();
+          DateTime normalizedDate = DateTime(dueDate.year, dueDate.month, dueDate.day);
+          tasksMap.putIfAbsent(normalizedDate, () => []).add(task);
+        }
+        setState(() {
+          _tasksByDate = tasksMap;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _tasksByDate = {};
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -110,74 +66,87 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
       appBar: const TasksCalendarAppBar(),
       body: Padding(
         padding: EdgeInsets.only(top: topPadding + 16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Gérer vos tâches",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Gérer vos tâches",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            TableCalendar(
+              locale: 'fr_FR',
+              firstDay: DateTime.utc(2000, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              eventLoader: (day) {
+                DateTime normalizedDate = DateTime(day.year, day.month, day.day);
+                return _tasksByDate[normalizedDate] ?? [];
+              },
+              calendarStyle: const CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                selectedDecoration: BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
                 ),
               ),
-              TableCalendar(
-                locale: 'fr_FR',
-                firstDay: DateTime.utc(2000, 1, 1),
-                lastDay: DateTime.utc(2100, 12, 31),
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
-                },
-                onFormatChanged: (format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                },
-                calendarStyle: const CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tâches du ${DateFormat.yMMMMd('fr_FR').format(_selectedDay)}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  selectedDecoration: BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+                ],
               ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Tâches du ${DateFormat.yMMMMd('fr_FR').format(_selectedDay)}",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: Colors.blue, size: 28),
-                      onPressed: _createTask,
-                    ),
-                  ],
-                ),
-              ),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+            ),
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
                 padding: const EdgeInsets.all(16.0),
-                children: List.generate(7, (index) => const ListTile(
-                  leading: Icon(Icons.task, color: Colors.green),
-                  title: Text("Exemple de tâche"),
-                )),
+                children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? []).map((task) {
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.task, color: Colors.green),
+                      title: Text(task['title']),
+                      subtitle: Text(task['description']),
+                      trailing: Text(task['priority'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: task['priority'] == 'élevé'
+                                  ? Colors.red
+                                  : task['priority'] == 'moyen'
+                                  ? Colors.orange
+                                  : Colors.green)),
+                    ),
+                  );
+                }).toList(),
               ),
-            ],
-          ),
+            ),
+
+          ],
         ),
       ),
       bottomNavigationBar: const CustomBottomBar(),
