@@ -11,14 +11,16 @@
 ## Plant Guide
 
 - Plant Guide barre de recherche ameliorer.✅
-- Pagination a faire.
+- Pagination a faire.✅
 - circularprogressbar a ameliorer.✅
-- Realiser detail page de chaque plante.
+- Realiser detail page de chaque plante.✅
 
 ## Favoris
 
-- base de données à créer pour enregistrer favoris et scan.
+- base de données à créer pour enregistrer favoris et scan.✅
 - pas accès si pas de compte.✅
+- favoris accès a detail plante.
+- Mes scans a configurer.
 
 ## Calendar
 
