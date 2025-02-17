@@ -1,6 +1,7 @@
 # LeafGuard
 
 - Plus tard réaliser theme dark et light.
+- Notification a configurer.
 
 ## Home
 
@@ -21,6 +22,7 @@
 - pas accès si pas de compte.✅
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
+- Filtre a configurer.
 
 ## Calendar
 
