@@ -24,7 +24,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting('fr_FR', null);
+    initializeDateFormatting('fr_CA', null);
     WidgetsBinding.instance.addPostFrameCallback((_) => _fetchTasks());
   }
 
@@ -75,7 +75,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
               ),
             ),
             TableCalendar(
-              locale: 'fr_FR',
+              locale: 'fr_CA',
               firstDay: DateTime.utc(2000, 1, 1),
               lastDay: DateTime.utc(2100, 12, 31),
               focusedDay: _focusedDay,
