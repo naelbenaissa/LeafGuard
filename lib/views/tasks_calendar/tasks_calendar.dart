@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/tasks_calendar/appbar/tasksCalendar_appbar.dart';
 import '../bar/custom_bottombar.dart';
+import '../widgets/task_card.dart';
 
 class TasksCalendarPage extends StatefulWidget {
   const TasksCalendarPage({super.key});
@@ -105,47 +105,20 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
               ),
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Tâches du ${DateFormat.yMMMMd('fr_FR').format(_selectedDay)}",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView(
                 padding: const EdgeInsets.all(16.0),
-                children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? []).map((task) {
-                  return Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ListTile(
-                      leading: Icon(Icons.task, color: Colors.green),
-                      title: Text(task['title']),
-                      subtitle: Text(task['description']),
-                      trailing: Text(task['priority'],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: task['priority'] == 'élevé'
-                                  ? Colors.red
-                                  : task['priority'] == 'moyen'
-                                  ? Colors.orange
-                                  : Colors.green)),
-                    ),
-                  );
-                }).toList(),
+                children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? [])
+                    .map((task) => TaskCard(
+                  title: task['title'],
+                  description: task['description'],
+                  priority: task['priority'],
+                ))
+                    .toList(),
               ),
             ),
-
           ],
         ),
       ),

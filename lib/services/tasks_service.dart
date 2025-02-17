@@ -5,6 +5,18 @@ class TasksService {
 
   TasksService(this.supabase);
 
+  Future<List<Map<String, dynamic>>> fetchTasks(String? userId) async {
+    if (userId == null) return [];
+
+    final response = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('user_id', userId)
+        .order('due_date', ascending: true);
+
+    return response ?? [];
+  }
+
   Future<void> addTask(String userId, String title, String description, DateTime dueDate, String priority) async {
     final response = await supabase.from('tasks').insert({
       'user_id': userId,
