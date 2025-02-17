@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/tasks_calendar/appbar/tasksCalendar_appbar.dart';
@@ -33,13 +34,15 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
     final user = supabase.auth.currentUser;
 
     if (user != null) {
-      final response = await supabase.from('tasks').select('*').eq('user_id', user.id);
+      final response =
+          await supabase.from('tasks').select('*').eq('user_id', user.id);
 
       if (response != null && response.isNotEmpty) {
         Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
         for (var task in response) {
           DateTime dueDate = DateTime.parse(task['due_date']).toLocal();
-          DateTime normalizedDate = DateTime(dueDate.year, dueDate.month, dueDate.day);
+          DateTime normalizedDate =
+              DateTime(dueDate.year, dueDate.month, dueDate.day);
           tasksMap.putIfAbsent(normalizedDate, () => []).add(task);
         }
         setState(() {
@@ -58,6 +61,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
   @override
   Widget build(BuildContext context) {
     double topPadding = MediaQuery.of(context).padding.top + kToolbarHeight;
+    String formattedDate =
+        DateFormat.yMMMMEEEEd('fr_CA').format(_selectedDay); // Format canadien
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -88,7 +93,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 });
               },
               eventLoader: (day) {
-                DateTime normalizedDate = DateTime(day.year, day.month, day.day);
+                DateTime normalizedDate =
+                    DateTime(day.year, day.month, day.day);
                 return _tasksByDate[normalizedDate] ?? [];
               },
               calendarStyle: const CalendarStyle(
@@ -102,20 +108,36 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+
+            // ✅ Ajout de la date sélectionnée en gras
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                formattedDate, // Date formatée
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? [])
-                    .map((task) => TaskCard(
-                  title: task['title'],
-                  description: task['description'],
-                  priority: task['priority'],
-                ))
-                    .toList(),
-              ),
+                      padding: const EdgeInsets.all(16.0),
+                      children: (_tasksByDate[DateTime(_selectedDay.year,
+                                  _selectedDay.month, _selectedDay.day)] ??
+                              [])
+                          .map((task) => TaskCard(
+                                title: task['title'],
+                                description: task['description'],
+                                priority: task['priority'],
+                              ))
+                          .toList(),
+                    ),
             ),
           ],
         ),
