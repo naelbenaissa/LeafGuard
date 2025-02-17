@@ -35,8 +35,6 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
     if (user != null) {
       final response = await supabase.from('tasks').select('*').eq('user_id', user.id);
 
-      print("Réponse Supabase : $response");
-
       if (response != null && response.isNotEmpty) {
         Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
         for (var task in response) {

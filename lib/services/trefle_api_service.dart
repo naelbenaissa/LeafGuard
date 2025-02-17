@@ -11,7 +11,6 @@ class TrefleApiService {
         ? "$_baseUrl?token=$_apiKey&page=$page"
         : "$_baseUrl/search?token=$_apiKey&q=${Uri.encodeComponent(query)}";
 
-    print("🔗 URL de l'API: $url");
     return _getPlantsData(url);
   }
 
@@ -19,7 +18,6 @@ class TrefleApiService {
   Future<Map<String, dynamic>> _getPlantsData(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
-      print("📩 Réponse API: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -31,7 +29,6 @@ class TrefleApiService {
         throw Exception("Erreur ${response.statusCode} : Impossible de charger les données.");
       }
     } catch (e) {
-      print("🚨 Erreur de chargement: $e");
       return {"data": [], "total": 0};
     }
   }
@@ -42,16 +39,14 @@ class TrefleApiService {
 
     try {
       final response = await http.get(Uri.parse(url));
-      print("📩 Réponse API: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['data']; // Retourne directement les détails de la plante
+        return data['data'];
       } else {
         throw Exception("Erreur ${response.statusCode} : Impossible de charger la plante.");
       }
     } catch (e) {
-      print("🚨 Erreur de chargement: $e");
       return null;
     }
   }

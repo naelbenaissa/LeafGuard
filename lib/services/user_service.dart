@@ -17,7 +17,6 @@ class UserService {
         return null;
       }
     } catch (error) {
-      print('Erreur lors de la récupération des données de l\'utilisateur: $error');
       return null;
     }
   }

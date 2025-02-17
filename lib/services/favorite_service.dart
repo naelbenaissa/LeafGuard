@@ -13,7 +13,7 @@ class FavoriteService {
         .match({'user_id': userId, 'plant_id': plantId})
         .maybeSingle();
 
-    return response != null; // Retourne `true` si la plante est en favori
+    return response != null;
   }
 
   /// Ajoute une plante aux favoris
