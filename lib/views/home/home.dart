@@ -107,7 +107,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                     controller: _tabController,
                     children: [
                       mesPlantesSection(),
-                      mesTachesSection(),
+                      MesTachesSection(),
                     ],
                   ),
                 ),

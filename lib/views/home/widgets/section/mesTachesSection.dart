@@ -3,83 +3,142 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:ui_leafguard/services/tasks_service.dart';
-
 import '../../../widgets/task_card.dart';
 
-Widget mesTachesSection() {
+class MesTachesSection extends StatefulWidget {
+  const MesTachesSection({super.key});
+
+  @override
+  _MesTachesSectionState createState() => _MesTachesSectionState();
+}
+
+class _MesTachesSectionState extends State<MesTachesSection> {
   final SupabaseClient supabase = Supabase.instance.client;
-  final user = supabase.auth.currentUser;
-  final TasksService tasksService = TasksService(supabase);
+  final TasksService tasksService = TasksService(Supabase.instance.client);
+  bool showPastTasks = false;
 
-  return FutureBuilder<List<Map<String, dynamic>>>(
-    future: tasksService.fetchTasks(user?.id),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (snapshot.hasError) {
-        return Center(child: Text("Erreur : ${snapshot.error}"));
-      }
-      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text("Aucune tâche trouvée"));
-      }
+  @override
+  Widget build(BuildContext context) {
+    final user = supabase.auth.currentUser;
 
-      return FutureBuilder(
-        future: initializeDateFormatting('fr_FR', null),
-        builder: (context, localeSnapshot) {
-          if (localeSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: tasksService.fetchTasks(user?.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("Erreur : ${snapshot.error}"));
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("Aucune tâche trouvée"));
+        }
 
-          final tasks = snapshot.data!;
-          final Map<String, List<Map<String, dynamic>>> groupedTasks = {};
-
-          for (var task in tasks) {
-            String formattedDate = DateFormat.yMMMMd('fr_FR')
-                .format(DateTime.parse(task['due_date']));
-
-            if (!groupedTasks.containsKey(formattedDate)) {
-              groupedTasks[formattedDate] = [];
+        return FutureBuilder(
+          future: initializeDateFormatting('fr_CA', null),
+          builder: (context, localeSnapshot) {
+            if (localeSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
             }
-            groupedTasks[formattedDate]!.add(task);
-          }
 
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: groupedTasks.entries.map((entry) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          entry.key,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
+            final tasks = snapshot.data!;
+            final Map<String, List<Map<String, dynamic>>> groupedTasks = {};
+            DateTime today = DateTime.now();
+
+            for (var task in tasks) {
+              DateTime taskDate = DateTime.parse(task['due_date']);
+              bool isPastTask = taskDate.isBefore(today);
+              if (!showPastTasks && isPastTask) continue;
+
+              String formattedDate =
+                  DateFormat.yMMMMd('fr_CA').format(taskDate);
+              if (!groupedTasks.containsKey(formattedDate)) {
+                groupedTasks[formattedDate] = [];
+              }
+              groupedTasks[formattedDate]!.add(task);
+            }
+
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          showPastTasks = !showPastTasks;
+                        });
+                      },
+                      icon: Icon(
+                        showPastTasks
+                            ? Icons.history_toggle_off
+                            : Icons.history,
+                        color: Colors.white,
                       ),
-                      ...entry.value.map((task) {
-                        return TaskCard(
-                          title: task['title'],
-                          description: task['description'],
-                          priority: task['priority'],
-                        );
-                      }).toList(),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
+                      label: Text(
+                        showPastTasks
+                            ? "Masquer les tâches passées"
+                            : "Afficher les tâches passées",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14.0),
+                        backgroundColor: showPastTasks
+                            ? Colors.green.shade700
+                            : Colors.green.shade400,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        elevation: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: groupedTasks.entries.map((entry) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  entry.key,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              ...entry.value.map((task) {
+                                return TaskCard(
+                                  title: task['title'],
+                                  description: task['description'],
+                                  priority: task['priority'],
+                                );
+                              }),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
