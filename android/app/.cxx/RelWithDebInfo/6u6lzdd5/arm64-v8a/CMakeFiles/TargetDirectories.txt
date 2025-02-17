@@ -1,0 +1,2 @@
+C:/Users/naelb/Desktop/Nael/ESP/UI_LeafGuard/android/app/.cxx/RelWithDebInfo/6u6lzdd5/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/naelb/Desktop/Nael/ESP/UI_LeafGuard/android/app/.cxx/RelWithDebInfo/6u6lzdd5/arm64-v8a/CMakeFiles/rebuild_cache.dir

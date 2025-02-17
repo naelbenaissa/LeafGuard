@@ -56,6 +56,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         /// Provoque des erreurs inopinées
         // extendBodyBehindAppBar: true,
