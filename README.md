@@ -23,6 +23,8 @@
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
 - Filtre a configurer.
+Scna : confiance et date
+Favoris : a a z, z a a, date, id
 
 ## Calendar
 
@@ -40,6 +42,7 @@
 
 - corriger design appbar.✅
 - bouton retour fonctionne pas.✅
-- notifications radio a configurer.
+- notifications radio a configurer.✅
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
+- Notifications local flutter plugin a mettre en place.
