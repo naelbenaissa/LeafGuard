@@ -18,19 +18,24 @@ class TasksService {
   }
 
   Future<void> addTask(String userId, String title, String description, DateTime dueDate, String priority) async {
-    final response = await supabase.from('tasks').insert({
+    final response = await Supabase.instance.client
+        .from('tasks')
+        .insert({
       'user_id': userId,
       'title': title,
       'description': description,
       'due_date': dueDate.toIso8601String(),
       'priority': priority,
-      'created_at': DateTime.now().toIso8601String(),
-    });
+    })
+        .select();
 
-    if (response.error != null) {
-      throw Exception('Erreur lors de l\'ajout de la tâche: ${response.error!.message}');
+    print("✅ Réponse Supabase: $response"); // Vérification
+
+    if (response == null || response.isEmpty) {
+      throw Exception("❌ Erreur: Aucune tâche insérée !");
     }
   }
+
 
   Future<void> updateTask(String taskId, String title, String description, DateTime dueDate, String priority) async {
     final response = await supabase.from('tasks').update({
