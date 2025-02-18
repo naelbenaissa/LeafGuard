@@ -44,10 +44,11 @@ class _MesTachesSectionState extends State<MesTachesSection> {
             final tasks = snapshot.data!;
             final Map<String, List<Map<String, dynamic>>> groupedTasks = {};
             DateTime today = DateTime.now();
+            today = DateTime(today.year, today.month, today.day);
 
             for (var task in tasks) {
               DateTime taskDate = DateTime.parse(task['due_date']);
-              bool isPastTask = taskDate.isBefore(today);
+              bool isPastTask = taskDate.isBefore(today) && taskDate.day != today.day;
               if (!showPastTasks && isPastTask) continue;
 
               String formattedDate =
