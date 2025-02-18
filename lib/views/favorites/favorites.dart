@@ -14,11 +14,67 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _showFilterOptions = false;
+  String? _selectedFilter;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _selectedFilter = null; // Reset filter when tab changes
+      });
+    });
+  }
+
+  void _toggleFilterOptions() {
+    setState(() {
+      _showFilterOptions = !_showFilterOptions;
+    });
+  }
+
+  void _selectFilter(String filter) {
+    setState(() {
+      _selectedFilter = _selectedFilter == filter ? null : filter;
+    });
+  }
+
+  List<Widget> _getFilterOptions() {
+    List<String> filters = _tabController.index == 0
+        ? ["Confiance", "Date"]
+        : ["A - Z", "Z - A", "Date", "ID"];
+
+    return filters.map((filter) {
+      bool isSelected = _selectedFilter == filter;
+      return GestureDetector(
+        onTap: () => _selectFilter(filter),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.green : Colors.grey[300],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              Text(
+                filter,
+                style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+              ),
+              if (isSelected)
+                GestureDetector(
+                  onTap: () => _selectFilter(filter),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.close, size: 16, color: Colors.red),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
   }
 
   @override
@@ -30,7 +86,7 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const FavoritesAppbar(),
+      appBar: FavoritesAppbar(onFilterPressed: _toggleFilterOptions),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,6 +98,14 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
                 textAlign: TextAlign.center,
               ),
             ),
+            if (_showFilterOptions)
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _getFilterOptions(),
+                ),
+              ),
             SizedBox(
               width: 250,
               child: TabBar(

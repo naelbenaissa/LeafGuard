@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
 
 class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const FavoritesAppbar({super.key});
+  final VoidCallback onFilterPressed;
+
+  const FavoritesAppbar({super.key, required this.onFilterPressed});
 
   @override
   Size get preferredSize => const Size.fromHeight(80);
@@ -47,7 +49,7 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: onFilterPressed,
                       icon: const Icon(Icons.filter_list),
                       color: Colors.black,
                     ),

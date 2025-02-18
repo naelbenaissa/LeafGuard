@@ -23,8 +23,6 @@
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
 - Filtre a configurer.
-Scna : confiance et date
-Favoris : a a z, z a a, date, id
 
 ## Calendar
 
