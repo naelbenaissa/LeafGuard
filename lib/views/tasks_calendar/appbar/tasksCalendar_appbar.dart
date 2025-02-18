@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profileButton.dart';
+import '../../widgets/notification_settings.dart'; // Import du fichier
 
-class TasksCalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
+class TasksCalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   const TasksCalendarAppBar({super.key});
 
   @override
+  _TasksCalendarAppBarState createState() => _TasksCalendarAppBarState();
+
+  @override
   Size get preferredSize => const Size.fromHeight(80);
+}
+
+class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
+  void _showNotificationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Choisissez le niveau de notifications"),
+          content: const NotificationSettings(),
+            actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Fermer"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +71,7 @@ class TasksCalendarAppBar extends StatelessWidget implements PreferredSizeWidget
                       ],
                     ),
                     child: IconButton(
-                      onPressed: () {
-                        // Action pour les notifications
-                      },
+                      onPressed: _showNotificationDialog,
                       icon: const Icon(Icons.notifications),
                       color: Colors.black,
                     ),

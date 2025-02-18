@@ -59,7 +59,6 @@ class DatabaseService {
   }
 
   Future<void> _insertInitialData(Database db) async {
-    // Insertion des maladies avec récupération de leur ID
     List<Map<String, dynamic>> diseases = [
       {'plant_name': 'Poivron', 'disease_name': 'Poivron - Dépérissement bactérien', 'is_healthy': 0},
       {'plant_name': 'Poivron', 'disease_name': 'Poivron - Sain', 'is_healthy': 1},
