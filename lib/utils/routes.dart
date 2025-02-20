@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:ui_leafguard/views/account/account.dart';
 import 'package:ui_leafguard/views/auth/auth.dart';
+import 'package:ui_leafguard/views/camera/camera.dart';
 import 'package:ui_leafguard/views/favorites/favorites.dart';
 import 'package:ui_leafguard/views/plant_guide/plant_guide.dart';
 import '../views/home/home.dart';
@@ -24,9 +25,9 @@ class Routes {
         ),
         GoRoute(
           path: '/camera',
-          builder: (context, state) => const HomePage(),
+          builder: (context, state) => const CameraPage(),
           pageBuilder: (context, state) =>
-              NoTransitionPage(child: const HomePage()),
+              NoTransitionPage(child: const CameraPage()),
         ),
         GoRoute(
           path: '/favorites',
