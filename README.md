@@ -34,7 +34,7 @@
 
 ## Camera
 
-- Camera a configurer.
+- Design à améliorer
 
 ## Compte
 
