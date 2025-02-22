@@ -11,6 +11,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  String _selectedOption = "Caméra";
   CameraController? _controller;
   List<CameraDescription>? cameras;
   final ImagePicker _picker = ImagePicker();
@@ -40,21 +41,17 @@ class _CameraPageState extends State<CameraPage> {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        // Handle selected image
+        debugPrint("Image sélectionnée: ${image.path}");
       }
     } catch (e) {
       debugPrint("Erreur lors de la sélection d'une image: $e");
     }
   }
 
-  Future<void> takePicture() async {
-    if (_controller != null && _controller!.value.isInitialized) {
-      try {
-        await _controller!.takePicture();
-      } catch (e) {
-        debugPrint("Erreur lors de la prise de la photo: $e");
-      }
-    }
+  void _updateOption(String option) {
+    setState(() {
+      _selectedOption = option;
+    });
   }
 
   @override
@@ -67,62 +64,67 @@ class _CameraPageState extends State<CameraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const CameraAppBar(),
+      appBar: CameraAppBar(onOptionSelected: _updateOption),
       body: Column(
         children: [
-          if (_controller != null && _controller!.value.isInitialized)
-            Expanded(
-              flex: 5,
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: CameraPreview(_controller!),
-              ),
+          Expanded(
+            flex: 3,
+            child: _selectedOption == "Caméra"
+                ? (_controller != null && _controller!.value.isInitialized
+                ? AspectRatio(
+              aspectRatio: _controller!.value.aspectRatio,
+              child: CameraPreview(_controller!),
             )
-          else
-            const Expanded(
-              flex: 5,
-              child: Center(child: CircularProgressIndicator()),
+                : const Center(child: CircularProgressIndicator()))
+                : _selectedOption == "Scans récents"
+                ? const Center(child: Text("Liste des scans récents"))
+                : Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/img/storyboard_pickImage.jpg',
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: pickImage,
+                    icon: const Icon(Icons.image, color: Colors.white),
+                    label: const Text("Sélectionner une image", style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    ),
+                  ),
+                ],
+              ),
             ),
+          ),
           Container(
-            color: Colors.green,
             width: double.infinity,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
+            color: Colors.green,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: pickImage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text('Sélectionner', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                Icon(
+                  _selectedOption == "Caméra" ? Icons.camera_alt :
+                  _selectedOption == "Scans récents" ? Icons.history :
+                  Icons.image,
+                  color: Colors.white,
                 ),
-                ElevatedButton(
-                  onPressed: takePicture,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: const CircleBorder(),
+                const SizedBox(width: 10),
+                Text(
+                  _selectedOption,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  child: const Icon(Icons.camera_alt, size: 24),
-                ),
-                ElevatedButton(
-                  onPressed: initializeCamera,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text("Caméra", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

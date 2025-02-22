@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CameraAppBar({super.key});
+  final Function(String) onOptionSelected;
+
+  const CameraAppBar({super.key, required this.onOptionSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +49,14 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                   BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
                 ],
               ),
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.more_vert),
-                color: Colors.black,
+              child: PopupMenuButton<String>(
+                onSelected: onOptionSelected,
+                icon: const Icon(Icons.more_vert, color: Colors.black),
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: "Caméra", child: Text("Caméra")),
+                  const PopupMenuItem(value: "Ajouter une image", child: Text("Ajouter une image")),
+                  const PopupMenuItem(value: "Scans récents", child: Text("Scans récents")),
+                ],
               ),
             ),
           ],
