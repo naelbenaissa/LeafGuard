@@ -71,38 +71,41 @@ class _CameraPageState extends State<CameraPage> {
             flex: 3,
             child: _selectedOption == "Caméra"
                 ? (_controller != null && _controller!.value.isInitialized
-                ? AspectRatio(
-              aspectRatio: _controller!.value.aspectRatio,
-              child: CameraPreview(_controller!),
-            )
-                : const Center(child: CircularProgressIndicator()))
+                    ? AspectRatio(
+                        aspectRatio: _controller!.value.aspectRatio,
+                        child: CameraPreview(_controller!),
+                      )
+                    : const Center(child: CircularProgressIndicator()))
                 : _selectedOption == "Scans récents"
-                ? const Center(child: Text("Liste des scans récents"))
-                : Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/img/storyboard_pickImage.jpg',
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: pickImage,
-                    icon: const Icon(Icons.image, color: Colors.white),
-                    label: const Text("Sélectionner une image", style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    ? const Center(child: Text("Liste des scans récents"))
+                    : Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/img/storyboard_pickImage.jpg',
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: pickImage,
+                              icon:
+                                  const Icon(Icons.image, color: Colors.white),
+                              label: const Text("Sélectionner une image",
+                                  style: TextStyle(color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 20),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
           Container(
             width: double.infinity,
@@ -112,9 +115,11 @@ class _CameraPageState extends State<CameraPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  _selectedOption == "Caméra" ? Icons.camera_alt :
-                  _selectedOption == "Scans récents" ? Icons.history :
-                  Icons.image,
+                  _selectedOption == "Caméra"
+                      ? Icons.camera_alt
+                      : _selectedOption == "Scans récents"
+                          ? Icons.history
+                          : Icons.image,
                   color: Colors.white,
                 ),
                 const SizedBox(width: 10),
@@ -135,7 +140,7 @@ class _CameraPageState extends State<CameraPage> {
               color: Colors.white,
               padding: const EdgeInsets.all(12),
               child: GridView.builder(
-                itemCount: 4,
+                itemCount: 8,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
