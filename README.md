@@ -35,6 +35,9 @@
 ## Camera
 
 - Design à améliorer
+- Scanner a configurer.
+- Ajouter un bouton pour scanner.
+- Faire le lien api image.
 
 ## Compte
 
