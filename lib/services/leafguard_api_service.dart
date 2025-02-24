@@ -6,20 +6,20 @@ class IaLeafguardService {
   static const String _predictUrl = "https://ialeafguard-production.up.railway.app/predict/";
 
   /// Envoie une image et retourne la prédiction de l'IA
-  Future<String> predictDisease(File imageFile) async {
+  Future<Map<String, dynamic>> predictDisease(File imageFile) async {
     try {
       var request = http.MultipartRequest("POST", Uri.parse(_predictUrl));
 
-      // Ajouter l'image en multipart/form-data
+      // Ajoute l'image en multipart/form-data
       request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
 
-      // Envoyer la requête
+      // Envoye la requête
       var response = await request.send();
 
-      // Vérifier si la requête est réussie
+      // Vérifie si la requête est réussie
       if (response.statusCode == 200) {
         var responseData = await response.stream.bytesToString();
-        return jsonDecode(responseData); // Retourne la prédiction
+        return jsonDecode(responseData);
       } else {
         throw Exception("Erreur lors de la prédiction : ${response.statusCode}");
       }
