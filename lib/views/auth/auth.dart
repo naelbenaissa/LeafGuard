@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/user_service.dart';
 import '../bar/custom_bottombar.dart';
-import 'package:intl/intl.dart';
+import 'widgets/auth_text_field.dart';
+import 'widgets/auth_password_field.dart';
+import 'widgets/auth_button.dart';
+import 'widgets/auth_toggle_text.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -31,7 +35,6 @@ class _AuthPageState extends State<AuthPage> {
   Future<void> _authenticate() async {
     try {
       if (!isLogin) {
-        // Vérifier si les mots de passe correspondent
         if (passwordController.text != confirmPasswordController.text) {
           _showSnackbar("Les mots de passe ne correspondent pas.");
           return;
@@ -42,19 +45,10 @@ class _AuthPageState extends State<AuthPage> {
           return;
         }
 
-        // Vérifier l'âge minimum de 16 ans si une date est entrée
         if (birthdateController.text.isNotEmpty) {
-          DateTime? birthDate = DateFormat("dd/MM/yyyy").parse(
-              birthdateController.text);
-          DateTime today = DateTime.now();
-          int age = today.year - birthDate.year;
-          if (today.month < birthDate.month ||
-              (today.month == birthDate.month && today.day < birthDate.day)) {
-            age--;
-          }
-          if (age < 16) {
-            _showSnackbar(
-                "Vous devez avoir au moins 16 ans pour vous inscrire.");
+          DateTime birthDate = DateFormat("dd/MM/yyyy").parse(birthdateController.text);
+          if (_calculateAge(birthDate) < 16) {
+            _showSnackbar("Vous devez avoir au moins 16 ans pour vous inscrire.");
             return;
           }
         }
@@ -64,22 +58,16 @@ class _AuthPageState extends State<AuthPage> {
           password: passwordController.text,
         );
 
-        final user = response.user;
-        if (user != null) {
+        if (response.user != null) {
           await userService.addUserData(
-            user.id,
+            response.user!.id,
             emailController.text.trim(),
             nameController.text.trim(),
             surnameController.text.trim(),
             phoneController.text.trim(),
-            birthdateController.text
-                .trim()
-                .isNotEmpty ? birthdateController.text.trim() : null,
+            birthdateController.text.trim().isNotEmpty ? birthdateController.text.trim() : null,
           );
-
-          if (mounted) {
-            context.go('/');
-          }
+          if (mounted) context.go('/');
         }
       } else {
         final response = await supabase.auth.signInWithPassword(
@@ -87,10 +75,8 @@ class _AuthPageState extends State<AuthPage> {
           password: passwordController.text,
         );
 
-        if (response.session != null) {
-          if (mounted) {
-            context.go('/');
-          }
+        if (response.session != null && mounted) {
+          context.go('/');
         }
       }
     } catch (e) {
@@ -98,14 +84,33 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
+  int _calculateAge(DateTime birthDate) {
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red, duration: const Duration(seconds: 2)),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 16)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        birthdateController.text = DateFormat("dd/MM/yyyy").format(pickedDate);
+      });
+    }
   }
 
   @override
@@ -120,21 +125,6 @@ class _AuthPageState extends State<AuthPage> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 16)),
-      // 16 ans en arrière
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null) {
-      setState(() {
-        birthdateController.text = DateFormat("dd/MM/yyyy").format(pickedDate);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,95 +137,50 @@ class _AuthPageState extends State<AuthPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              Text(
-                isLogin ? "Content de te revoir !" : "Créer un compte",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 28, fontWeight: FontWeight.bold),
-              ),
+              Text(isLogin ? "Content de te revoir !" : "Créer un compte",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
-              _buildTextField(
-                  emailController, "Email", TextInputType.emailAddress),
+              AuthTextField(controller: emailController, label: "Email", keyboardType: TextInputType.emailAddress),
               if (!isLogin) ...[
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField(
-                        nameController, "Nom")),
+                    Expanded(child: AuthTextField(controller: nameController, label: "Nom")),
                     const SizedBox(width: 10),
-                    Expanded(child: _buildTextField(
-                        surnameController, "Prénom")),
+                    Expanded(child: AuthTextField(controller: surnameController, label: "Prénom")),
                   ],
                 ),
               ],
               const SizedBox(height: 10),
-              _buildPasswordField(
-                  passwordController, "Mot de passe", isPasswordVisible, () {
-                setState(() {
-                  isPasswordVisible = !isPasswordVisible;
-                });
+              AuthPasswordField(controller: passwordController, label: "Mot de passe", isVisible: isPasswordVisible, onToggle: () {
+                setState(() => isPasswordVisible = !isPasswordVisible);
               }),
               if (!isLogin) ...[
                 const SizedBox(height: 10),
-                _buildPasswordField(
-                    confirmPasswordController, "Confirmez le mot de passe",
-                    isConfirmPasswordVisible, () {
-                  setState(() {
-                    isConfirmPasswordVisible = !isConfirmPasswordVisible;
-                  });
+                AuthPasswordField(controller: confirmPasswordController, label: "Confirmez le mot de passe", isVisible: isConfirmPasswordVisible, onToggle: () {
+                  setState(() => isConfirmPasswordVisible = !isConfirmPasswordVisible);
                 }),
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField(
-                        phoneController, "Téléphone (optionnel)",
-                        TextInputType.phone)),
+                    Expanded(child: AuthTextField(controller: phoneController, label: "Téléphone (optionnel)", keyboardType: TextInputType.phone)),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: TextField(
+                      child: AuthTextField(
                         controller: birthdateController,
+                        label: "Date de naissance (optionnel)",
                         readOnly: true,
-                        decoration: _inputDecoration(
-                            "Date de naissance (optionnel)").copyWith(
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.calendar_today),
-                            onPressed: () => _selectDate(context),
-                          ),
-                        ),
+                        suffixIcon: IconButton(icon: const Icon(Icons.calendar_today), onPressed: () => _selectDate(context)),
                       ),
                     ),
                   ],
                 ),
               ],
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _authenticate,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-                child: Text(
-                  isLogin ? "Connexion" : "Inscription",
-                  style: const TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
+              AuthButton(onPressed: _authenticate, text: isLogin ? "Connexion" : "Inscription"),
               const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isLogin = !isLogin;
-                  });
-                },
-                child: Text(
-                  isLogin
-                      ? "Vous n'avez pas de compte ? Inscrivez-vous"
-                      : "Vous avez déjà un compte ? Connectez-vous",
-                  style: const TextStyle(
-                      color: Colors.green, fontWeight: FontWeight.bold),
-                ),
-              )
+              AuthToggleText(isLogin: isLogin, onPressed: () => setState(() => isLogin = !isLogin))
             ],
           ),
         ),
@@ -243,39 +188,4 @@ class _AuthPageState extends State<AuthPage> {
       bottomNavigationBar: const CustomBottomBar(),
     );
   }
-
-  Widget _buildTextField(TextEditingController controller, String label,
-      [TextInputType type = TextInputType.text]) {
-    return TextField(
-      controller: controller,
-      keyboardType: type,
-      decoration: _inputDecoration(label),
-    );
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      filled: true,
-      fillColor: Colors.grey[200],
-    );
-  }
-
-  Widget _buildPasswordField(TextEditingController controller,
-      String label,
-      bool isVisible,
-      VoidCallback onToggle,) {
-    return TextField(
-      controller: controller,
-      obscureText: !isVisible,
-      decoration: _inputDecoration(label).copyWith(
-        suffixIcon: IconButton(
-          icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
-          onPressed: onToggle,
-        ),
-      ),
-    );
-  }
-
 }
