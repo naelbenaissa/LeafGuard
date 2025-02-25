@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ui_leafguard/views/camera/widgets/bottom_menu_widget.dart';
+import 'package:ui_leafguard/views/camera/widgets/camera_preview_widget.dart';
+import 'package:ui_leafguard/views/camera/widgets/image_selection_widget.dart';
+import 'package:ui_leafguard/views/camera/widgets/scan_result_dialog.dart';
 import '../../services/leafguard_api_service.dart';
 import 'appbar/camera_appbar.dart';
 
@@ -68,26 +72,7 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> scanDisease() async {
     if (_selectedImage == null) return;
-    try {
-      final result = await _iaService.predictDisease(_selectedImage!);
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Résultat du scan"),
-            content: Text("Maladie détectée: ${result['maladies'] ?? 'Inconnu'}\nConfiance: ${(result['confiance'] != null ? (result['confiance'] * 100).toStringAsFixed(2) : 'N/A')}%"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              )
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      debugPrint("Erreur lors de l'analyse de l'image: $e");
-    }
+    await ScanResultDialog.show(context, _selectedImage!, _iaService);
   }
 
   @override
@@ -109,98 +94,54 @@ class _CameraPageState extends State<CameraPage> {
       body: Column(
         children: [
           Expanded(
-            flex: 3,
-            child: _selectedOption == "Caméra"
-                ? (_controller != null && _controller!.value.isInitialized
-                ? AspectRatio(
-              aspectRatio: _controller!.value.aspectRatio,
-              child: CameraPreview(_controller!),
-            )
-                : const Center(child: CircularProgressIndicator()))
-                : _selectedOption == "Scans récents"
-                ? const Center(child: Text("Liste des scans récents"))
-                : _selectedImage != null
-                ? Image.file(
-              _selectedImage!,
+            flex: 1,
+            child: Container(
               width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-            )
-                : Image.asset(
-              'assets/img/storyboard_pickImage.jpg',
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
+              color: Colors.green[100],
+              child: _selectedOption == "Caméra"
+                  ? CameraPreviewWidget(
+                controller: _controller,
+                selectedImage: _selectedImage,
+                takePicture: takePicture,
+                clearImage: () => setState(() => _selectedImage = null),
+              )
+                  : ImageSelectionWidget(
+                selectedImage: _selectedImage,
+                pickImage: pickImage,
+                clearImage: () => setState(() => _selectedImage = null),
+              ),
             ),
           ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            color: Colors.green,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      _selectedOption == "Caméra"
-                          ? Icons.camera_alt
-                          : _selectedOption == "Scans récents"
-                          ? Icons.history
-                          : Icons.image,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _selectedOption,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                ElevatedButton.icon(
-                  onPressed: pickImage,
-                  icon: const Icon(Icons.image, color: Colors.white),
-                  label: const Text("Sélectionner une image", style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.2),
-                    shape: RoundedRectangleBorder(
+          BottomMenuWidget(
+            onOptionSelected: (option) {
+              setState(() {
+                _selectedOption = option;
+                _selectedImage = null;
+              });
+            },
+            onScanPressed: scanDisease, // Bouton "Scanner" appelle scanDisease()
+          ),
+          Flexible(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(4.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: scanDisease,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green[300],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: const Center(child: Text("Scan récent")),
                   ),
-                ),
-              ],
-            ),
-          ),
-          if (_selectedOption != "Scans récents" && _selectedImage != null)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: scanDisease,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text("Scanner la maladie"),
-              ),
-            ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(12),
-              child: GridView.builder(
-                itemCount: 8,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemBuilder: (context, index) {
-                  return Container(color: Colors.grey[300]);
-                },
-              ),
+                );
+              },
             ),
           ),
         ],
