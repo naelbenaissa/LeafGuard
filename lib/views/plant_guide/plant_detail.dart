@@ -41,7 +41,7 @@ class _DetailPageState extends State<DetailPage> {
   Future<void> _checkIfFavorite() async {
     if (userId == null) return;
     bool favorite =
-        await favoriteService.isFavorite(userId!, widget.plant['id']);
+    await favoriteService.isFavorite(userId!, widget.plant['id']);
     setState(() {
       isFavorite = favorite;
     });
@@ -49,7 +49,20 @@ class _DetailPageState extends State<DetailPage> {
 
   /// Ajoute ou supprime une plante des favoris
   Future<void> _toggleFavorite() async {
-    if (userId == null) return;
+    if (userId == null) {
+      // Afficher un message demandant de se connecter
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Vous devez être connecté pour ajouter aux favoris.",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (isFavorite) {
       await favoriteService.removeFavorite(userId!, widget.plant['id']);
     } else {
@@ -121,8 +134,7 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        widget.plant['scientific_name'] ??
-                            "Nom scientifique inconnu",
+                        widget.plant['scientific_name'] ?? "Nom scientifique inconnu",
                         style: const TextStyle(
                             fontSize: 18,
                             fontStyle: FontStyle.italic,

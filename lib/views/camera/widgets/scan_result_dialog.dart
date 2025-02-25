@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/leafguard_api_service.dart';
 import '../../../services/scan_service.dart';
 
@@ -21,6 +23,9 @@ class ScanResultDialog {
       bool isBookmarked = false;
       String? scanId;
       String? imageUrl;
+
+      final session = Supabase.instance.client.auth.currentSession;
+      bool isAuthenticated = session != null;
 
       showDialog(
         context: context,
@@ -69,124 +74,149 @@ class ScanResultDialog {
                   ],
                 ),
                 actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          if (isBookmarked) {
-                            if (scanId == null || imageUrl == null) {
-                              List<Map<String, dynamic>> scans =
-                                  await scanService.getScans();
-                              if (scans.isNotEmpty) {
-                                scanId = scans.first['id'].toString();
-                                imageUrl = scans.first['image_url'].toString();
-                              } else {
-                                return;
+                  if (isAuthenticated)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            if (isBookmarked) {
+                              if (scanId == null || imageUrl == null) {
+                                List<Map<String, dynamic>> scans =
+                                    await scanService.getScans();
+                                if (scans.isNotEmpty) {
+                                  scanId = scans.first['id'].toString();
+                                  imageUrl =
+                                      scans.first['image_url'].toString();
+                                } else {
+                                  return;
+                                }
                               }
-                            }
 
-                            bool confirmDelete = await showDialog(
-                              context: context,
-                              builder: (BuildContext dialogContext) {
-                                return AlertDialog(
-                                  title: const Text("Supprimer ce scan ?"),
-                                  content: const Text(
-                                      "Êtes-vous sûr de vouloir supprimer ce scan ? Cette action est irréversible."),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(dialogContext, false),
-                                      child: const Text("Annuler"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(dialogContext, true),
-                                      child: const Text("Supprimer",
-                                          style: TextStyle(color: Colors.red)),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                              bool confirmDelete = await showDialog(
+                                context: context,
+                                builder: (BuildContext dialogContext) {
+                                  return AlertDialog(
+                                    title: const Text("Supprimer ce scan ?"),
+                                    content: const Text(
+                                        "Êtes-vous sûr de vouloir supprimer ce scan ? Cette action est irréversible."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext, false),
+                                        child: const Text("Annuler"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext, true),
+                                        child: const Text("Supprimer",
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
 
-                            if (confirmDelete) {
+                              if (confirmDelete) {
+                                try {
+                                  await scanService.deleteScan(
+                                      scanId!, imageUrl!);
+                                  setState(() {
+                                    isBookmarked = false;
+                                    scanId = null;
+                                    imageUrl = null;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text("Scan supprimé avec succès.")),
+                                  );
+                                } catch (e) {
+                                  debugPrint(
+                                      "Erreur lors de la suppression du scan : $e");
+                                }
+                              }
+                            } else {
                               try {
-                                await scanService.deleteScan(
-                                    scanId!, imageUrl!);
+                                await scanService.addScan(
+                                  imageFile: selectedImage,
+                                  predictions: maladie,
+                                  confidence: rawConfiance ?? 0.0,
+                                );
+                                List<Map<String, dynamic>> scans =
+                                    await scanService.getScans();
+                                Map<String, dynamic>? addedScan =
+                                    scans.firstWhere(
+                                  (scan) =>
+                                      scan['predictions'] == maladie &&
+                                      scan['confidence'] == rawConfiance,
+                                  orElse: () => {},
+                                );
+
                                 setState(() {
-                                  isBookmarked = false;
-                                  scanId = null;
-                                  imageUrl = null;
+                                  isBookmarked = true;
+                                  scanId = addedScan['id']?.toString();
+                                  imageUrl = addedScan['image_url']?.toString();
                                 });
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content:
-                                          Text("Scan supprimé avec succès.")),
+                                      content: Text("Ajouté aux favoris !")),
                                 );
                               } catch (e) {
                                 debugPrint(
-                                    "Erreur lors de la suppression du scan : $e");
+                                    "Erreur lors de l'ajout aux favoris : $e");
                               }
                             }
-                          } else {
-                            try {
-                              await scanService.addScan(
-                                imageFile: selectedImage,
-                                predictions: maladie,
-                                confidence: rawConfiance ?? 0.0,
-                              );
-                              List<Map<String, dynamic>> scans =
-                                  await scanService.getScans();
-                              Map<String, dynamic>? addedScan =
-                                  scans.firstWhere(
-                                (scan) =>
-                                    scan['predictions'] == maladie &&
-                                    scan['confidence'] == rawConfiance,
-                                orElse: () => {},
-                              );
-
-                              setState(() {
-                                isBookmarked = true;
-                                scanId = addedScan['id']?.toString();
-                                imageUrl = addedScan['image_url']?.toString();
-                              });
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Ajouté aux favoris !")),
-                              );
-                            } catch (e) {
-                              debugPrint(
-                                  "Erreur lors de l'ajout aux favoris : $e");
-                            }
-                          }
-                        },
-                        icon: Icon(
-                          isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                          color: Colors.orange,
+                          },
+                          icon: Icon(
+                            isBookmarked
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            color: Colors.orange,
+                          ),
+                          tooltip: isBookmarked
+                              ? "Retirer des favoris"
+                              : "Ajouter aux favoris",
                         ),
-                        tooltip: isBookmarked
-                            ? "Retirer des favoris"
-                            : "Ajouter aux favoris",
-                      ),
-                      ElevatedButton.icon(
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            debugPrint("Tâche ajoutée au calendrier !");
+                          },
+                          icon: const Icon(Icons.calendar_today,
+                              color: Colors.white),
+                          label: const Text("Ajouter au calendrier"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Center(
+                      child: ElevatedButton.icon(
                         onPressed: () {
-                          debugPrint("Tâche ajoutée au calendrier !");
+                          Navigator.pop(
+                              context);
+                          GoRouter.of(context).go(
+                              '/auth');
                         },
-                        icon: const Icon(Icons.calendar_today,
-                            color: Colors.white),
-                        label: const Text("Ajouter au calendrier"),
+                        icon: const Icon(Icons.login, color: Colors.white),
+                        label: const Text("Se connecter"),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: Colors.green[400],
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
                 ],
               );
             },

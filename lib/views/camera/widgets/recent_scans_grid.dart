@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecentScansGrid extends StatelessWidget {
   final List<Map<String, dynamic>> recentScans;
@@ -12,6 +13,26 @@ class RecentScansGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final session = Supabase.instance.client.auth.currentSession;
+    final bool isAuthenticated = session != null;
+
+    if (!isAuthenticated) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            "Veuillez vous connecter pour voir vos scans enregistrés.",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
     if (recentScans.isEmpty) {
       return const Center(
         child: Padding(
