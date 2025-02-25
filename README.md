@@ -31,13 +31,14 @@
 - ajouter un bouton pour créer tâches.✅
 - pas acces si pas de compte.✅
 - Associer les tâches a un compte.✅
+- Améliorer design popup tâches.
 
 ## Camera
 
-- Design à améliorer
-- Scanner a configurer.
-- Ajouter un bouton pour scanner.
-- Faire le lien api image.
+- Design à améliorer✅
+- Scanner a configurer.✅
+- Ajouter un bouton pour scanner.✅
+- Faire le lien api image.✅
 - faire le lien maladie taches.
 
 ## Compte
@@ -48,3 +49,4 @@
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
 - Notifications local flutter plugin a mettre en place.
+
