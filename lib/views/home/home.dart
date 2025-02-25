@@ -34,7 +34,8 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
-      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed) {
+      if (event == AuthChangeEvent.signedIn ||
+          event == AuthChangeEvent.tokenRefreshed) {
         setState(() {
           isAuthenticated = true;
         });
@@ -54,19 +55,19 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    double appBarHeight =
+        MediaQuery.of(context).padding.top + kToolbarHeight + 23;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        /// Provoque des erreurs inopinées
-        // extendBodyBehindAppBar: true,
-        appBar: const HomeAppBar(
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: SingleChildScrollView(
+        extendBodyBehindAppBar: true,
+        appBar: const HomeAppBar(),
+        body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: appBarHeight),
                 AnimatedSlogan(sloganWords: sloganWords),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
@@ -100,8 +101,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height *
-                      0.7,
+                  height: MediaQuery.of(context).size.height * 0.7,
                   child: TabBarView(
                     controller: _tabController,
                     children: [
@@ -113,7 +113,6 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-        ),
         bottomNavigationBar: const CustomBottomBar(),
       ),
     );

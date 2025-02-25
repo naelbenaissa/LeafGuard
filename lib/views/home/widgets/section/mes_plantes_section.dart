@@ -36,76 +36,73 @@ Widget mesPlantesSection() {
     {'name': 'Dahlia', 'image': 'assets/img/plantes/dahlia.png', 'days': 8},
   ];
 
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Mes Plantes",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16.0,
-              mainAxisSpacing: 16.0,
-              childAspectRatio: 0.8,
-            ),
-            itemCount: plantes.length,
-            itemBuilder: (context, index) {
-              final plante = plantes[index];
-
-              return Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.asset(
-                          plante['image'] as String,
-                          width: 160,
-                          height: 160,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            value: (plante['days'] as int) / 30,
-                            backgroundColor: Colors.grey[300],
-                            color: Colors.green,
-                            strokeWidth: 3,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    plante['name'] as String,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "${plante['days']} jours prochaine arrosage",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text(
+          "Mes Plantes",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
       ),
-    ),
+      Expanded(
+        child: GridView.builder(
+          padding: EdgeInsets.zero, // Supprime tout padding autour du GridView
+          physics: const BouncingScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: plantes.length,
+          itemBuilder: (context, index) {
+            final plante = plantes[index];
+
+            return Column(
+              children: [
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        plante['image'] as String,
+                        width: 160,
+                        height: 160,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          value: (plante['days'] as int) / 30,
+                          backgroundColor: Colors.grey[300],
+                          color: Colors.green,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  plante['name'] as String,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${plante['days']} jours avant arrosage",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    ],
   );
 }
