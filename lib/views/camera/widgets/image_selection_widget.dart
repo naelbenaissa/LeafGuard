@@ -21,14 +21,29 @@ class ImageSelectionWidget extends StatelessWidget {
         Positioned.fill(
           child: selectedImage == null
               ? Container(
-            color: Colors.green[100],
-            child: Center(
-              child: ElevatedButton(
-                onPressed: pickImage,
-                child: const Text("Sélectionner une image"),
-              ),
-            ),
-          )
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/img/storyboard_pickImage.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      onPressed: pickImage,
+                      icon: const Icon(Icons.image, color: Colors.white),
+                      label: const Text("Sélectionner une image"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               : Image.file(selectedImage!, fit: BoxFit.cover),
         ),
         if (selectedImage != null)
