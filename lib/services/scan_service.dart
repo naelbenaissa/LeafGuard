@@ -1,35 +1,23 @@
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:path/path.dart';
 
 class ScanService {
   final SupabaseClient supabase;
 
   ScanService(this.supabase);
 
-  /// Upload l'image et retourne son URL
-  Future<String> uploadImage(File imageFile, String userId) async {
-    try {
-      final String fileName = "${DateTime.now().millisecondsSinceEpoch}_${basename(imageFile.path)}";
-      final String filePath = "scans/$userId/$fileName";
-
-      await supabase.storage.from('scans').upload(filePath, imageFile);
-
-      final String publicUrl = supabase.storage.from('scans').getPublicUrl(filePath);
-      return publicUrl;
-    } catch (e) {
-      throw Exception("Erreur lors de l'upload de l'image: $e");
-    }
-  }
-
   /// Ajoute un scan dans la base de données
   Future<void> addScan({
-    required String userId,
     required File imageFile,
     required String predictions,
     required double confidence,
   }) async {
     try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception("Utilisateur non connecté !");
+      }
+
       String imageUrl = await uploadImage(imageFile, userId);
 
       await supabase.from('scans').insert({
@@ -44,9 +32,31 @@ class ScanService {
     }
   }
 
-  /// Récupère les scans d'un utilisateur
-  Future<List<Map<String, dynamic>>> getScans(String userId) async {
+  /// Upload l'image et retourne son URL
+  Future<String> uploadImage(File imageFile, String userId) async {
     try {
+      final String fileName =
+          "${DateTime.now().millisecondsSinceEpoch}_${imageFile.path.split('/').last}";
+      final String filePath = "scans/$userId/$fileName";
+
+      await supabase.storage.from('scans').upload(filePath, imageFile);
+
+      final String publicUrl =
+          supabase.storage.from('scans').getPublicUrl(filePath);
+      return publicUrl;
+    } catch (e) {
+      throw Exception("Erreur lors de l'upload de l'image: $e");
+    }
+  }
+
+  /// Récupère les scans d'un utilisateur
+  Future<List<Map<String, dynamic>>> getScans() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception("Utilisateur non connecté !");
+      }
+
       final response = await supabase
           .from('scans')
           .select('*')
@@ -62,13 +72,19 @@ class ScanService {
   /// Supprime un scan et son image associée
   Future<void> deleteScan(String scanId, String imageUrl) async {
     try {
-      // Supprimer l'entrée dans la base de données
-      await supabase.from('scans').delete().eq('id', scanId);
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception("Utilisateur non connecté !");
+      }
+      await supabase
+          .from('scans')
+          .delete()
+          .match({'id': scanId, 'user_id': userId});
 
-      // Supprimer l'image de Supabase Storage
-      final uri = Uri.parse(imageUrl);
-      final String filePath = uri.pathSegments.sublist(2).join('/');
-      await supabase.storage.from('scans').remove([filePath]);
+      final String storagePath =
+          imageUrl.split('/storage/v1/object/public/').last;
+
+      await supabase.storage.from('scans').remove([storagePath]);
     } catch (e) {
       throw Exception("Erreur lors de la suppression du scan: $e");
     }

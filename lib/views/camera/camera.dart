@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/camera/widgets/bottom_menu_widget.dart';
 import 'package:ui_leafguard/views/camera/widgets/camera_preview_widget.dart';
 import 'package:ui_leafguard/views/camera/widgets/image_selection_widget.dart';
 import 'package:ui_leafguard/views/camera/widgets/scan_result_dialog.dart';
 import '../../services/leafguard_api_service.dart';
+import '../../services/scan_service.dart'; // Import du ScanService
 import 'appbar/camera_appbar.dart';
 
 class CameraPage extends StatefulWidget {
@@ -23,6 +25,7 @@ class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   final IaLeafguardService _iaService = IaLeafguardService();
+  final ScanService _scanService = ScanService(Supabase.instance.client); // Initialisation du service
 
   @override
   void initState() {
@@ -70,9 +73,10 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  /// **🔍 Analyse l'image et affiche les résultats**
   Future<void> scanDisease() async {
     if (_selectedImage == null) return;
-    await ScanResultDialog.show(context, _selectedImage!, _iaService);
+    await ScanResultDialog.show(context, _selectedImage!, _iaService, _scanService);
   }
 
   @override
