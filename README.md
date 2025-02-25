@@ -2,6 +2,7 @@
 
 - Plus tard réaliser theme dark et light.
 - Notification a configurer.
+- Problème au niveau de la suppression des images tâches sur storage supabase.
 
 ## Home
 
