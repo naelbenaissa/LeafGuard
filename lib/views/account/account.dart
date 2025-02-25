@@ -48,7 +48,7 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AccountAppBar(),
+      appBar: const AccountAppBar(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _userData == null
@@ -77,8 +77,6 @@ class _AccountPageState extends State<AccountPage> {
                           style: const TextStyle(fontSize: 16)),
                       const SizedBox(height: 20),
                       const Divider(color: Colors.green, thickness: 2),
-
-                      // Changer le mot de passe
                       ListTile(
                         leading: Icon(Icons.lock,
                             color: _expandedSection == "password"
@@ -114,8 +112,6 @@ class _AccountPageState extends State<AccountPage> {
                             ],
                           ),
                         ),
-
-                      // Notifications
                       ListTile(
                         leading: Icon(Icons.notifications,
                             color: _expandedSection == "notifications"
@@ -133,7 +129,6 @@ class _AccountPageState extends State<AccountPage> {
                             ],
                           ),
                         ),
-
                       ListTile(
                         leading: const Icon(Icons.logout, color: Colors.red),
                         title: const Text("Se déconnecter"),

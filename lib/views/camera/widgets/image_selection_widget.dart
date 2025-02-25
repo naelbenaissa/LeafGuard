@@ -59,7 +59,7 @@ class ImageSelectionWidget extends StatelessWidget {
                     BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
                   ],
                 ),
-                padding: const EdgeInsets.all(15), // Ajustement pour une bonne taille
+                padding: const EdgeInsets.all(15),
                 child: const Icon(Icons.close, color: Colors.black, size: 30),
               ),
             ),

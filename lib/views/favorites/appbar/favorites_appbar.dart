@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../bar/widgets/profileButton.dart';
+import '../../bar/widgets/profile_button.dart';
 
 class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onFilterPressed;
@@ -45,7 +45,10 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
                       shape: BoxShape.circle,
                       color: Colors.white,
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 5,
+                            spreadRadius: 1),
                       ],
                     ),
                     child: IconButton(

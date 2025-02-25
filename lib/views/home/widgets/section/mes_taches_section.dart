@@ -24,7 +24,7 @@ class _MesTachesSectionState extends State<MesTachesSection> {
     _refreshTasks();
   }
 
-  /// 🔄 Recharge la liste des tâches
+  /// Recharge la liste des tâches
   void _refreshTasks() {
     final user = supabase.auth.currentUser;
     setState(() {
@@ -61,10 +61,12 @@ class _MesTachesSectionState extends State<MesTachesSection> {
 
             for (var task in tasks) {
               DateTime taskDate = DateTime.parse(task['due_date']);
-              bool isPastTask = taskDate.isBefore(today) && taskDate.day != today.day;
+              bool isPastTask =
+                  taskDate.isBefore(today) && taskDate.day != today.day;
               if (!showPastTasks && isPastTask) continue;
 
-              String formattedDate = DateFormat.yMMMMd('fr_CA').format(taskDate);
+              String formattedDate =
+                  DateFormat.yMMMMd('fr_CA').format(taskDate);
               if (!groupedTasks.containsKey(formattedDate)) {
                 groupedTasks[formattedDate] = [];
               }
@@ -123,7 +125,7 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                             children: [
                               Padding(
                                 padding:
-                                const EdgeInsets.symmetric(vertical: 8.0),
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(
                                   entry.key,
                                   style: const TextStyle(

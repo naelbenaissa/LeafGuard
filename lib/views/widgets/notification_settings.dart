@@ -44,18 +44,15 @@ class _NotificationSettingsState extends State<NotificationSettings> {
 
       await Supabase.instance.client
           .from('users')
-          .update({'notifications': value})
-          .eq('user_id', userId);
+          .update({'notifications': value}).eq('user_id', userId);
 
       if (Navigator.of(context).canPop()) {
         Navigator.pop(context);
       }
-
     } catch (e) {
-      print("Erreur lors de la mise à jour des notifications : $e");
+      return;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -42,28 +42,29 @@ class TaskCard extends StatelessWidget {
         ),
         child: ListTile(
           leading: const Icon(Icons.task, color: Colors.green),
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title:
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(description),
           trailing: Icon(
             Icons.flag,
             color: priority == 'high'
                 ? Colors.red
                 : priority == 'medium'
-                ? Colors.orange
-                : Colors.green,
+                    ? Colors.orange
+                    : Colors.green,
           ),
         ),
       ),
     );
   }
 
-  /// 🔴 Supprime la tâche via TasksService
+  /// Supprime la tâche via TasksService
   Future<void> _deleteTask(BuildContext context) async {
     try {
       final taskService = TasksService(Supabase.instance.client);
-      await taskService.deleteTask(id); // Utilisation du service
+      await taskService.deleteTask(id);
 
-      refreshTasks(); // Rafraîchir après suppression
+      refreshTasks();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tâche supprimée")),
@@ -75,7 +76,7 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  /// 📌 Confirmation avant suppression
+  /// Confirmation avant suppression
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,

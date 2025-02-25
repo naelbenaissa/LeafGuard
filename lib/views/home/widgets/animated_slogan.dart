@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AnimatedSlogan extends StatefulWidget {
   final List<String> sloganWords;
+
   const AnimatedSlogan({super.key, required this.sloganWords});
 
   @override
@@ -19,7 +20,7 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
 
   void _startAnimation() async {
     for (int i = 0; i < widget.sloganWords.length; i++) {
-      await Future.delayed(const Duration(milliseconds: 600)); // Pause entre chaque mot
+      await Future.delayed(const Duration(milliseconds: 600));
       if (mounted) {
         setState(() {
           currentIndex = i + 1;
@@ -40,14 +41,14 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: List.generate(
         currentIndex,
-            (index) => Padding(
+        (index) => Padding(
           padding: const EdgeInsets.only(bottom: 5),
           child: Text(
             widget.sloganWords[index],
             style: TextStyle(
               fontSize: 35,
               fontWeight: FontWeight.bold,
-              color: colors[index % colors.length], // Applique une couleur différente à chaque mot
+              color: colors[index % colors.length],
             ),
           ),
         ),

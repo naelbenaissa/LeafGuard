@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ui_leafguard/views/tasks_calendar/appbar/tasksCalendar_appbar.dart';
+import 'package:ui_leafguard/views/tasks_calendar/appbar/tasks_calendar_appbar.dart';
 import 'package:ui_leafguard/views/tasks_calendar/widgets/dialog/create_task_dialog.dart';
 import '../bar/custom_bottombar.dart';
 import '../widgets/task_card.dart';
@@ -40,20 +40,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
     }
 
     try {
-      final response = await supabase
-          .from('tasks')
-          .select('*')
-          .eq('user_id', user.id);
-
-      if (response == null) {
-        setState(() => _isLoading = false);
-        return;
-      }
-
-      if (response is! List) {
-        setState(() => _isLoading = false);
-        return;
-      }
+      final response =
+          await supabase.from('tasks').select('*').eq('user_id', user.id);
 
       Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
       for (var task in response) {
@@ -62,7 +50,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
         }
 
         DateTime dueDate = DateTime.parse(task['due_date']).toLocal();
-        DateTime normalizedDate = DateTime(dueDate.year, dueDate.month, dueDate.day);
+        DateTime normalizedDate =
+            DateTime(dueDate.year, dueDate.month, dueDate.day);
         tasksMap.putIfAbsent(normalizedDate, () => []).add(task);
       }
 
@@ -70,12 +59,10 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
         _tasksByDate = tasksMap;
         _isLoading = false;
       });
-
     } catch (e) {
       setState(() => _isLoading = false);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +98,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 });
               },
               eventLoader: (day) {
-                DateTime normalizedDate = DateTime(day.year, day.month, day.day);
+                DateTime normalizedDate =
+                    DateTime(day.year, day.month, day.day);
                 return _tasksByDate[normalizedDate] ?? [];
               },
               calendarStyle: const CalendarStyle(
@@ -133,11 +121,16 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 children: [
                   Text(
                     formattedDate,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.blue, size: 30),
-                    onPressed: () => CreateTask.show(context, () => _fetchTasks()),
+                    icon: const Icon(Icons.add_circle,
+                        color: Colors.blue, size: 30),
+                    onPressed: () =>
+                        CreateTask.show(context, () => _fetchTasks()),
                   ),
                 ],
               ),
@@ -146,17 +139,19 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? [])
-                    .map((task) => TaskCard(
-                  id: task['id'].toString(),
-                  title: task['title'],
-                  description: task['description'],
-                  priority: task['priority'],
-                  refreshTasks: _fetchTasks,
-                ))
-                    .toList(),
-              ),
+                      padding: const EdgeInsets.all(16.0),
+                      children: (_tasksByDate[DateTime(_selectedDay.year,
+                                  _selectedDay.month, _selectedDay.day)] ??
+                              [])
+                          .map((task) => TaskCard(
+                                id: task['id'].toString(),
+                                title: task['title'],
+                                description: task['description'],
+                                priority: task['priority'],
+                                refreshTasks: _fetchTasks,
+                              ))
+                          .toList(),
+                    ),
             ),
           ],
         ),

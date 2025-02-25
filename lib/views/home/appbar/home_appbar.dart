@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../bar/widgets/profileButton.dart';
+import '../../bar/widgets/profile_button.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -39,7 +39,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   const ProfileButton(),
                   const Spacer(),
                   ToggleButtons(
-                    isSelected: [false, false],
+                    isSelected: const [false, false],
                     onPressed: (int index) {},
                     selectedColor: Colors.white,
                     color: Colors.black,

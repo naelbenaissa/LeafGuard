@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ui_leafguard/views/favorites/appbar/favorites_appbar.dart';
-import 'package:ui_leafguard/views/favorites/widgets/section/mesFavorisSection.dart';
-import 'package:ui_leafguard/views/favorites/widgets/section/mesScansSections.dart';
+import 'package:ui_leafguard/views/favorites/widgets/section/mes_favoris_section.dart';
+import 'package:ui_leafguard/views/favorites/widgets/section/mes_scans_sections.dart';
 import '../bar/custom_bottombar.dart';
-import '../widgets/dotIndicator.dart';
+import '../widgets/dot_indicator.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -12,7 +12,8 @@ class FavoritesPage extends StatefulWidget {
   _FavoritesPageState createState() => _FavoritesPageState();
 }
 
-class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProviderStateMixin {
+class _FavoritesPageState extends State<FavoritesPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _showFilterOptions = false;
   String? _selectedFilter;
@@ -23,7 +24,7 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       setState(() {
-        _selectedFilter = null; // Reset filter when tab changes
+        _selectedFilter = null;
       });
     });
   }
@@ -60,7 +61,8 @@ class _FavoritesPageState extends State<FavoritesPage> with SingleTickerProvider
             children: [
               Text(
                 filter,
-                style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+                style:
+                    TextStyle(color: isSelected ? Colors.white : Colors.black),
               ),
               if (isSelected)
                 GestureDetector(

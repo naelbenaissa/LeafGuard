@@ -75,9 +75,7 @@ class ScanResultDialog {
                       IconButton(
                         onPressed: () async {
                           if (isBookmarked) {
-
                             if (scanId == null || imageUrl == null) {
-                              // ⚠️ Si scanId ou imageUrl sont null, récupérer les scans et prendre le dernier enregistré
                               List<Map<String, dynamic>> scans =
                                   await scanService.getScans();
                               if (scans.isNotEmpty) {

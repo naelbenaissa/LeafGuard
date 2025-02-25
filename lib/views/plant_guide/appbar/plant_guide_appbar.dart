@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../bar/widgets/profileButton.dart';
+import '../../bar/widgets/profile_button.dart';
 
 class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function(String) onSearchChanged;
@@ -45,8 +45,10 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onChanged: onSearchChanged,
                       decoration: InputDecoration(
                         hintText: "Rechercher une plante...",
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.grey),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 10),
                         filled: true,
                         fillColor: Colors.grey.shade100,
                         border: OutlineInputBorder(

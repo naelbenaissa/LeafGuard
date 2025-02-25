@@ -49,8 +49,8 @@ Widget mesPlantesSection() {
           ),
           const SizedBox(height: 16),
           GridView.builder(
-            shrinkWrap: true, // 🔹 Permet à GridView de s'ajuster
-            physics: const NeverScrollableScrollPhysics(), // 🔹 Empêche le défilement interne
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16.0,
@@ -93,7 +93,8 @@ Widget mesPlantesSection() {
                   const SizedBox(height: 8),
                   Text(
                     plante['name'] as String,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "${plante['days']} jours prochaine arrosage",
@@ -107,5 +108,4 @@ Widget mesPlantesSection() {
       ),
     ),
   );
-
 }

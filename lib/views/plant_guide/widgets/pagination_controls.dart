@@ -6,11 +6,11 @@ class PaginationControls extends StatelessWidget {
   final Function(int) onPageChanged;
 
   const PaginationControls({
-    Key? key,
+    super.key,
     required this.currentPage,
     required this.totalPages,
     required this.onPageChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +22,15 @@ class PaginationControls extends StatelessWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
+          onPressed:
+              currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
         ),
         for (int i = start; i <= end; i++)
           if (i == currentPage)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text('$i', style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text('$i',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             )
           else
             TextButton(
@@ -37,7 +39,9 @@ class PaginationControls extends StatelessWidget {
             ),
         IconButton(
           icon: const Icon(Icons.arrow_forward),
-          onPressed: currentPage < totalPages ? () => onPageChanged(currentPage + 1) : null,
+          onPressed: currentPage < totalPages
+              ? () => onPageChanged(currentPage + 1)
+              : null,
         ),
       ],
     );

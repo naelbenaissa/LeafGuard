@@ -80,7 +80,8 @@ class CreateTask {
                       style: const TextStyle(fontSize: 16),
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.calendar_today, color: Colors.green[700]),
+                      icon:
+                          Icon(Icons.calendar_today, color: Colors.green[700]),
                       onPressed: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
@@ -141,22 +142,28 @@ class CreateTask {
                         onPressed: () async {
                           if (title.isEmpty || description.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Veuillez remplir tous les champs")),
+                              const SnackBar(
+                                  content:
+                                      Text("Veuillez remplir tous les champs")),
                             );
                             return;
                           }
 
-                          final user = Supabase.instance.client.auth.currentUser;
+                          final user =
+                              Supabase.instance.client.auth.currentUser;
                           if (user == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Utilisateur non connecté")),
+                              const SnackBar(
+                                  content: Text("Utilisateur non connecté")),
                             );
                             return;
                           }
 
                           try {
-                            final taskService = TasksService(Supabase.instance.client);
-                            await taskService.addTask(user.id, title, description, selectedDate, priority);
+                            final taskService =
+                                TasksService(Supabase.instance.client);
+                            await taskService.addTask(user.id, title,
+                                description, selectedDate, priority);
 
                             refreshTasks();
 
@@ -173,7 +180,8 @@ class CreateTask {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text("Ajouter", style: TextStyle(color: Colors.white)),
+                        child: const Text("Ajouter",
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),

@@ -30,7 +30,7 @@ class TasksService {
         .select();
 
     if (response == null || response.isEmpty) {
-      throw Exception("❌ Erreur: Aucune tâche insérée !");
+      throw Exception("Erreur: Aucune tâche insérée !");
     }
   }
 

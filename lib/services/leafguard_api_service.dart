@@ -10,13 +10,10 @@ class IaLeafguardService {
     try {
       var request = http.MultipartRequest("POST", Uri.parse(_predictUrl));
 
-      // Ajoute l'image en multipart/form-data
       request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
 
-      // Envoye la requête
       var response = await request.send();
 
-      // Vérifie si la requête est réussie
       if (response.statusCode == 200) {
         var responseData = await response.stream.bytesToString();
         return jsonDecode(responseData);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
-import 'package:ui_leafguard/views/widgets/dotIndicator.dart';
-import 'package:ui_leafguard/views/home/widgets/section/mesPlantesSection.dart';
-import 'package:ui_leafguard/views/home/widgets/section/mesTachesSection.dart';
+import 'package:ui_leafguard/views/widgets/dot_indicator.dart';
+import 'package:ui_leafguard/views/home/widgets/section/mes_plantes_section.dart';
+import 'package:ui_leafguard/views/home/widgets/section/mes_taches_section.dart';
 import 'appbar/home_appbar.dart';
 import '../bar/custom_bottombar.dart';
 
@@ -23,7 +23,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _checkAuthStatus(); // Vérifie l'authentification aux démarrage
+    _checkAuthStatus();
   }
 
   void _checkAuthStatus() {
@@ -32,7 +32,6 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
       isAuthenticated = session != null;
     });
 
-    // Écouter les changements d'état de l'authentification
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
       if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed) {
@@ -107,7 +106,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                     controller: _tabController,
                     children: [
                       mesPlantesSection(),
-                      MesTachesSection(),
+                      const MesTachesSection(),
                     ],
                   ),
                 ),

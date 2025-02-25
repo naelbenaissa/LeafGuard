@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ui_leafguard/views/plant_guide/appbar/plantDetail_appbar.dart';
+import 'package:ui_leafguard/views/plant_guide/appbar/plant-detail_appbar.dart';
 import 'package:ui_leafguard/services/favorite_service.dart';
 import 'package:ui_leafguard/views/plant_guide/widgets/build_info_card.dart';
 
@@ -40,7 +40,8 @@ class _DetailPageState extends State<DetailPage> {
   /// Vérifie si la plante est en favori
   Future<void> _checkIfFavorite() async {
     if (userId == null) return;
-    bool favorite = await favoriteService.isFavorite(userId!, widget.plant['id']);
+    bool favorite =
+        await favoriteService.isFavorite(userId!, widget.plant['id']);
     setState(() {
       isFavorite = favorite;
     });
@@ -84,7 +85,8 @@ class _DetailPageState extends State<DetailPage> {
                       height: 350,
                       width: double.infinity,
                       color: Colors.green[200],
-                      child: const Icon(Icons.local_florist, size: 100, color: Colors.green),
+                      child: const Icon(Icons.local_florist,
+                          size: 100, color: Colors.green),
                     ),
                   ),
                 ),
@@ -103,9 +105,7 @@ class _DetailPageState extends State<DetailPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -116,16 +116,20 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       Text(
                         widget.plant['common_name'] ?? "Nom inconnu",
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        widget.plant['scientific_name'] ?? "Nom scientifique inconnu",
-                        style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey),
+                        widget.plant['scientific_name'] ??
+                            "Nom scientifique inconnu",
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey),
                       ),
                     ],
                   ),
-
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -137,25 +141,30 @@ class _DetailPageState extends State<DetailPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  buildInfoCard(Icons.account_tree, "Famille", widget.plant['family'] ?? 'Non spécifiée'),
-                  buildInfoCard(Icons.grass, "Genre", widget.plant['genus'] ?? 'Non spécifié'),
-                  buildInfoCard(Icons.leaderboard, "Rang", widget.plant['rank'] ?? 'Inconnu'),
-                  buildInfoCard(Icons.verified, "Statut", widget.plant['status'] ?? 'Non précisé'),
-                  buildInfoCard(Icons.history, "Année de découverte", widget.plant['year']?.toString() ?? 'Inconnue'),
-                  buildInfoCard(Icons.person, "Auteur", widget.plant['author'] ?? 'Non spécifié'),
-                  buildInfoCard(Icons.menu_book, "Bibliographie", widget.plant['bibliography'] ?? 'Non disponible'),
-                  buildInfoCard(Icons.map, "Distribution", widget.plant['distribution'] ?? 'Non disponible'),
+                  buildInfoCard(Icons.account_tree, "Famille",
+                      widget.plant['family'] ?? 'Non spécifiée'),
+                  buildInfoCard(Icons.grass, "Genre",
+                      widget.plant['genus'] ?? 'Non spécifié'),
+                  buildInfoCard(Icons.leaderboard, "Rang",
+                      widget.plant['rank'] ?? 'Inconnu'),
+                  buildInfoCard(Icons.verified, "Statut",
+                      widget.plant['status'] ?? 'Non précisé'),
+                  buildInfoCard(Icons.history, "Année de découverte",
+                      widget.plant['year']?.toString() ?? 'Inconnue'),
+                  buildInfoCard(Icons.person, "Auteur",
+                      widget.plant['author'] ?? 'Non spécifié'),
+                  buildInfoCard(Icons.menu_book, "Bibliographie",
+                      widget.plant['bibliography'] ?? 'Non disponible'),
+                  buildInfoCard(Icons.map, "Distribution",
+                      widget.plant['distribution'] ?? 'Non disponible'),
                 ],
               ),
             ),
-
             const SizedBox(height: 30),
           ],
         ),

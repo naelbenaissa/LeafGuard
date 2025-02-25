@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/scan_service.dart';
-
 import '../../../widgets/delete_confirmation_dialog.dart';
 
 class MesScansSection extends StatefulWidget {
@@ -47,7 +46,6 @@ class _MesScansSectionState extends State<MesScansSection> {
     }
   }
 
-
   /// Supprime un scan et rafraîchit la liste
   Future<void> _deleteScan(String scanId, String imageUrl) async {
     setState(() => isLoading = true);
@@ -72,43 +70,51 @@ class _MesScansSectionState extends State<MesScansSection> {
     }
 
     return scans.isEmpty
-        ? const Center(child: Text("Aucun scan disponible", style: TextStyle(fontSize: 18)))
+        ? const Center(
+            child:
+                Text("Aucun scan disponible", style: TextStyle(fontSize: 18)))
         : RefreshIndicator(
-      onRefresh: _fetchScans,
-      child: ListView.builder(
-        itemCount: scans.length,
-        padding: const EdgeInsets.all(10),
-        itemBuilder: (context, index) {
-          final scan = scans[index];
-          return Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(10),
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  scan['image_url'],
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 50),
-                ),
-              ),
-              title: Text(
-                scan['predictions'],
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text("Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%"),
-              trailing: IconButton(
-                icon: const Icon(Icons.close, color: Colors.red),
-                onPressed: () => _confirmDelete(scan['id'], scan['image_url']),
-              ),
+            onRefresh: _fetchScans,
+            child: ListView.builder(
+              itemCount: scans.length,
+              padding: const EdgeInsets.all(10),
+              itemBuilder: (context, index) {
+                final scan = scans[index];
+                return Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(10),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        scan['image_url'],
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.image, size: 50),
+                      ),
+                    ),
+                    title: Text(
+                      scan['predictions'],
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%"),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () =>
+                          _confirmDelete(scan['id'], scan['image_url']),
+                    ),
+                  ),
+                );
+              },
             ),
           );
-        },
-      ),
-    );
   }
 }

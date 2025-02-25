@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../bar/widgets/profileButton.dart';
+import '../../bar/widgets/profile_button.dart';
 import '../widgets/dialog/show_notifications_dialog.dart';
 
-class TasksCalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
+class TasksCalendarAppBar extends StatefulWidget
+    implements PreferredSizeWidget {
   const TasksCalendarAppBar({super.key});
 
   @override
@@ -49,7 +50,10 @@ class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
                       shape: BoxShape.circle,
                       color: Colors.white,
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 5,
+                            spreadRadius: 1),
                       ],
                     ),
                     child: IconButton(

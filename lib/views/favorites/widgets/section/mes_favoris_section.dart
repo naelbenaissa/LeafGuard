@@ -39,8 +39,8 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
 
       List<Map<String, dynamic>> plants = [];
 
-      // Récupérer les détails des plantes en parallèle
-      final futures = plantIds.map((plantId) => trefleApiService.fetchPlantDetails(plantId));
+      final futures = plantIds
+          .map((plantId) => trefleApiService.fetchPlantDetails(plantId));
       final results = await Future.wait(futures);
 
       for (int i = 0; i < results.length; i++) {
@@ -68,45 +68,49 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
     }
 
     return favoritePlants.isEmpty
-        ? const Center(child: Text("Pas de favoris", style: TextStyle(fontSize: 18)))
+        ? const Center(
+            child: Text("Pas de favoris", style: TextStyle(fontSize: 18)))
         : ListView.builder(
-      itemCount: favoritePlants.length,
-      padding: const EdgeInsets.all(10),
-      itemBuilder: (context, index) {
-        final plant = favoritePlants[index];
-        return Card(
-          elevation: 4, // Ombre sous la carte pour donner du relief
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15), // Coins arrondis
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(10),
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(10), // Arrondi de l'image
-              child: Image.network(
-                plant['plant_image'],
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.local_florist, size: 50),
-              ),
-            ),
-            title: Text(
-              plant['plant_name'],
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text("${plant['plant_id']}"),
-            trailing: IconButton(
-              icon: const Icon(Icons.favorite, color: Colors.red),
-              onPressed: () async {
-                await favoriteService.removeFavorite(userId!, plant['plant_id']);
-                _fetchFavorites(); // Rafraîchir la liste
-              },
-            ),
-          ),
-        );
-      },
-    );
+            itemCount: favoritePlants.length,
+            padding: const EdgeInsets.all(10),
+            itemBuilder: (context, index) {
+              final plant = favoritePlants[index];
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(10),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      plant['plant_image'],
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.local_florist, size: 50),
+                    ),
+                  ),
+                  title: Text(
+                    plant['plant_name'],
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text("${plant['plant_id']}"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.favorite, color: Colors.red),
+                    onPressed: () async {
+                      await favoriteService.removeFavorite(
+                          userId!, plant['plant_id']);
+                      _fetchFavorites();
+                    },
+                  ),
+                ),
+              );
+            },
+          );
   }
 }
