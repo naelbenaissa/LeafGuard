@@ -44,14 +44,17 @@ class _AuthPageState extends State<AuthPage> {
 
         // Vérifier l'âge minimum de 16 ans si une date est entrée
         if (birthdateController.text.isNotEmpty) {
-          DateTime? birthDate = DateFormat("dd/MM/yyyy").parse(birthdateController.text);
+          DateTime? birthDate = DateFormat("dd/MM/yyyy").parse(
+              birthdateController.text);
           DateTime today = DateTime.now();
           int age = today.year - birthDate.year;
-          if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+          if (today.month < birthDate.month ||
+              (today.month == birthDate.month && today.day < birthDate.day)) {
             age--;
           }
           if (age < 16) {
-            _showSnackbar("Vous devez avoir au moins 16 ans pour vous inscrire.");
+            _showSnackbar(
+                "Vous devez avoir au moins 16 ans pour vous inscrire.");
             return;
           }
         }
@@ -69,7 +72,9 @@ class _AuthPageState extends State<AuthPage> {
             nameController.text.trim(),
             surnameController.text.trim(),
             phoneController.text.trim(),
-            birthdateController.text.trim().isNotEmpty ? birthdateController.text.trim() : null,
+            birthdateController.text
+                .trim()
+                .isNotEmpty ? birthdateController.text.trim() : null,
           );
 
           if (mounted) {
@@ -118,7 +123,8 @@ class _AuthPageState extends State<AuthPage> {
   Future<void> _selectDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 16)), // 16 ans en arrière
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 16)),
+      // 16 ans en arrière
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -144,27 +150,36 @@ class _AuthPageState extends State<AuthPage> {
               Text(
                 isLogin ? "Content de te revoir !" : "Créer un compte",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              _buildTextField(emailController, "Email", TextInputType.emailAddress),
+              _buildTextField(
+                  emailController, "Email", TextInputType.emailAddress),
+              if (!isLogin) ...[
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(child: _buildTextField(
+                        nameController, "Nom")),
+                    const SizedBox(width: 10),
+                    Expanded(child: _buildTextField(
+                        surnameController, "Prénom")),
+                  ],
+                ),
+              ],
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(child: _buildTextField(nameController, "Nom (obligatoire)")),
-                  const SizedBox(width: 10),
-                  Expanded(child: _buildTextField(surnameController, "Prénom (obligatoire)")),
-                ],
-              ),
-              const SizedBox(height: 10),
-              _buildPasswordField(passwordController, "Mot de passe", isPasswordVisible, () {
+              _buildPasswordField(
+                  passwordController, "Mot de passe", isPasswordVisible, () {
                 setState(() {
                   isPasswordVisible = !isPasswordVisible;
                 });
               }),
               if (!isLogin) ...[
                 const SizedBox(height: 10),
-                _buildPasswordField(confirmPasswordController, "Confirmez le mot de passe", isConfirmPasswordVisible, () {
+                _buildPasswordField(
+                    confirmPasswordController, "Confirmez le mot de passe",
+                    isConfirmPasswordVisible, () {
                   setState(() {
                     isConfirmPasswordVisible = !isConfirmPasswordVisible;
                   });
@@ -172,13 +187,16 @@ class _AuthPageState extends State<AuthPage> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField(phoneController, "Téléphone (optionnel)", TextInputType.phone)),
+                    Expanded(child: _buildTextField(
+                        phoneController, "Téléphone (optionnel)",
+                        TextInputType.phone)),
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
                         controller: birthdateController,
                         readOnly: true,
-                        decoration: _inputDecoration("Date de naissance (optionnel)").copyWith(
+                        decoration: _inputDecoration(
+                            "Date de naissance (optionnel)").copyWith(
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.calendar_today),
                             onPressed: () => _selectDate(context),
@@ -194,7 +212,8 @@ class _AuthPageState extends State<AuthPage> {
                 onPressed: _authenticate,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: Text(
@@ -210,8 +229,11 @@ class _AuthPageState extends State<AuthPage> {
                   });
                 },
                 child: Text(
-                  isLogin ? "Vous n'avez pas de compte ? Inscrivez-vous" : "Vous avez déjà un compte ? Connectez-vous",
-                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                  isLogin
+                      ? "Vous n'avez pas de compte ? Inscrivez-vous"
+                      : "Vous avez déjà un compte ? Connectez-vous",
+                  style: const TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.bold),
                 ),
               )
             ],
@@ -222,7 +244,8 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, [TextInputType type = TextInputType.text]) {
+  Widget _buildTextField(TextEditingController controller, String label,
+      [TextInputType type = TextInputType.text]) {
     return TextField(
       controller: controller,
       keyboardType: type,
@@ -239,12 +262,10 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildPasswordField(
-      TextEditingController controller,
+  Widget _buildPasswordField(TextEditingController controller,
       String label,
       bool isVisible,
-      VoidCallback onToggle,
-      ) {
+      VoidCallback onToggle,) {
     return TextField(
       controller: controller,
       obscureText: !isVisible,

@@ -1,4 +1,4 @@
-import 'dart:math'; // Pour générer un nombre aléatoire
+import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserService {

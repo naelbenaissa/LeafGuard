@@ -33,7 +33,7 @@
 - ajouter un bouton pour créer tâches.✅
 - pas acces si pas de compte.✅
 - Associer les tâches a un compte.✅
-- Améliorer design popup tâches.
+- Améliorer design popup tâches.✅
 
 ## Camera
 
@@ -42,7 +42,7 @@
 - Ajouter un bouton pour scanner.✅
 - Faire le lien api image.✅
 - faire le lien maladie taches.
-- afficher scan recent.
+- afficher scan recent.✅
 
 ## Compte
 
