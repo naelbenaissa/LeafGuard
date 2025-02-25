@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import '../../services/user_service.dart';
 import '../bar/custom_bottombar.dart';
 
 class AuthPage extends StatefulWidget {
@@ -14,10 +14,14 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   bool isLogin = true;
   final SupabaseClient supabase = Supabase.instance.client;
+  final UserService userService = UserService();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
   String errorMessage = '';
 
@@ -28,6 +32,7 @@ class _AuthPageState extends State<AuthPage> {
 
     try {
       if (isLogin) {
+        // Connexion utilisateur
         final response = await supabase.auth.signInWithPassword(
           email: emailController.text.trim(),
           password: passwordController.text,
@@ -39,6 +44,7 @@ class _AuthPageState extends State<AuthPage> {
           }
         }
       } else {
+        // Vérifier si les mots de passe correspondent
         if (passwordController.text != confirmPasswordController.text) {
           setState(() {
             errorMessage = "Les mots de passe ne correspondent pas.";
@@ -49,9 +55,19 @@ class _AuthPageState extends State<AuthPage> {
         final response = await supabase.auth.signUp(
           email: emailController.text.trim(),
           password: passwordController.text,
+          emailRedirectTo: null,
         );
 
-        if (response.user != null) {
+
+        final user = response.user;
+        if (user != null) {
+          await userService.addUserData(
+            user.id,
+            nameController.text.trim(),
+            surnameController.text.trim(),
+            phoneController.text.trim(),
+          );
+
           if (mounted) {
             context.go('/');
           }
@@ -69,6 +85,9 @@ class _AuthPageState extends State<AuthPage> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    nameController.dispose();
+    surnameController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -76,12 +95,13 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 40),
             Text(
               isLogin ? "Content de te revoir !" : "Créer un compte",
               textAlign: TextAlign.center,
@@ -91,35 +111,36 @@ class _AuthPageState extends State<AuthPage> {
             TextField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
+              decoration: _inputDecoration("Email"),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(
-                labelText: "Mot de passe",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
+              decoration: _inputDecoration("Mot de passe"),
             ),
             if (!isLogin) ...[
               const SizedBox(height: 10),
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Confirmez le mot de passe",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
+                decoration: _inputDecoration("Confirmez le mot de passe"),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: nameController,
+                decoration: _inputDecoration("Nom (optionnel)"),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: surnameController,
+                decoration: _inputDecoration("Prénom (optionnel)"),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: _inputDecoration("Numéro de téléphone (optionnel)"),
               ),
             ],
             const SizedBox(height: 10),
@@ -160,6 +181,15 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
       bottomNavigationBar: const CustomBottomBar(),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      filled: true,
+      fillColor: Colors.grey[200],
     );
   }
 }

@@ -50,7 +50,6 @@ class _DetailPageState extends State<DetailPage> {
   /// Ajoute ou supprime une plante des favoris
   Future<void> _toggleFavorite() async {
     if (userId == null) {
-      // Afficher un message demandant de se connecter
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
