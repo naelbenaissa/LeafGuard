@@ -8,7 +8,7 @@ class CreateTask {
     String title = "";
     String description = "";
     DateTime selectedDate = DateTime.now();
-    String priority = "faible";
+    String priority = "medium";
 
     final supabase = Supabase.instance.client;
     final user = supabase.auth.currentUser;
@@ -56,7 +56,7 @@ class CreateTask {
               DropdownButtonFormField<String>(
                 value: priority,
                 decoration: const InputDecoration(labelText: "Priorité"),
-                items: ["faible", "moyen", "élevé"].map((String value) {
+                items: ["low", "medium", "high"].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

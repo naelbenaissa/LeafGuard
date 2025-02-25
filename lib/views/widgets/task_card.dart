@@ -25,9 +25,9 @@ class TaskCard extends StatelessWidget {
         subtitle: Text(description),
         trailing: Icon(
           Icons.flag,
-          color: priority == 'élevé'
+          color: priority == 'high'
               ? Colors.red
-              : priority == 'moyen'
+              : priority == 'medium'
               ? Colors.orange
               : Colors.green,
         ),

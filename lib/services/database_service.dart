@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -31,91 +32,76 @@ class DatabaseService {
   Future<void> _createTables(Database db) async {
     await db.execute('''
       CREATE TABLE diseases (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         plant_name TEXT NOT NULL,
         disease_name TEXT NOT NULL UNIQUE,
-        is_healthy BOOLEAN NOT NULL DEFAULT 0
+        is_healthy BOOLEAN NOT NULL
       );
     ''');
 
     await db.execute('''
       CREATE TABLE tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         task_description TEXT NOT NULL
       );
     ''');
 
     await db.execute('''
       CREATE TABLE disease_tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         disease_id INTEGER NOT NULL,
         task_id INTEGER NOT NULL,
         FOREIGN KEY (disease_id) REFERENCES diseases(id) ON DELETE CASCADE,
         FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
       );
     ''');
-
-    await _insertInitialData(db);
   }
 
-  Future<void> _insertInitialData(Database db) async {
-    List<Map<String, dynamic>> diseases = [
-      {'plant_name': 'Poivron', 'disease_name': 'Poivron - Dépérissement bactérien', 'is_healthy': 0},
-      {'plant_name': 'Poivron', 'disease_name': 'Poivron - Sain', 'is_healthy': 1},
-      {'plant_name': 'Pomme de terre', 'disease_name': 'Pomme de terre - Brûlure précoce', 'is_healthy': 0},
-      {'plant_name': 'Pomme de terre', 'disease_name': 'Pomme de terre - Brûlure tardive', 'is_healthy': 0},
-      {'plant_name': 'Pomme de terre', 'disease_name': 'Pomme de terre - Saine', 'is_healthy': 1},
-      {'plant_name': 'Tomate', 'disease_name': 'Tomate - Tache bactérienne', 'is_healthy': 0},
-      {'plant_name': 'Tomate', 'disease_name': 'Tomate - Saine', 'is_healthy': 1},
-    ];
+  /// ✅ Synchronisation depuis Supabase vers SQLite
+  Future<void> syncFromSupabase() async {
+    final db = await database;
+    final supabase = Supabase.instance.client;
 
-    for (var disease in diseases) {
-      await db.insert('diseases', disease);
-    }
-
-    // Insertion des tâches avec récupération de leur ID
-    List<int> taskIds = [];
-    List<String> taskDescriptions = [
-      'Éliminer les feuilles infectées',
-      'Appliquer un traitement au cuivre',
-      'Surveiller l\'évolution',
-      'Retirer les parties infectées',
-      'Appliquer un fongicide naturel',
-      'Espacer les plants pour l\'aération'
-    ];
-
-    for (var task in taskDescriptions) {
-      int taskId = await db.insert('tasks', {'task_description': task});
-      taskIds.add(taskId);
-    }
-
-    // Association des maladies aux tâches
-    Map<String, List<int>> diseaseTaskMapping = {
-      'Poivron - Dépérissement bactérien': [taskIds[0], taskIds[1], taskIds[2]],
-      'Pomme de terre - Brûlure précoce': [taskIds[3], taskIds[4], taskIds[5]],
-      'Tomate - Tache bactérienne': [taskIds[0], taskIds[1], taskIds[5]],
-    };
-
-    for (var entry in diseaseTaskMapping.entries) {
-      String diseaseName = entry.key;
-      List<int> tasks = entry.value;
-
-      final diseaseQuery = await db.query(
-        'diseases',
-        columns: ['id'],
-        where: 'disease_name = ?',
-        whereArgs: [diseaseName],
-      );
-
-      if (diseaseQuery.isNotEmpty) {
-        int diseaseId = diseaseQuery.first['id'] as int;
-        for (var taskId in tasks) {
-          await db.insert('disease_tasks', {'disease_id': diseaseId, 'task_id': taskId});
-        }
+    // 🔄 Récupérer les maladies depuis Supabase
+    final diseases = await supabase.from('diseases').select();
+    await db.transaction((txn) async {
+      await txn.delete('diseases');
+      for (var disease in diseases) {
+        await txn.insert('diseases', disease, conflictAlgorithm: ConflictAlgorithm.replace);
       }
-    }
+    });
+
+    // 🔄 Récupérer les tâches depuis Supabase
+    final tasks = await supabase.from('tasks').select();
+    await db.transaction((txn) async {
+      await txn.delete('tasks');
+      for (var task in tasks) {
+        await txn.insert('tasks', task, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    });
+
+    // 🔄 Récupérer les relations maladies ↔ tâches
+    final diseaseTasks = await supabase.from('disease_tasks').select();
+    await db.transaction((txn) async {
+      await txn.delete('disease_tasks');
+      for (var dt in diseaseTasks) {
+        await txn.insert('disease_tasks', dt, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    });
   }
 
+  /// ✅ Récupérer les tâches associées à une maladie spécifique
+  Future<List<Map<String, dynamic>>> getTasksForDisease(String diseaseName) async {
+    final db = await database;
+    return await db.rawQuery('''
+      SELECT tasks.* FROM tasks
+      JOIN disease_tasks ON tasks.id = disease_tasks.task_id
+      JOIN diseases ON disease_tasks.disease_id = diseases.id
+      WHERE diseases.disease_name = ?
+    ''', [diseaseName]);
+  }
+
+  /// ✅ Fermer la base de données
   Future<void> closeDatabase() async {
     final db = await database;
     await db.close();
