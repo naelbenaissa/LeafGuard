@@ -30,13 +30,21 @@ class CameraPreviewWidget extends StatelessWidget {
         ),
         Positioned(
           bottom: 20,
-          child: FloatingActionButton(
-            onPressed: selectedImage == null ? takePicture : clearImage,
-            backgroundColor: selectedImage == null ? Colors.white : Colors.grey[200],
-            child: Icon(
-              selectedImage == null ? Icons.camera : Icons.close,
-              color: Colors.black,
-              size: 30,
+          child: Container(
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+              ],
+            ),
+            child: IconButton(
+              onPressed: selectedImage == null ? takePicture : clearImage,
+              icon: Icon(
+                selectedImage == null ? Icons.camera : Icons.close,
+                color: Colors.black,
+                size: 30,
+              ),
             ),
           ),
         ),

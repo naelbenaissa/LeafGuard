@@ -119,7 +119,7 @@ class _CameraPageState extends State<CameraPage> {
                 _selectedImage = null;
               });
             },
-            onScanPressed: scanDisease, // Bouton "Scanner" appelle scanDisease()
+            onScanPressed: scanDisease,
           ),
           Flexible(
             child: GridView.builder(
@@ -135,7 +135,7 @@ class _CameraPageState extends State<CameraPage> {
                   onTap: scanDisease,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.green[300],
+                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Center(child: Text("Scan récent")),
