@@ -40,6 +40,7 @@
 - Ajouter un bouton pour scanner.✅
 - Faire le lien api image.✅
 - faire le lien maladie taches.
+- afficher scan recent.
 
 ## Compte
 
