@@ -62,7 +62,7 @@ class _FavoritesPageState extends State<FavoritesPage>
               Text(
                 filter,
                 style:
-                    TextStyle(color: isSelected ? Colors.white : Colors.black),
+                TextStyle(color: isSelected ? Colors.white : Colors.black),
               ),
               if (isSelected)
                 GestureDetector(
@@ -89,54 +89,51 @@ class _FavoritesPageState extends State<FavoritesPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: FavoritesAppbar(onFilterPressed: _toggleFilterOptions),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Gérez vos plantes favorites et vos scans",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Gérez vos plantes favorites et vos scans",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (_showFilterOptions)
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _getFilterOptions(),
               ),
             ),
-            if (_showFilterOptions)
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: _getFilterOptions(),
-                ),
-              ),
-            SizedBox(
-              width: 250,
-              child: TabBar(
-                controller: _tabController,
-                labelStyle: const TextStyle(fontSize: 18),
-                tabs: const [
-                  Tab(text: "Mes Scans"),
-                  Tab(text: "Mes Favoris"),
-                ],
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.grey,
-                indicatorWeight: 0,
-                dividerHeight: 0,
-                indicator: DotIndicator(),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 10),
-              ),
+          SizedBox(
+            width: 250,
+            child: TabBar(
+              controller: _tabController,
+              labelStyle: const TextStyle(fontSize: 18),
+              tabs: const [
+                Tab(text: "Mes Scans"),
+                Tab(text: "Mes Favoris"),
+              ],
+              labelColor: Colors.green,
+              unselectedLabelColor: Colors.grey,
+              indicatorWeight: 0,
+              dividerHeight: 0,
+              indicator: DotIndicator(),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  MesScansSection(),
-                  MesFavorisSection(),
-                ],
-              ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                MesScansSection(filter: _selectedFilter),
+                MesFavorisSection(filter: _selectedFilter),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: const CustomBottomBar(),
     );

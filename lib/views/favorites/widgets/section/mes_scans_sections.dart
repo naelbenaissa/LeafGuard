@@ -4,7 +4,8 @@ import 'package:ui_leafguard/services/scan_service.dart';
 import '../../../widgets/delete_confirmation_dialog.dart';
 
 class MesScansSection extends StatefulWidget {
-  const MesScansSection({super.key});
+  final String? filter;
+  const MesScansSection({super.key, this.filter});
 
   @override
   _MesScansSectionState createState() => _MesScansSectionState();
@@ -23,6 +24,15 @@ class _MesScansSectionState extends State<MesScansSection> {
     _fetchScans();
   }
 
+  /// Détecte le changement de filtre et actualise la liste
+  @override
+  void didUpdateWidget(covariant MesScansSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.filter != oldWidget.filter) {
+      _sortScans();
+    }
+  }
+
   /// Récupère les scans de l'utilisateur
   Future<void> _fetchScans() async {
     setState(() => isLoading = true);
@@ -30,12 +40,33 @@ class _MesScansSectionState extends State<MesScansSection> {
       final userScans = await scanService.getScans();
       setState(() {
         scans = userScans;
+        _sortScans();
         isLoading = false;
       });
     } catch (e) {
       debugPrint("Erreur lors du chargement des scans : $e");
       setState(() => isLoading = false);
     }
+  }
+
+  /// Trie les scans en fonction du filtre sélectionné
+  void _sortScans() {
+    if (widget.filter == null) {
+      _fetchScans();
+      return;
+    }
+
+    setState(() {
+      if (widget.filter == "Confiance") {
+        scans.sort((a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
+      } else if (widget.filter == "Date") {
+        scans.sort((a, b) {
+          DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+          DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+          return dateB.compareTo(dateA);
+        });
+      }
+    });
   }
 
   /// Affiche une boîte de dialogue pour confirmer la suppression
@@ -86,13 +117,9 @@ class _MesScansSectionState extends State<MesScansSection> {
       onRefresh: _fetchScans,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: scans.length + 1,
+        itemCount: scans.length,
         padding: const EdgeInsets.all(10),
         itemBuilder: (context, index) {
-          if (index == scans.length) {
-            return const SizedBox(height: 50);
-          }
-
           final scan = scans[index];
           return Card(
             elevation: 4,

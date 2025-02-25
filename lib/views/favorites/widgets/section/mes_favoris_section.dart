@@ -4,7 +4,8 @@ import 'package:ui_leafguard/services/favorite_service.dart';
 import 'package:ui_leafguard/services/trefle_api_service.dart';
 
 class MesFavorisSection extends StatefulWidget {
-  const MesFavorisSection({super.key});
+  final String? filter;
+  const MesFavorisSection({super.key, this.filter});
 
   @override
   _MesFavorisSectionState createState() => _MesFavorisSectionState();
@@ -26,36 +27,60 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
     _fetchFavorites();
   }
 
-  /// Récupère les favoris de l'utilisateur avec les détails des plantes
+  /// Détecte le changement de filtre et actualise la liste
+  @override
+  void didUpdateWidget(covariant MesFavorisSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.filter != oldWidget.filter) {
+      _sortFavorites();
+    }
+  }
+
+  /// Récupère les favoris de l'utilisateur
   Future<void> _fetchFavorites() async {
     setState(() => isLoading = true);
-
     final user = supabase.auth.currentUser;
     if (user != null) {
       userId = user.id;
       final plantIds = await favoriteService.getFavoritePlantIds(userId!);
-
-      List<Map<String, dynamic>> plants = [];
       final futures =
       plantIds.map((plantId) => trefleApiService.fetchPlantDetails(plantId));
       final results = await Future.wait(futures);
 
-      for (int i = 0; i < results.length; i++) {
+      favoritePlants = List.generate(results.length, (i) {
         final plantDetails = results[i];
-        if (plantDetails != null) {
-          plants.add({
-            'plant_id': plantIds[i],
-            'plant_name': plantDetails['common_name'] ?? 'Nom inconnu',
-            'plant_image': plantDetails['image_url'] ?? '',
-          });
-        }
-      }
+        return {
+          'plant_id': plantIds[i],
+          'plant_name': plantDetails?['common_name'] ?? 'Nom inconnu',
+          'plant_image': plantDetails?['image_url'] ?? '',
+        };
+      });
 
       setState(() {
-        favoritePlants = plants;
         isLoading = false;
       });
     }
+  }
+
+  /// Trie les favoris selon le filtre sélectionné et actualise instantanément
+  void _sortFavorites() {
+    if (widget.filter == null) {
+      _fetchFavorites(); // 🔄 Réinitialise la liste si aucun filtre n'est sélectionné
+      return;
+    }
+
+    setState(() {
+      if (widget.filter == "A - Z") {
+        favoritePlants.sort((a, b) => a['plant_name'].compareTo(b['plant_name']));
+      } else if (widget.filter == "Z - A") {
+        favoritePlants.sort((a, b) => b['plant_name'].compareTo(a['plant_name']));
+      } else if (widget.filter == "Date") {
+        favoritePlants.sort(
+                (a, b) => (b['added_at'] ?? "").compareTo(a['added_at'] ?? ""));
+      } else if (widget.filter == "ID") {
+        favoritePlants.sort((a, b) => a['plant_id'].compareTo(b['plant_id']));
+      }
+    });
   }
 
   @override
@@ -70,7 +95,7 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7, // Pour activer le scroll même vide
+          height: MediaQuery.of(context).size.height * 0.7,
           child: const Center(
             child: Text("Pas de favoris", style: TextStyle(fontSize: 18)),
           ),
@@ -80,20 +105,19 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
         : RefreshIndicator(
       onRefresh: _fetchFavorites,
       child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(), // Permet le scroll fluide
-        itemCount: favoritePlants.length + 1, // +1 pour le SizedBox final
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: favoritePlants.length + 1,
         padding: const EdgeInsets.all(10),
         itemBuilder: (context, index) {
           if (index == favoritePlants.length) {
-            return const SizedBox(height: 50); // Ajoute un espace à la fin
+            return const SizedBox(height: 50);
           }
 
           final plant = favoritePlants[index];
+
           return Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
             child: ListTile(
               contentPadding: const EdgeInsets.all(10),
