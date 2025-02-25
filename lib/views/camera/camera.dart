@@ -6,9 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/camera/widgets/bottom_menu_widget.dart';
 import 'package:ui_leafguard/views/camera/widgets/camera_preview_widget.dart';
 import 'package:ui_leafguard/views/camera/widgets/image_selection_widget.dart';
+import 'package:ui_leafguard/views/camera/widgets/recent_scans_grid.dart';
 import 'package:ui_leafguard/views/camera/widgets/scan_result_dialog.dart';
 import '../../services/leafguard_api_service.dart';
-import '../../services/scan_service.dart'; // Import du ScanService
+import '../../services/scan_service.dart';
 import 'appbar/camera_appbar.dart';
 
 class CameraPage extends StatefulWidget {
@@ -25,12 +26,15 @@ class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   final IaLeafguardService _iaService = IaLeafguardService();
-  final ScanService _scanService = ScanService(Supabase.instance.client); // Initialisation du service
+  final ScanService _scanService = ScanService(Supabase.instance.client);
+
+  List<Map<String, dynamic>> _recentScans = [];
 
   @override
   void initState() {
     super.initState();
     initializeCamera();
+    _fetchScans();
   }
 
   Future<void> initializeCamera() async {
@@ -73,10 +77,24 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  /// **🔍 Analyse l'image et affiche les résultats**
+  /// ** Analyse l'image et affiche les résultats**
   Future<void> scanDisease() async {
     if (_selectedImage == null) return;
-    await ScanResultDialog.show(context, _selectedImage!, _iaService, _scanService);
+    await ScanResultDialog.show(
+        context, _selectedImage!, _iaService, _scanService);
+    _fetchScans();
+  }
+
+  /// ** Récupère les scans récents**
+  Future<void> _fetchScans() async {
+    try {
+      final scans = await _scanService.getScans();
+      setState(() {
+        _recentScans = scans.toList();
+      });
+    } catch (e) {
+      debugPrint("Erreur lors du chargement des scans : $e");
+    }
   }
 
   @override
@@ -104,16 +122,16 @@ class _CameraPageState extends State<CameraPage> {
               color: Colors.green[100],
               child: _selectedOption == "Caméra"
                   ? CameraPreviewWidget(
-                controller: _controller,
-                selectedImage: _selectedImage,
-                takePicture: takePicture,
-                clearImage: () => setState(() => _selectedImage = null),
-              )
+                      controller: _controller,
+                      selectedImage: _selectedImage,
+                      takePicture: takePicture,
+                      clearImage: () => setState(() => _selectedImage = null),
+                    )
                   : ImageSelectionWidget(
-                selectedImage: _selectedImage,
-                pickImage: pickImage,
-                clearImage: () => setState(() => _selectedImage = null),
-              ),
+                      selectedImage: _selectedImage,
+                      pickImage: pickImage,
+                      clearImage: () => setState(() => _selectedImage = null),
+                    ),
             ),
           ),
           BottomMenuWidget(
@@ -125,27 +143,11 @@ class _CameraPageState extends State<CameraPage> {
             },
             onScanPressed: scanDisease,
           ),
-          Flexible(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(4.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: scanDisease,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(child: Text("Scan récent")),
-                  ),
-                );
-              },
+          const SizedBox(height: 10),
+          Expanded(
+            child: RecentScansGrid(
+              recentScans: _recentScans,
+              onScanTap: scanDisease,
             ),
           ),
         ],
