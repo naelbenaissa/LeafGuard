@@ -14,7 +14,7 @@ class TasksService {
         .eq('user_id', userId)
         .order('due_date', ascending: true);
 
-    return response ?? [];
+    return response;
   }
 
   Future<void> addTask(String userId, String title, String description, DateTime dueDate, String priority) async {
@@ -28,8 +28,6 @@ class TasksService {
       'priority': priority,
     })
         .select();
-
-    print("✅ Réponse Supabase: $response"); // Vérification
 
     if (response == null || response.isEmpty) {
       throw Exception("❌ Erreur: Aucune tâche insérée !");

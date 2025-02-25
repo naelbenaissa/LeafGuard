@@ -149,9 +149,11 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 padding: const EdgeInsets.all(16.0),
                 children: (_tasksByDate[DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day)] ?? [])
                     .map((task) => TaskCard(
+                  id: task['id'].toString(),
                   title: task['title'],
                   description: task['description'],
                   priority: task['priority'],
+                  refreshTasks: _fetchTasks,
                 ))
                     .toList(),
               ),

@@ -16,13 +16,26 @@ class _MesTachesSectionState extends State<MesTachesSection> {
   final SupabaseClient supabase = Supabase.instance.client;
   final TasksService tasksService = TasksService(Supabase.instance.client);
   bool showPastTasks = false;
+  Future<List<Map<String, dynamic>>>? _futureTasks;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTasks();
+  }
+
+  /// 🔄 Recharge la liste des tâches
+  void _refreshTasks() {
+    final user = supabase.auth.currentUser;
+    setState(() {
+      _futureTasks = tasksService.fetchTasks(user?.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = supabase.auth.currentUser;
-
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: tasksService.fetchTasks(user?.id),
+      future: _futureTasks,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -51,8 +64,7 @@ class _MesTachesSectionState extends State<MesTachesSection> {
               bool isPastTask = taskDate.isBefore(today) && taskDate.day != today.day;
               if (!showPastTasks && isPastTask) continue;
 
-              String formattedDate =
-                  DateFormat.yMMMMd('fr_CA').format(taskDate);
+              String formattedDate = DateFormat.yMMMMd('fr_CA').format(taskDate);
               if (!groupedTasks.containsKey(formattedDate)) {
                 groupedTasks[formattedDate] = [];
               }
@@ -111,7 +123,7 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                             children: [
                               Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(
                                   entry.key,
                                   style: const TextStyle(
@@ -123,9 +135,11 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                               ),
                               ...entry.value.map((task) {
                                 return TaskCard(
+                                  id: task['id'].toString(),
                                   title: task['title'],
                                   description: task['description'],
                                   priority: task['priority'],
+                                  refreshTasks: _refreshTasks,
                                 );
                               }),
                             ],
