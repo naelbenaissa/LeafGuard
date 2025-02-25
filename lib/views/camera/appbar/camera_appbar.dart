@@ -37,7 +37,7 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: const Icon(Icons.arrow_back, color: Colors.black, size: 18),
                   ),
                   const SizedBox(width: 8),
-                  const Text("Retour", style: TextStyle(fontSize: 18),),
+                  const Text("Accueil", style: TextStyle(fontSize: 18),),
                 ],
               ),
             ),
@@ -55,7 +55,6 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: "Caméra", child: Text("Caméra")),
                   const PopupMenuItem(value: "Ajouter une image", child: Text("Ajouter une image")),
-                  const PopupMenuItem(value: "Scans récents", child: Text("Scans récents")),
                 ],
               ),
             ),
