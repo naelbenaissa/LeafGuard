@@ -24,7 +24,7 @@
 - pas accès si pas de compte.✅
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
-- Filtre a configurer.
+- Filtre a configurer.✅
 
 ## Calendar
 
@@ -52,4 +52,5 @@
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
 - Notifications local flutter plugin a mettre en place.
+- Ajouter choix de photo de profil
 
