@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../services/user_service.dart';
 
 class ProfileButton extends StatefulWidget {
@@ -17,6 +18,12 @@ class _ProfileButtonState extends State<ProfileButton> {
   void initState() {
     super.initState();
     _loadUserProfile();
+
+    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+      if (mounted) {
+        _loadUserProfile();
+      }
+    });
   }
 
   Future<void> _loadUserProfile() async {
@@ -40,12 +47,20 @@ class _ProfileButtonState extends State<ProfileButton> {
       child: CircleAvatar(
         radius: 22,
         backgroundColor: Colors.grey.shade200,
-        backgroundImage: profileImageUrl != null && profileImageUrl!.isNotEmpty
-            ? NetworkImage(profileImageUrl!)
-            : null,
-        child: profileImageUrl == null || profileImageUrl!.isEmpty
-            ? const Icon(Icons.person, size: 28, color: Colors.grey)
-            : null,
+        child: profileImageUrl != null && profileImageUrl!.isNotEmpty
+            ? ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: profileImageUrl!,
+            width: 44,
+            height: 44,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+            const CircularProgressIndicator(),
+            errorWidget: (context, url, error) =>
+            const Icon(Icons.error, color: Colors.red),
+          ),
+        )
+            : const Icon(Icons.person, size: 28, color: Colors.grey),
       ),
     );
   }

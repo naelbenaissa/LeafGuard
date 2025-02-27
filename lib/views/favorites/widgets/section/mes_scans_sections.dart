@@ -38,11 +38,13 @@ class _MesScansSectionState extends State<MesScansSection> {
     setState(() => isLoading = true);
     try {
       final userScans = await scanService.getScans();
-      setState(() {
-        scans = userScans;
-        _sortScans();
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          scans = userScans;
+          _sortScans();
+          isLoading = false;
+        });
+      }
     } catch (e) {
       debugPrint("Erreur lors du chargement des scans : $e");
       setState(() => isLoading = false);
