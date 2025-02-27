@@ -3,7 +3,7 @@
 - Plus tard réaliser theme dark et light.
 - Notification a configurer.
 - Problème au niveau de la suppression des images tâches sur storage supabase.
-- Tutoriel de début a faire. introduction_screen: ^3.1.17
+- Tutoriel de début a faire.✅
 
 ## Home
 
