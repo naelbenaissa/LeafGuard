@@ -53,5 +53,5 @@
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
 - Notifications local flutter plugin a mettre en place.
-- Ajouter choix de photo de profil
+- Ajouter choix de photo de profil✅
 
