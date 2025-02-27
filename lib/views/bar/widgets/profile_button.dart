@@ -23,7 +23,7 @@ class _ProfileButtonState extends State<ProfileButton> {
     final user = Supabase.instance.client.auth.currentUser;
     if (user != null) {
       final userData = await UserService().fetchUserData(user.id);
-      if (userData != null && userData['profile_image'] != null) {
+      if (mounted && userData != null && userData['profile_image'] != null) {
         setState(() {
           profileImageUrl = userData['profile_image'];
         });

@@ -60,6 +60,8 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
       final response = await _plantService.fetchPlants(page: _currentPage);
       final totalPlants = response['total'] ?? 1;
 
+      if (!mounted) return;
+
       setState(() {
         plants = response['data'] ?? [];
         _totalPages = (totalPlants / 20).ceil();
@@ -93,6 +95,7 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   }
 
   void _setLoading(bool value) {
+    if (!mounted) return;
     setState(() => isLoading = value);
   }
 

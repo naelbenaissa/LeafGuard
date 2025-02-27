@@ -20,7 +20,22 @@ class ChangeProfilePictureSection extends StatelessWidget {
     final UserService userService = UserService();
 
     Future<void> _updateProfileImage(String newImageUrl) async {
-      await userService.updateProfileImage(userData!["id"], newImageUrl);
+      if (userData == null || userData!["user_id"] == null) {
+        return;
+      }
+      if (newImageUrl.isEmpty) {
+        return;
+      }
+
+      await userService.updateProfileImage(userData!["user_id"], newImageUrl);
+
+      final updatedUserData = await userService.fetchUserData(userData!["user_id"]);
+
+      if (updatedUserData != null) {
+        userData?.update("profile_image", (value) => updatedUserData["profile_image"],
+            ifAbsent: () => updatedUserData["profile_image"]);
+      }
+
       onUpdate();
     }
 
@@ -38,9 +53,13 @@ class ChangeProfilePictureSection extends StatelessWidget {
               spacing: 10,
               runSpacing: 10,
               children: userService.getProfileImages().map((imageUrl) {
-                bool isSelected = imageUrl == userData!["profile_image"];
+                bool isSelected = imageUrl == userData?["profile_image"];
                 return GestureDetector(
-                  onTap: () => _updateProfileImage(imageUrl),
+                  onTap: () {
+                    if (userData?["user_id"] != null && imageUrl.isNotEmpty) {
+                      _updateProfileImage(imageUrl);
+                    }
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       border: isSelected ? Border.all(color: Colors.green, width: 3) : null,

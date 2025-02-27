@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
@@ -18,6 +20,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   final List<String> sloganWords = ["Scanne,", "Comprends,", "Agis !"];
   late TabController _tabController;
   bool isAuthenticated = false;
+  late final StreamSubscription<AuthState> _authSubscription;
 
   @override
   void initState() {
@@ -32,26 +35,24 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
       isAuthenticated = session != null;
     });
 
-    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (!mounted) return;
+
       final AuthChangeEvent event = data.event;
-      if (event == AuthChangeEvent.signedIn ||
-          event == AuthChangeEvent.tokenRefreshed) {
-        setState(() {
-          isAuthenticated = true;
-        });
-      } else if (event == AuthChangeEvent.signedOut) {
-        setState(() {
-          isAuthenticated = false;
-        });
-      }
+      setState(() {
+        isAuthenticated = (event == AuthChangeEvent.signedIn ||
+            event == AuthChangeEvent.tokenRefreshed);
+      });
     });
   }
 
   @override
   void dispose() {
+    _authSubscription.cancel();
     _tabController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
