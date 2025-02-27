@@ -153,14 +153,12 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               ],
               const SizedBox(height: 10),
-              AuthPasswordField(controller: passwordController, label: "Mot de passe", isVisible: isPasswordVisible, onToggle: () {
-                setState(() => isPasswordVisible = !isPasswordVisible);
-              }),
+              AuthPasswordField(controller: passwordController, label: "Mot de passe"),
+
               if (!isLogin) ...[
                 const SizedBox(height: 10),
-                AuthPasswordField(controller: confirmPasswordController, label: "Confirmez le mot de passe", isVisible: isConfirmPasswordVisible, onToggle: () {
-                  setState(() => isConfirmPasswordVisible = !isConfirmPasswordVisible);
-                }),
+                AuthPasswordField(controller: confirmPasswordController, label: "Confirmez le mot de passe"),
+
                 const SizedBox(height: 10),
                 Row(
                   children: [

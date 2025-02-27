@@ -78,6 +78,24 @@ class UserService {
     }
   }
 
+  Future<bool> verifyOldPassword(String oldPassword) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return false;
+
+    try {
+      // Tentative de connexion avec l'ancien mot de passe
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: user.email!,
+        password: oldPassword,
+      );
+
+      // Si la connexion est réussie, le mot de passe est valide
+      return response.user != null;
+    } catch (error) {
+      return false;
+    }
+  }
+
   /// Supprime définitevement un compte
   Future<void> deleteAccount() async {
     final user = Supabase.instance.client.auth.currentUser;
@@ -107,5 +125,4 @@ class UserService {
       throw "Erreur lors de la suppression du compte : $error";
     }
   }
-
 }
