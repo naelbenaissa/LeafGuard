@@ -13,15 +13,29 @@ class UserService {
           .eq('user_id', uuid)
           .single();
 
-      if (response.isNotEmpty) {
-        return response;
-      } else {
-        return null;
-      }
+      return response.isNotEmpty ? response : null;
     } catch (error) {
       return null;
     }
   }
+
+  /// Change le mot de passe de l'utilisateur
+  Future<void> changePassword(String newPassword) async {
+    final user = Supabase.instance.client.auth.currentUser;
+
+    if (user == null) {
+      throw "Utilisateur non connecté.";
+    }
+
+    final response = await Supabase.instance.client.auth.updateUser(
+      UserAttributes(password: newPassword),
+    );
+
+    if (response.user == null) {
+      throw "Erreur lors du changement de mot de passe.";
+    }
+  }
+
 
   /// Génère une URL d'image de profil aléatoire entre `user_1.jpg` et `user_10.jpg`
   String _getRandomProfileImage() {
@@ -46,4 +60,52 @@ class UserService {
       print("Erreur lors de l'ajout de l'utilisateur : $error");
     }
   }
+
+  /// Récupère les URLs des 10 images de profil disponibles
+  List<String> getProfileImages() {
+    return List.generate(
+      10,
+          (index) => "https://xweiounkhqtchlapjazt.supabase.co/storage/v1/object/public/profil_picture/user_${index + 1}.jpg",
+    );
+  }
+
+  /// Met à jour l'image de profil de l'utilisateur dans la base de données
+  Future<void> updateProfileImage(String userId, String newImageUrl) async {
+    try {
+      await _client.from('users').update({'profile_image': newImageUrl}).eq('user_id', userId);
+    } catch (error) {
+      print("Erreur lors de la mise à jour de l'image de profil : $error");
+    }
+  }
+
+  /// Supprime définitevement un compte
+  Future<void> deleteAccount() async {
+    final user = Supabase.instance.client.auth.currentUser;
+
+    if (user == null) {
+      throw "Utilisateur non connecté.";
+    }
+
+    try {
+      final client = Supabase.instance.client;
+
+      // Supprime les tâches associées à l'utilisateur
+      await client.from('tasks').delete().eq('user_id', user.id);
+      await client.from('favorites').delete().eq('user_id', user.id);
+      await client.from('scans').delete().eq('user_id', user.id);
+
+
+      // Supprime les données utilisateur de la table "users"
+      await client.from('users').delete().eq('user_id', user.id);
+
+      // Supprime le compte de auth.users en appelant la fonction SQL
+      await client.rpc('delete_user_account', params: {'user_id': user.id});
+
+      // Déconnecte l'utilisateur après suppression
+      await client.auth.signOut();
+    } catch (error) {
+      throw "Erreur lors de la suppression du compte : $error";
+    }
+  }
+
 }
