@@ -25,6 +25,7 @@
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
 - Filtre a configurer.✅
+- Filtre bug date
 
 ## Calendar
 
@@ -41,7 +42,7 @@
 - Scanner a configurer.✅
 - Ajouter un bouton pour scanner.✅
 - Faire le lien api image.✅
-- faire le lien maladie taches.
+- faire le lien maladie taches.✅
 - afficher scan recent.✅
 
 ## Compte
