@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/leafguard_api_service.dart';
 import '../../../services/scan_service.dart';
+import '../../../services/tasks_service.dart';
 
 class ScanResultDialog {
   static Future<void> show(
@@ -181,19 +182,23 @@ class ScanResultDialog {
                               : "Ajouter aux favoris",
                         ),
                         ElevatedButton.icon(
-                          onPressed: () {
-                            debugPrint("Tâche ajoutée au calendrier !");
+                          onPressed: () async {
+                            final tasksService = TasksService(Supabase.instance.client);
+                            try {
+                              await tasksService.addTasksForDisease(maladie);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Tâches ajoutées au calendrier !"))
+                              );
+                            } catch (e) {
+                              debugPrint("Erreur lors de l'ajout des tâches : $e");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Erreur : ${e.toString()}"))
+                              );
+                            }
                           },
-                          icon: const Icon(Icons.calendar_today,
-                              color: Colors.white),
-                          label: const Text("Ajouter au calendrier"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
+                          icon: Icon(Icons.calendar_today, color: Colors.white),
+                          label: Text("Ajouter au calendrier"),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                         ),
                       ],
                     )

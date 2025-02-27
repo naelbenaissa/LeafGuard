@@ -5,6 +5,51 @@ class TasksService {
 
   TasksService(this.supabase);
 
+  Future<void> addTasksForDisease(String diseaseName) async {
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception("Utilisateur non authentifié.");
+    }
+    final userId = user.id;
+
+    final diseaseResponse = await supabase
+        .from('diseases')
+        .select('id')
+        .eq('disease_name', diseaseName)
+        .maybeSingle();
+
+    if (diseaseResponse == null) {
+      throw Exception("Maladie non trouvée dans la base.");
+    }
+    final diseaseId = diseaseResponse['id'];
+
+    final taskLinks = await supabase
+        .from('disease_tasks')
+        .select('task_id')
+        .eq('disease_id', diseaseId);
+
+    if (taskLinks.isEmpty) {
+      throw Exception("Aucune tâche associée à cette maladie.");
+    }
+
+    final taskIds = taskLinks.map((e) => e['task_id']).toList();
+
+    final tasks = await supabase
+        .from('ia_tasks')
+        .select('*')
+        .filter('id', 'in', taskIds);
+
+    for (var task in tasks) {
+      await supabase.from('tasks').insert({
+        'user_id': userId,
+        'title': task['title'],
+        'description': task['description'],
+        'due_date': DateTime.now().add(Duration(days: task['jours'])).toIso8601String(),
+        'priority': task['priority'],
+      });
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetchTasks(String? userId) async {
     if (userId == null) return [];
 
