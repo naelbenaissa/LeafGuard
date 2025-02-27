@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ui_leafguard/theme/theme.dart';
+import 'package:ui_leafguard/theme/theme_provider.dart';
 import 'utils/routes.dart';
 
 void main() async {
@@ -14,7 +17,12 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final bool onboardingComplete = prefs.getBool('onboarding_complete') ?? false;
 
-  runApp(MyApp(showOnboarding: !onboardingComplete));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: MyApp(showOnboarding: !onboardingComplete),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,9 +32,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: Routes.routerConfiguration(showOnboarding: showOnboarding),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp.router(
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          debugShowCheckedModeBanner: false,
+          routerConfig: Routes.routerConfiguration(showOnboarding: showOnboarding),
+        );
+      },
     );
   }
 }

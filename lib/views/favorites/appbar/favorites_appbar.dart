@@ -16,7 +16,7 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
       child: Stack(
         children: [
           AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             elevation: 0,
           ),
           Positioned(

@@ -24,6 +24,7 @@ dependencies:
   image_picker: ^1.1.2
   introduction_screen: ^3.1.17
   cached_network_image: ^3.4.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

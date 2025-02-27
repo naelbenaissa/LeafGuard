@@ -26,12 +26,15 @@ class CustomBottomBar extends StatelessWidget {
     int selectedIndex = _getSelectedIndex(context);
     final user = Supabase.instance.client.auth.currentUser;
     final bool isAuthenticated = user != null;
+    final backgroundColor = Theme.of(context).bottomNavigationBarTheme.backgroundColor;
+    final iconColor = Theme.of(context).bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
+    final selectedColor = Theme.of(context).bottomNavigationBarTheme.selectedItemColor ?? Colors.green;
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
         BottomAppBar(
-          color: Colors.white,
+          color: backgroundColor,
           elevation: 3,
           shape: const CircularNotchedRectangle(),
           notchMargin: 10,
@@ -41,22 +44,22 @@ class CustomBottomBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: Icon(Icons.home, color: selectedIndex == 0 ? Colors.green : Colors.grey),
+                  icon: Icon(Icons.home, color: selectedIndex == 0 ? selectedColor : iconColor),
                   onPressed: () => context.go('/'),
                 ),
                 if (isAuthenticated)
                   IconButton(
-                    icon: Icon(Icons.calendar_month, color: selectedIndex == 1 ? Colors.green : Colors.grey),
+                    icon: Icon(Icons.calendar_month, color: selectedIndex == 1 ? selectedColor : iconColor),
                     onPressed: () => context.go('/calendar'),
                   ),
                 const SizedBox(width: 50),
                 if (isAuthenticated)
                   IconButton(
-                    icon: Icon(Icons.favorite, color: selectedIndex == 2 ? Colors.green : Colors.grey),
+                    icon: Icon(Icons.favorite, color: selectedIndex == 2 ? selectedColor : iconColor),
                     onPressed: () => context.go('/favorites'),
                   ),
                 IconButton(
-                  icon: Icon(Icons.menu_book, color: selectedIndex == 3 ? Colors.green : Colors.grey),
+                  icon: Icon(Icons.menu_book, color: selectedIndex == 3 ? selectedColor : iconColor),
                   onPressed: () => context.go('/plantsguide'),
                 ),
               ],
@@ -68,7 +71,7 @@ class CustomBottomBar extends StatelessWidget {
           left: MediaQuery.of(context).size.width / 2 - 30,
           child: FloatingActionButton(
             onPressed: () => context.go('/camera'),
-            backgroundColor: Colors.green,
+            backgroundColor: selectedColor,
             shape: const CircleBorder(),
             child: const Icon(Icons.camera_alt, color: Colors.white),
           ),
