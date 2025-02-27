@@ -39,3 +39,9 @@ flutter:
     - assets/img/plantes/young_banana.png
     - assets/img/plantes/dahlia.png
     - assets/img/storyboard_pickImage.jpg
+
+    - assets/img/tutoriel/home.png
+    - assets/img/tutoriel/task.png
+    - assets/img/tutoriel/diagnostic.png
+    - assets/img/tutoriel/guide.png
+
