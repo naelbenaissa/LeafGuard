@@ -105,6 +105,8 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CameraAppBar(onOptionSelected: (option) {
@@ -119,19 +121,19 @@ class _CameraPageState extends State<CameraPage> {
             flex: 1,
             child: Container(
               width: double.infinity,
-              color: Colors.green[100],
+              color: isDarkMode ? Colors.black : Colors.green[100],
               child: _selectedOption == "Caméra"
                   ? CameraPreviewWidget(
-                      controller: _controller,
-                      selectedImage: _selectedImage,
-                      takePicture: takePicture,
-                      clearImage: () => setState(() => _selectedImage = null),
-                    )
+                controller: _controller,
+                selectedImage: _selectedImage,
+                takePicture: takePicture,
+                clearImage: () => setState(() => _selectedImage = null),
+              )
                   : ImageSelectionWidget(
-                      selectedImage: _selectedImage,
-                      pickImage: pickImage,
-                      clearImage: () => setState(() => _selectedImage = null),
-                    ),
+                selectedImage: _selectedImage,
+                pickImage: pickImage,
+                clearImage: () => setState(() => _selectedImage = null),
+              ),
             ),
           ),
           BottomMenuWidget(
@@ -145,9 +147,12 @@ class _CameraPageState extends State<CameraPage> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: RecentScansGrid(
-              recentScans: _recentScans,
-              onScanTap: scanDisease,
+            child: Container(
+              color: isDarkMode ? Colors.black : Colors.white,
+              child: RecentScansGrid(
+                recentScans: _recentScans,
+                onScanTap: scanDisease,
+              ),
             ),
           ),
         ],
