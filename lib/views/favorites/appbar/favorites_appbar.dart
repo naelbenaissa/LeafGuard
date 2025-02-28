@@ -11,6 +11,10 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[900]! // Gris foncé en mode sombre
+        : Colors.white; // Blanc en mode clair
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: Stack(
@@ -25,7 +29,7 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: backgroundColor,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -41,20 +45,23 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
                   const ProfileButton(),
                   const Spacer(),
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
+                      color: backgroundColor,
+                      boxShadow: const [
                         BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 1),
+                          color: Colors.black12,
+                          blurRadius: 5,
+                          spreadRadius: 1,
+                        ),
                       ],
                     ),
                     child: IconButton(
                       onPressed: onFilterPressed,
                       icon: const Icon(Icons.filter_list),
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white // Icône blanche en mode sombre
+                          : Colors.black, // Icône noire en mode clair
                     ),
                   ),
                 ],

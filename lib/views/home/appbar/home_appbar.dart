@@ -13,8 +13,11 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+
+    final backgroundColor = isDarkMode ? Colors.grey[800]! : Colors.white;
+    final buttonBackgroundColor = isDarkMode ? Colors.grey[700]! : Colors.grey.shade100;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final iconColor = isDarkMode ? Colors.grey[200]! : Colors.grey[800]!;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
@@ -42,20 +45,26 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   const ProfileButton(),
                   const Spacer(),
-                  ToggleButtons(
-                    isSelected: [!isDarkMode, isDarkMode],
-                    onPressed: (int index) {
-                      themeProvider.toggleTheme();
-                    },
-                    selectedColor: Colors.white,
-                    color: textColor,
-                    fillColor: Colors.grey, // Rempli le bouton actif
-                    borderRadius: BorderRadius.circular(30),
-                    constraints: const BoxConstraints(minWidth: 50, minHeight: 40),
-                    children: [
-                      Icon(Icons.light_mode, color: isDarkMode ? textColor : Colors.white),
-                      Icon(Icons.dark_mode, color: isDarkMode ? Colors.white : textColor),
-                    ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: buttonBackgroundColor,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: ToggleButtons(
+                      isSelected: [!isDarkMode, isDarkMode],
+                      onPressed: (int index) {
+                        themeProvider.toggleTheme();
+                      },
+                      selectedColor: Colors.white,
+                      color: textColor,
+                      fillColor: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+                      borderRadius: BorderRadius.circular(30),
+                      constraints: const BoxConstraints(minWidth: 50, minHeight: 40),
+                      children: [
+                        Icon(Icons.light_mode, color: isDarkMode ? iconColor : Colors.white),
+                        Icon(Icons.dark_mode, color: isDarkMode ? Colors.white : iconColor),
+                      ],
+                    ),
                   ),
                 ],
               ),

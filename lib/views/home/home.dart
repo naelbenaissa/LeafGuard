@@ -56,15 +56,15 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double appBarHeight =
-        MediaQuery.of(context).padding.top + kToolbarHeight + 23;
+    final theme = Theme.of(context);
+    double appBarHeight = MediaQuery.of(context).padding.top + kToolbarHeight + 23;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: const HomeAppBar(),
-        body: SingleChildScrollView(
+    return Builder(
+      builder: (context) {
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: const HomeAppBar(),
+          body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -93,8 +93,8 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                       Tab(text: "Mes Plantes"),
                       Tab(text: "Mes Tâches"),
                     ],
-                    labelColor: Colors.green,
-                    unselectedLabelColor: Colors.grey,
+                    labelColor: theme.primaryColor, // Utilisation du thème
+                    unselectedLabelColor: theme.hintColor,
                     indicatorWeight: 0,
                     dividerHeight: 0,
                     indicator: DotIndicator(),
@@ -114,8 +114,10 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-        bottomNavigationBar: const CustomBottomBar(),
-      ),
+          bottomNavigationBar: const CustomBottomBar(),
+          backgroundColor: theme.scaffoldBackgroundColor, // Applique le fond selon le thème
+        );
+      },
     );
   }
 }

@@ -6,6 +6,12 @@ class AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black54 : Colors.white;
+    final foregroundColor = isDarkMode ? Colors.white : Colors.black;
+    final buttonBackground = isDarkMode ? Colors.grey[800] : Colors.white;
+    final iconBackground = isDarkMode ? Colors.grey[700] : Colors.grey[200];
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: Padding(
@@ -16,8 +22,8 @@ class AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
             ElevatedButton(
               onPressed: () => context.go("/"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                backgroundColor: buttonBackground,
+                foregroundColor: foregroundColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -30,27 +36,30 @@ class AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey[200],
+                      color: iconBackground,
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.black, size: 18),
+                    child: Icon(Icons.arrow_back, color: foregroundColor, size: 18),
                   ),
                   const SizedBox(width: 8),
-                  const Text("Accueil", style: TextStyle(fontSize: 18),),
+                  Text("Accueil", style: TextStyle(fontSize: 18, color: foregroundColor)),
                 ],
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: buttonBackground,
                 boxShadow: [
-                  BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+                  BoxShadow(
+                    color: isDarkMode ? Colors.black45 : Colors.black12,
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                  ),
                 ],
               ),
               child: IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.more_vert),
-                color: Colors.black,
+                icon: Icon(Icons.more_vert, color: foregroundColor),
               ),
             ),
           ],

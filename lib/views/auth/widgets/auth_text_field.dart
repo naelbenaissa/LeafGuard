@@ -18,15 +18,19 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       readOnly: readOnly,
+      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         filled: true,
-        fillColor: Colors.grey[200],
+        fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
         suffixIcon: suffixIcon,
       ),
     );

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../bar/widgets/profile_button.dart';
 import '../widgets/dialog/show_notifications_dialog.dart';
 
-class TasksCalendarAppBar extends StatefulWidget
-    implements PreferredSizeWidget {
+class TasksCalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   const TasksCalendarAppBar({super.key});
 
   @override
@@ -16,6 +15,10 @@ class TasksCalendarAppBar extends StatefulWidget
 class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
   @override
   Widget build(BuildContext context) {
+    final Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[900]! // Gris foncé en mode sombre
+        : Colors.white; // Blanc en mode clair
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: Stack(
@@ -30,7 +33,7 @@ class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: backgroundColor,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -46,20 +49,23 @@ class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
                   const ProfileButton(),
                   const Spacer(),
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
+                      color: backgroundColor,
+                      boxShadow: const [
                         BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 1),
+                          color: Colors.black12,
+                          blurRadius: 5,
+                          spreadRadius: 1,
+                        ),
                       ],
                     ),
                     child: IconButton(
                       onPressed: () => showNotificationDialog(context),
                       icon: const Icon(Icons.notifications),
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white // Icône blanche en mode sombre
+                          : Colors.black, // Icône noire en mode clair
                     ),
                   ),
                 ],

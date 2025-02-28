@@ -42,7 +42,14 @@ class ChangeProfilePictureSection extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.person, color: isExpanded ? Colors.green : Colors.black),
+          leading: Icon(
+            Icons.person,
+            color: isExpanded
+                ? Colors.green
+                : Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           title: const Text("Changer la photo de profil"),
           onTap: onTap,
         ),

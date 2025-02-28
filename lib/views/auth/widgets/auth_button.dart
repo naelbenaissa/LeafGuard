@@ -12,16 +12,19 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
+        backgroundColor: isDarkMode ? Colors.teal : Colors.green,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(vertical: 15),
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 18, color: Colors.white),
+        style: TextStyle(fontSize: 18, color: isDarkMode ? Colors.black : Colors.white),
       ),
     );
   }

@@ -8,6 +8,9 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: Padding(
@@ -18,8 +21,8 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
             ElevatedButton(
               onPressed: () => context.go("/"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                foregroundColor: isDarkMode ? Colors.white : Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -32,29 +35,40 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey[200],
+                      color: isDarkMode ? Colors.grey[700] : Colors.grey[200],
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.black, size: 18),
+                    child: Icon(Icons.arrow_back, color: isDarkMode ? Colors.white : Colors.black, size: 18),
                   ),
                   const SizedBox(width: 8),
-                  const Text("Accueil", style: TextStyle(fontSize: 18),),
+                  Text("Accueil", style: TextStyle(fontSize: 18, color: isDarkMode ? Colors.white : Colors.black)),
                 ],
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: isDarkMode ? Colors.grey[800] : Colors.white,
                 boxShadow: [
-                  BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
+                  BoxShadow(
+                    color: isDarkMode ? Colors.black54 : Colors.black12,
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                  ),
                 ],
               ),
               child: PopupMenuButton<String>(
                 onSelected: onOptionSelected,
-                icon: const Icon(Icons.more_vert, color: Colors.black),
+                icon: Icon(Icons.more_vert, color: isDarkMode ? Colors.white : Colors.black),
+                color: isDarkMode ? Colors.grey[800] : Colors.white,
                 itemBuilder: (context) => [
-                  const PopupMenuItem(value: "Caméra", child: Text("Caméra")),
-                  const PopupMenuItem(value: "Ajouter une image", child: Text("Ajouter une image")),
+                  PopupMenuItem(
+                    value: "Caméra",
+                    child: Text("Caméra", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+                  ),
+                  PopupMenuItem(
+                    value: "Ajouter une image",
+                    child: Text("Ajouter une image", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+                  ),
                 ],
               ),
             ),

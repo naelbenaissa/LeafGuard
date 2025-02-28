@@ -11,6 +11,12 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor = isDarkMode ? Colors.grey[900]! : Colors.white;
+    final Color textFieldColor = isDarkMode ? Colors.grey[800]! : Colors.grey.shade100;
+    final Color hintTextColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
+    final Color iconColor = isDarkMode ? Colors.white : Colors.black;
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: Stack(
@@ -25,7 +31,7 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
             right: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: backgroundColor,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -43,14 +49,14 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Expanded(
                     child: TextField(
                       onChanged: onSearchChanged,
+                      style: TextStyle(color: iconColor),
                       decoration: InputDecoration(
                         hintText: "Rechercher une plante...",
-                        prefixIcon:
-                            const Icon(Icons.search, color: Colors.grey),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 10),
+                        hintStyle: TextStyle(color: hintTextColor),
+                        prefixIcon: Icon(Icons.search, color: hintTextColor),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: textFieldColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: BorderSide.none,

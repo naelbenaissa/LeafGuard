@@ -23,8 +23,13 @@ class CreateTask {
     showDialog(
       context: context,
       builder: (context) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final textColor = theme.textTheme.bodyLarge!.color;
+        final fieldColor = colorScheme.surfaceVariant;
+
         return Dialog(
-          backgroundColor: Colors.white,
+          backgroundColor: colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -41,7 +46,7 @@ class CreateTask {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green[700],
+                      color: textColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -49,13 +54,15 @@ class CreateTask {
                   TextField(
                     decoration: InputDecoration(
                       labelText: "Titre",
+                      labelStyle: TextStyle(color: textColor),
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: fieldColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    style: TextStyle(color: textColor),
                     onChanged: (value) => title = value,
                   ),
                   const SizedBox(height: 10),
@@ -63,13 +70,15 @@ class CreateTask {
                     maxLines: 3,
                     decoration: InputDecoration(
                       labelText: "Description",
+                      labelStyle: TextStyle(color: textColor),
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: fieldColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    style: TextStyle(color: textColor),
                     onChanged: (value) => description = value,
                   ),
                   const SizedBox(height: 10),
@@ -77,11 +86,10 @@ class CreateTask {
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                       "Date : ${DateFormat.yMMMMd('fr_CA').format(selectedDate)}",
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16, color: textColor),
                     ),
                     trailing: IconButton(
-                      icon:
-                          Icon(Icons.calendar_today, color: Colors.green[700]),
+                      icon: Icon(Icons.calendar_today, color: textColor),
                       onPressed: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
@@ -100,13 +108,16 @@ class CreateTask {
                     value: priority,
                     decoration: InputDecoration(
                       labelText: "Priorité",
+                      labelStyle: TextStyle(color: textColor),
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: fieldColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    dropdownColor: fieldColor,
+                    style: TextStyle(color: textColor),
                     items: [
                       {"value": "low", "label": "Basse"},
                       {"value": "medium", "label": "Moyenne"},
@@ -114,7 +125,7 @@ class CreateTask {
                     ].map((item) {
                       return DropdownMenuItem<String>(
                         value: item["value"],
-                        child: Text(item["label"]!),
+                        child: Text(item["label"]!, style: TextStyle(color: textColor)),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -130,8 +141,8 @@ class CreateTask {
                       OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.green[700],
-                          side: BorderSide(color: Colors.green[700]!),
+                          foregroundColor: textColor,
+                          side: BorderSide(color: textColor!),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -142,31 +153,14 @@ class CreateTask {
                         onPressed: () async {
                           if (title.isEmpty || description.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Veuillez remplir tous les champs")),
+                              const SnackBar(content: Text("Veuillez remplir tous les champs")),
                             );
                             return;
                           }
-
-                          final user =
-                              Supabase.instance.client.auth.currentUser;
-                          if (user == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Utilisateur non connecté")),
-                            );
-                            return;
-                          }
-
                           try {
-                            final taskService =
-                                TasksService(Supabase.instance.client);
-                            await taskService.addTask(user.id, title,
-                                description, selectedDate, priority);
-
+                            final taskService = TasksService(Supabase.instance.client);
+                            await taskService.addTask(user.id, title, description, selectedDate, priority);
                             refreshTasks();
-
                             Navigator.of(context).pop();
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -175,13 +169,12 @@ class CreateTask {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[700],
+                          backgroundColor: fieldColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text("Ajouter",
-                            style: TextStyle(color: Colors.white)),
+                        child: Text("Ajouter", style: TextStyle(color: textColor)),
                       ),
                     ],
                   ),

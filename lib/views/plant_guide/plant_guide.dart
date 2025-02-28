@@ -177,8 +177,11 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
                                         Text(
                                           "ID: ${plant['id'] ?? 'Inconnu'}",
                                           style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey[800]),
+                                            fontSize: 14,
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                                ? Colors.grey[400]
+                                                : Colors.grey[800],
+                                          ),
                                         ),
                                       ],
                                     ),

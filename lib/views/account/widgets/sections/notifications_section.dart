@@ -13,7 +13,14 @@ class NotificationsSection extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.notifications, color: isExpanded ? Colors.green : Colors.black),
+          leading: Icon(
+            Icons.notifications,
+            color: isExpanded
+                ? Colors.green
+                : Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           title: const Text("Gérer les notifications"),
           onTap: onTap,
         ),

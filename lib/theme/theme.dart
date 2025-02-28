@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Couleurs principales
   static const Color primaryColor = Colors.green;
   static const Color accentColor = Colors.greenAccent;
   static const Color backgroundColorLight = Colors.white;
@@ -10,7 +9,6 @@ class AppTheme {
   static const Color textColorDark = Colors.white;
   static const Color greyColor = Colors.grey;
 
-  // Thème clair
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColorLight,
@@ -19,9 +17,10 @@ class AppTheme {
     textTheme: _textTheme(textColorLight),
     cardTheme: _cardTheme(Colors.white),
     buttonTheme: _buttonTheme(primaryColor),
+    tabBarTheme: _tabBarTheme(textColorLight, primaryColor),
+    elevatedButtonTheme: _elevatedButtonTheme(primaryColor),
   );
 
-  // Thème sombre
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColorDark,
@@ -29,9 +28,10 @@ class AppTheme {
     bottomNavigationBarTheme: _bottomNavBarTheme(backgroundColorDark, textColorDark),
     textTheme: _textTheme(textColorDark),
     cardTheme: _cardTheme(Colors.grey[900]!),
+    tabBarTheme: _tabBarTheme(textColorDark, primaryColor),
+    elevatedButtonTheme: _elevatedButtonTheme(primaryColor),
   );
 
-  // 🎨 Thème AppBar
   static AppBarTheme _appBarTheme(Color bgColor, Color iconColor) {
     return AppBarTheme(
       backgroundColor: bgColor,
@@ -40,7 +40,6 @@ class AppTheme {
     );
   }
 
-  // 🎨 Thème BottomNavigationBar
   static BottomNavigationBarThemeData _bottomNavBarTheme(Color bgColor, Color iconColor) {
     return BottomNavigationBarThemeData(
       backgroundColor: bgColor,
@@ -51,16 +50,16 @@ class AppTheme {
     );
   }
 
-  // 🎨 Thème Textes
   static TextTheme _textTheme(Color textColor) {
     return TextTheme(
       bodyLarge: TextStyle(fontSize: 18, color: textColor),
       bodyMedium: TextStyle(fontSize: 16, color: textColor),
       bodySmall: TextStyle(fontSize: 14, color: greyColor),
+      headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: textColor),
+      headlineMedium: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: primaryColor),
     );
   }
 
-  // 🎨 Thème Cartes
   static CardTheme _cardTheme(Color color) {
     return CardTheme(
       elevation: 4,
@@ -70,11 +69,35 @@ class AppTheme {
     );
   }
 
-  // 🎨 Thème Boutons
   static ButtonThemeData _buttonTheme(Color color) {
     return ButtonThemeData(
       buttonColor: color,
       textTheme: ButtonTextTheme.primary,
     );
   }
+
+  static TabBarTheme _tabBarTheme(Color textColor, Color selectedColor) {
+    return TabBarTheme(
+      labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      labelColor: selectedColor,
+      unselectedLabelColor: greyColor,
+      indicator: BoxDecoration(
+        border: Border(bottom: BorderSide(color: selectedColor, width: 3)),
+      ),
+    );
+  }
+
+  static ElevatedButtonThemeData _elevatedButtonTheme(Color color) {
+    return ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        elevation: 2,
+        padding: const EdgeInsets.symmetric(vertical: 14.0),
+      ),
+    );
+  }
+
+
 }

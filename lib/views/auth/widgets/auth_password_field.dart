@@ -19,14 +19,18 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return TextField(
       controller: widget.controller,
       obscureText: !_isPasswordVisible,
+      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
       decoration: InputDecoration(
         labelText: widget.label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         filled: true,
-        fillColor: Colors.grey[200],
+        fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
         suffixIcon: GestureDetector(
           onLongPress: () {
             setState(() {
@@ -38,7 +42,10 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
               _isPasswordVisible = false;
             });
           },
-          child: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+          child: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
         ),
       ),
     );

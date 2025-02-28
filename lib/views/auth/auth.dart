@@ -18,9 +18,6 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   bool isLogin = true;
-  bool isPasswordVisible = false;
-  bool isConfirmPasswordVisible = false;
-
   final SupabaseClient supabase = Supabase.instance.client;
   final UserService userService = UserService();
 
@@ -39,12 +36,10 @@ class _AuthPageState extends State<AuthPage> {
           _showSnackbar("Les mots de passe ne correspondent pas.");
           return;
         }
-
         if (nameController.text.isEmpty || surnameController.text.isEmpty) {
           _showSnackbar("Le nom et le prénom sont obligatoires.");
           return;
         }
-
         if (birthdateController.text.isNotEmpty) {
           DateTime birthDate = DateFormat("dd/MM/yyyy").parse(birthdateController.text);
           if (_calculateAge(birthDate) < 16) {
@@ -52,12 +47,10 @@ class _AuthPageState extends State<AuthPage> {
             return;
           }
         }
-
         final response = await supabase.auth.signUp(
           email: emailController.text.trim(),
           password: passwordController.text,
         );
-
         if (response.user != null) {
           await userService.addUserData(
             response.user!.id,
@@ -74,7 +67,6 @@ class _AuthPageState extends State<AuthPage> {
           email: emailController.text.trim(),
           password: passwordController.text,
         );
-
         if (response.session != null && mounted) {
           context.go('/');
         }
@@ -127,8 +119,12 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textColor = theme.textTheme.bodyLarge!.color;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -137,9 +133,11 @@ class _AuthPageState extends State<AuthPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              Text(isLogin ? "Content de te revoir !" : "Créer un compte",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              Text(
+                isLogin ? "Content de te revoir !" : "Créer un compte",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textColor),
+              ),
               const SizedBox(height: 20),
               AuthTextField(controller: emailController, label: "Email", keyboardType: TextInputType.emailAddress),
               if (!isLogin) ...[
@@ -154,11 +152,9 @@ class _AuthPageState extends State<AuthPage> {
               ],
               const SizedBox(height: 10),
               AuthPasswordField(controller: passwordController, label: "Mot de passe"),
-
               if (!isLogin) ...[
                 const SizedBox(height: 10),
                 AuthPasswordField(controller: confirmPasswordController, label: "Confirmez le mot de passe"),
-
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -169,7 +165,7 @@ class _AuthPageState extends State<AuthPage> {
                         controller: birthdateController,
                         label: "Date de naissance (optionnel)",
                         readOnly: true,
-                        suffixIcon: IconButton(icon: const Icon(Icons.calendar_today), onPressed: () => _selectDate(context)),
+                        suffixIcon: IconButton(icon: Icon(Icons.calendar_today, color: textColor), onPressed: () => _selectDate(context)),
                       ),
                     ),
                   ],

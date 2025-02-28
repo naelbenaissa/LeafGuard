@@ -128,10 +128,10 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(
                                   entry.key,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: Theme.of(context).textTheme.bodyLarge!.color, // ✅ Corrigé
                                   ),
                                 ),
                               ),

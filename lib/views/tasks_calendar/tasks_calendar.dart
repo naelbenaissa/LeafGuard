@@ -121,10 +121,11 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 children: [
                   Text(
                     formattedDate,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyLarge!.color,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_circle,

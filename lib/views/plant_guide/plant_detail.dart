@@ -40,8 +40,7 @@ class _DetailPageState extends State<DetailPage> {
   /// Vérifie si la plante est en favori
   Future<void> _checkIfFavorite() async {
     if (userId == null) return;
-    bool favorite =
-    await favoriteService.isFavorite(userId!, widget.plant['id']);
+    bool favorite = await favoriteService.isFavorite(userId!, widget.plant['id']);
     setState(() {
       isFavorite = favorite;
     });
@@ -51,12 +50,9 @@ class _DetailPageState extends State<DetailPage> {
   Future<void> _toggleFavorite() async {
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Vous devez être connecté pour ajouter aux favoris.",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Text("Vous devez être connecté pour ajouter aux favoris."),
+          backgroundColor: Colors.red.shade700,
         ),
       );
       return;
@@ -74,9 +70,16 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final subtitleColor = isDarkMode ? Colors.grey[400] ?? Colors.grey : Colors.grey[700]!;
+    final cardColor = isDarkMode ? Colors.grey[900] ?? Colors.black : Colors.grey[100]!;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const PlantDetailAppbar(),
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,9 +99,8 @@ class _DetailPageState extends State<DetailPage> {
                     errorBuilder: (context, error, stackTrace) => Container(
                       height: 350,
                       width: double.infinity,
-                      color: Colors.green[200],
-                      child: const Icon(Icons.local_florist,
-                          size: 100, color: Colors.green),
+                      color: isDarkMode ? Colors.grey[800] : Colors.green[200],
+                      child: Icon(Icons.local_florist, size: 100, color: isDarkMode ? Colors.green[300] : Colors.green),
                     ),
                   ),
                 ),
@@ -109,7 +111,7 @@ class _DetailPageState extends State<DetailPage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.4),
+                        Colors.black.withOpacity(0.6),
                         Colors.transparent,
                       ],
                     ),
@@ -128,23 +130,19 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       Text(
                         widget.plant['common_name'] ?? "Nom inconnu",
-                        style: const TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textColor),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         widget.plant['scientific_name'] ?? "Nom scientifique inconnu",
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey),
+                        style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: subtitleColor),
                       ),
                     ],
                   ),
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.grey,
+                      color: isFavorite ? Colors.red : subtitleColor,
                       size: 32,
                     ),
                     onPressed: _toggleFavorite,
@@ -157,22 +155,14 @@ class _DetailPageState extends State<DetailPage> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  buildInfoCard(Icons.account_tree, "Famille",
-                      widget.plant['family'] ?? 'Non spécifiée'),
-                  buildInfoCard(Icons.grass, "Genre",
-                      widget.plant['genus'] ?? 'Non spécifié'),
-                  buildInfoCard(Icons.leaderboard, "Rang",
-                      widget.plant['rank'] ?? 'Inconnu'),
-                  buildInfoCard(Icons.verified, "Statut",
-                      widget.plant['status'] ?? 'Non précisé'),
-                  buildInfoCard(Icons.history, "Année de découverte",
-                      widget.plant['year']?.toString() ?? 'Inconnue'),
-                  buildInfoCard(Icons.person, "Auteur",
-                      widget.plant['author'] ?? 'Non spécifié'),
-                  buildInfoCard(Icons.menu_book, "Bibliographie",
-                      widget.plant['bibliography'] ?? 'Non disponible'),
-                  buildInfoCard(Icons.map, "Distribution",
-                      widget.plant['distribution'] ?? 'Non disponible'),
+                  buildInfoCard(Icons.account_tree, "Famille", widget.plant['family'] ?? 'Non spécifiée', textColor, cardColor),
+                  buildInfoCard(Icons.grass, "Genre", widget.plant['genus'] ?? 'Non spécifié', textColor, cardColor),
+                  buildInfoCard(Icons.leaderboard, "Rang", widget.plant['rank'] ?? 'Inconnu', textColor, cardColor),
+                  buildInfoCard(Icons.verified, "Statut", widget.plant['status'] ?? 'Non précisé', textColor, cardColor),
+                  buildInfoCard(Icons.history, "Année de découverte", widget.plant['year']?.toString() ?? 'Inconnue', textColor, cardColor),
+                  buildInfoCard(Icons.person, "Auteur", widget.plant['author'] ?? 'Non spécifié', textColor, cardColor),
+                  buildInfoCard(Icons.menu_book, "Bibliographie", widget.plant['bibliography'] ?? 'Non disponible', textColor, cardColor),
+                  buildInfoCard(Icons.map, "Distribution", widget.plant['distribution'] ?? 'Non disponible', textColor, cardColor),
                 ],
               ),
             ),

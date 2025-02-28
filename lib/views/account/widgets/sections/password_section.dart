@@ -67,11 +67,12 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
     }
   }
 
-  Widget _buildPasswordField(
-      {required TextEditingController controller,
-        required String label,
-        required bool isPasswordVisible,
-        required Function(bool) onVisibilityChanged}) {
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required bool isPasswordVisible,
+    required Function(bool) onVisibilityChanged,
+  }) {
     return TextField(
       controller: controller,
       obscureText: !isPasswordVisible,
@@ -91,7 +92,14 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.lock, color: widget.isExpanded ? Colors.green : Colors.black),
+          leading: Icon(
+            Icons.lock,
+            color: widget.isExpanded
+                ? Colors.green
+                : Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           title: const Text("Changer le mot de passe"),
           onTap: widget.onTap,
         ),
