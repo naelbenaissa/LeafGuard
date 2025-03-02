@@ -48,7 +48,7 @@ Widget mesPlantesSection() {
       ),
       Expanded(
         child: GridView.builder(
-          padding: EdgeInsets.zero, // Supprime tout padding autour du GridView
+          padding: EdgeInsets.zero,
           physics: const BouncingScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
