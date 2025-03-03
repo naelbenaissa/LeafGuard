@@ -22,7 +22,14 @@ class ThemeProvider extends ChangeNotifier {
   void toggleTheme() async {
     final prefs = await SharedPreferences.getInstance();
     _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+
     await prefs.setBool('isDarkMode', _themeMode == ThemeMode.dark);
+
+    if (!_onboardingComplete) {
+      _onboardingComplete = true;
+      await prefs.setBool('onboarding_complete', true);
+    }
+
     notifyListeners();
   }
 
