@@ -26,7 +26,7 @@
 - favoris accès a detail plante.
 - Mes scans a configurer.✅
 - Filtre a configurer.✅
-- Filtre bug date✅
+- Filtre bug date
 
 ## Calendar
 
