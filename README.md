@@ -4,6 +4,7 @@
 - Notification a configurer.
 - Problème au niveau de la suppression des images tâches sur storage supabase.
 - Tutoriel de début a faire.✅
+- Bug theme, réparer
 
 ## Home
 
