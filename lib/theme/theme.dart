@@ -54,9 +54,9 @@ class AppTheme {
     return TextTheme(
       bodyLarge: TextStyle(fontSize: 18, color: textColor),
       bodyMedium: TextStyle(fontSize: 16, color: textColor),
-      bodySmall: TextStyle(fontSize: 14, color: greyColor),
+      bodySmall: const TextStyle(fontSize: 14, color: greyColor),
       headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: textColor),
-      headlineMedium: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: primaryColor),
+      headlineMedium: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: primaryColor),
     );
   }
 

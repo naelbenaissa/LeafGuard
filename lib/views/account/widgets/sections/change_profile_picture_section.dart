@@ -19,7 +19,7 @@ class ChangeProfilePictureSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserService userService = UserService();
 
-    Future<void> _updateProfileImage(String newImageUrl) async {
+    Future<void> updateProfileImage(String newImageUrl) async {
       if (userData == null || userData!["user_id"] == null) {
         return;
       }
@@ -64,7 +64,7 @@ class ChangeProfilePictureSection extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     if (userData?["user_id"] != null && imageUrl.isNotEmpty) {
-                      _updateProfileImage(imageUrl);
+                      updateProfileImage(imageUrl);
                     }
                   },
                   child: Container(

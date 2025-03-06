@@ -26,7 +26,7 @@ class CreateTask {
         final theme = Theme.of(context);
         final colorScheme = theme.colorScheme;
         final textColor = theme.textTheme.bodyLarge!.color;
-        final fieldColor = colorScheme.surfaceVariant;
+        final fieldColor = colorScheme.surfaceContainerHighest;
 
         return Dialog(
           backgroundColor: colorScheme.surface,

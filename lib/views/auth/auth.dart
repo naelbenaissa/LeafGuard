@@ -124,7 +124,7 @@ class _AuthPageState extends State<AuthPage> {
     final textColor = theme.textTheme.bodyLarge!.color;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),

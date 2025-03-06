@@ -187,7 +187,7 @@ class ScanResultDialog {
                             try {
                               await tasksService.addTasksForDisease(maladie);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Tâches ajoutées au calendrier !"))
+                                  const SnackBar(content: Text("Tâches ajoutées au calendrier !"))
                               );
                             } catch (e) {
                               debugPrint("Erreur lors de l'ajout des tâches : $e");
@@ -196,8 +196,8 @@ class ScanResultDialog {
                               );
                             }
                           },
-                          icon: Icon(Icons.calendar_today, color: Colors.white),
-                          label: Text("Ajouter au calendrier"),
+                          icon: const Icon(Icons.calendar_today, color: Colors.white),
+                          label: const Text("Ajouter au calendrier"),
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                         ),
                       ],

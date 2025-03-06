@@ -26,6 +26,7 @@ dependencies:
   cached_network_image: ^3.4.1
   provider: ^6.1.2
 
+  shared_preferences: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

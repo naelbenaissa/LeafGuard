@@ -9,7 +9,7 @@ class DeleteAccountSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserService userService = UserService();
 
-    Future<void> _deleteAccount() async {
+    Future<void> deleteAccount() async {
       bool? confirmDelete = await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -47,7 +47,7 @@ class DeleteAccountSection extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.delete, color: Colors.red),
       title: const Text("Supprimer mon compte"),
-      onTap: _deleteAccount,
+      onTap: deleteAccount,
     );
   }
 }
