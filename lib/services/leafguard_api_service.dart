@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class IaLeafguardService {
-  static const String _predictUrl = "https://ialeafguard-production.up.railway.app/predict/";
+  static const String _predictUrl = "https://fastapi-app-72575665998.us-central1.run.app/predict/";
+  // static const String _predictUrl = "https://ialeafguard-production.up.railway.app/predict/";
 
   /// Envoie une image et retourne la prédiction de l'IA
   Future<Map<String, dynamic>> predictDisease(File imageFile) async {
