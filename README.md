@@ -62,7 +62,7 @@ flutter run
 - ✅ Implemented image scanning and AI analysis feature.
 - ✅ Operational user account and favorites management via Supabase.
 - ✅ Reminder system and calendar in place.
-- 🛠️ Local notifications implementation in progress.
+- ✅ AI hosted on Google Cloud.
 - 🛠️ Searching for a more efficient hosting solution for AI.
 - 🔄 Bug fixes and UX improvements underway.
 
