@@ -67,7 +67,6 @@ flutter run
 - 🔄 Bug fixes and UX improvements underway.
 
 ## Remaining Objectives
-- [ ] Hosting the AI on a more stable solution.
 - [ ] Finalizing local notifications.
 - [ ] Final testing and optimization.
 
