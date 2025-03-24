@@ -33,7 +33,7 @@ LeafGuard is a mobile application designed to assist with plant care by integrat
 - **Flutter** (Dart) - Mobile development framework.
 - **TensorFlow** (Python) - AI model for disease recognition.
 - **Supabase** - Database management and authentication.
-- **Railway** - Temporary hosting for the AI API.
+- **Google Cloud** - Hosting for the AI API.
 - **Flutter Local Notifications** - Local notification management.
 
 ## Installation and Execution
