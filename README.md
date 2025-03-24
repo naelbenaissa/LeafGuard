@@ -63,7 +63,6 @@ flutter run
 - ✅ Operational user account and favorites management via Supabase.
 - ✅ Reminder system and calendar in place.
 - ✅ AI hosted on Google Cloud.
-- 🛠️ Searching for a more efficient hosting solution for AI.
 - 🔄 Bug fixes and UX improvements underway.
 
 ## Remaining Objectives
