@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/scan_service.dart';
-import '../../../widgets/delete_confirmation_dialog.dart';
 
 class MesPlantesSection extends StatefulWidget {
   final String? filter;
@@ -66,29 +65,6 @@ class _MesScansSectionState extends State<MesPlantesSection> {
         });
       }
     });
-  }
-
-  Future<void> _confirmDelete(String scanId, String imageUrl) async {
-    bool confirmDelete = await showDeleteConfirmationDialog(context);
-    if (confirmDelete) {
-      await _deleteScan(scanId, imageUrl);
-    }
-  }
-
-  Future<void> _deleteScan(String scanId, String imageUrl) async {
-    setState(() => isLoading = true);
-    try {
-      await scanService.deleteScan(scanId, imageUrl);
-      await _fetchScans();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Scan supprimé avec succès.")),
-      );
-    } catch (e) {
-      debugPrint("Erreur lors de la suppression du scan : $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Échec de la suppression du scan.")),
-      );
-    }
   }
 
   @override
@@ -165,10 +141,6 @@ class _MesScansSectionState extends State<MesPlantesSection> {
                 "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
                 style: const TextStyle(color: Colors.grey),
               ),
-              // IconButton(
-              //   icon: const Icon(Icons.close, color: Colors.red),
-              //   onPressed: () => _confirmDelete(scan['id'], scan['image_url']),
-              // ),
             ],
           );
         },
