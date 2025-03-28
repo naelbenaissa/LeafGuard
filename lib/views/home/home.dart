@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
 import 'package:ui_leafguard/views/widgets/dot_indicator.dart';
-import 'package:ui_leafguard/views/home/widgets/section/mes_plantes_section.dart';
+import 'package:ui_leafguard/views/home/widgets/section/mes_plantes_section.dart';  // Assurez-vous que le bon fichier est importé
 import 'package:ui_leafguard/views/home/widgets/section/mes_taches_section.dart';
 import 'appbar/home_appbar.dart';
 import '../bar/custom_bottombar.dart';
@@ -52,7 +52,6 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
     _tabController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +104,9 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: TabBarView(
                     controller: _tabController,
-                    children: [
-                      mesPlantesSection(),
-                      const MesTachesSection(),
+                    children: const [
+                      MesPlantesSection(), // Correction ici
+                      MesTachesSection(),
                     ],
                   ),
                 ),
