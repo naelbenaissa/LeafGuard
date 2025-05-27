@@ -23,7 +23,7 @@ void main() {
 
     test('valeur initiale est ThemeMode.light et onboarding false', () async {
       // Attend la fin du chargement asynchrone du constructeur (_loadPreferences)
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Vérifie que le thème par défaut est light
       expect(themeProvider.themeMode, ThemeMode.light);
@@ -34,13 +34,13 @@ void main() {
 
     test('toggleTheme change theme de light à dark et set onboarding', () async {
       // Attend la fin du chargement initial
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Change le thème (toggle) : light -> dark et complète onboarding
       themeProvider.toggleTheme();
 
       // Attend les futures async pour que toggleTheme termine ses opérations
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Vérifie que le thème est bien passé à dark
       expect(themeProvider.themeMode, ThemeMode.dark);
@@ -69,7 +69,7 @@ void main() {
       themeProvider = ThemeProvider();
 
       // Attend le chargement async
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Vérifie que le thème est bien dark et onboarding complété
       expect(themeProvider.themeMode, ThemeMode.dark);
@@ -79,7 +79,7 @@ void main() {
       themeProvider.toggleTheme();
 
       // Attend la fin des opérations async
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Vérifie que le thème est bien passé à light
       expect(themeProvider.themeMode, ThemeMode.light);
