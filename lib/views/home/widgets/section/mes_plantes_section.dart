@@ -4,6 +4,7 @@ import 'package:ui_leafguard/services/scan_service.dart';
 
 class MesPlantesSection extends StatefulWidget {
   final String? filter;
+
   const MesPlantesSection({super.key, this.filter});
 
   @override
@@ -56,11 +57,14 @@ class _MesScansSectionState extends State<MesPlantesSection> {
 
     setState(() {
       if (widget.filter == "Confiance") {
-        scans.sort((a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
+        scans.sort(
+            (a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
       } else if (widget.filter == "Date") {
         scans.sort((a, b) {
-          DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
-          DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+          DateTime dateA =
+              DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+          DateTime dateB =
+              DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
           return dateB.compareTo(dateA);
         });
       }
@@ -77,81 +81,93 @@ class _MesScansSectionState extends State<MesPlantesSection> {
       padding: const EdgeInsets.only(top: 10),
       child: scans.isEmpty
           ? RefreshIndicator(
-        onRefresh: _fetchScans,
-        child: const SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.only(top: 32.0),
-            child: Center(
-              child: Text(
-                "Aucune scan disponible",
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
-        ),
-      )
-          : RefreshIndicator(
-        onRefresh: _fetchScans,
-        child: GridView.builder(
-          padding: EdgeInsets.zero,
-          physics: const BouncingScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16.0,
-            mainAxisSpacing: 16.0,
-            childAspectRatio: 0.8,
-          ),
-          itemCount: scans.length,
-          itemBuilder: (context, index) {
-            final scan = scans[index];
-
-            return Column(
-              children: [
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        scan['image_url'],
-                        width: 160,
-                        height: 160,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.image, size: 50),
-                      ),
+              onRefresh: _fetchScans,
+              child: const SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 32.0),
+                  child: Center(
+                    child: Text(
+                      "Aucune scan disponible",
+                      style: TextStyle(fontSize: 18),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(
-                          value: (scan['confidence'] ?? 0) / 100,
-                          backgroundColor: Colors.grey[300],
-                          color: Colors.green,
-                          strokeWidth: 3,
+                  ),
+                ),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _fetchScans,
+              child: GridView.builder(
+                padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: scans.length,
+                itemBuilder: (context, index) {
+                  final scan = scans[index];
+                  final confidence = (scan['confidence'] ?? 0).toDouble();
+
+                  Color confidenceColor;
+                  if (confidence > 0.7) {
+                    confidenceColor = Colors.green;
+                  } else if (confidence > 0.40) {
+                    confidenceColor = Colors.orange;
+                  } else {
+                    confidenceColor = Colors.red;
+                  }
+                  return Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              scan['image_url'],
+                              width: 160,
+                              height: 160,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.image, size: 50),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                value: confidence,
+                                backgroundColor: Colors.grey[300],
+                                color: confidenceColor,
+                                strokeWidth: 3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        scan['predictions'],
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  scan['predictions'],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),
-                ),
-                Text(
-                  "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                      Text(
+                        "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
     );
   }
 }
