@@ -64,17 +64,26 @@ class TaskCard extends StatelessWidget {
       final taskService = TasksService(Supabase.instance.client);
       await taskService.deleteTask(id);
 
-      refreshTasks();
+      // IMPORTANT : Ne pas appeler refreshTasks tout de suite !
+      // Laisse le Dismissible terminer son animation avant de rebuild.
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (context.mounted) {
+          refreshTasks();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Tâche supprimée")),
-      );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Tâche supprimée")),
+          );
+        }
+      });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur : $e")),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erreur : $e")),
+        );
+      }
     }
   }
+
 
   /// Confirmation avant suppression
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {

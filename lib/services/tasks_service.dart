@@ -94,10 +94,10 @@ class TasksService {
   }
 
   Future<void> deleteTask(String taskId) async {
-    final response = await supabase.from('tasks').delete().match({'id': taskId});
-
-    if (response.error != null) {
-      throw Exception('Erreur lors de la suppression de la tâche: ${response.error!.message}');
+    try {
+      await supabase.from('tasks').delete().match({'id': taskId});
+    } catch (e) {
+      throw Exception('Erreur lors de la suppression de la tâche: $e');
     }
   }
 }
