@@ -12,13 +12,18 @@ class AuthToggleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Text(
-        isLogin
-            ? "Vous n'avez pas de compte ? Inscrivez-vous"
-            : "Vous avez déjà un compte ? Connectez-vous",
-        style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+    return Center(
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Text(
+          isLogin
+              ? "Vous n'avez pas de compte ? Inscrivez-vous"
+              : "Vous avez déjà un compte ? Connectez-vous",
+          style: const TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
