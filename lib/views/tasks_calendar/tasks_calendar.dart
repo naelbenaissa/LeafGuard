@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/tasks_calendar/appbar/tasks_calendar_appbar.dart';
 import 'package:ui_leafguard/views/tasks_calendar/widgets/dialog/create_task_dialog.dart';
+import '../../services/notification_service.dart';
 import '../bar/custom_bottombar.dart';
 import '../widgets/task_card.dart';
 
@@ -32,7 +33,6 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
 
   Future<void> _fetchTasks() async {
     setState(() => _isLoading = true);
-
     final user = supabase.auth.currentUser;
     if (user == null) {
       setState(() => _isLoading = false);
@@ -41,18 +41,26 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
 
     try {
       final response =
-          await supabase.from('tasks').select('*').eq('user_id', user.id);
+      await supabase.from('tasks').select('*').eq('user_id', user.id);
 
       Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
       for (var task in response) {
-        if (task['due_date'] == null) {
-          continue;
-        }
+        if (task['due_date'] == null) continue;
 
         DateTime dueDate = DateTime.parse(task['due_date']).toLocal();
         DateTime normalizedDate =
-            DateTime(dueDate.year, dueDate.month, dueDate.day);
+        DateTime(dueDate.year, dueDate.month, dueDate.day);
         tasksMap.putIfAbsent(normalizedDate, () => []).add(task);
+
+        /// PLANIFICATION DE LA NOTIFICATION
+        if (dueDate.isAfter(DateTime.now())) {
+          await NotificationService().scheduleNotificationForTask(
+            id: task['id'],
+            title: task['title'],
+            body: task['description'] ?? '',
+            date: dueDate,
+          );
+        }
       }
 
       setState(() {
@@ -63,6 +71,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
       setState(() => _isLoading = false);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

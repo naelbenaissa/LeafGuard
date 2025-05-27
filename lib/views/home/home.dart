@@ -1,10 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/home/widgets/animated_slogan.dart';
 import 'package:ui_leafguard/views/widgets/dot_indicator.dart';
-import 'package:ui_leafguard/views/home/widgets/section/mes_plantes_section.dart';  // Assurez-vous que le bon fichier est importé
+import 'package:ui_leafguard/views/home/widgets/section/mes_plantes_section.dart';
 import 'package:ui_leafguard/views/home/widgets/section/mes_taches_section.dart';
 import 'appbar/home_appbar.dart';
 import '../bar/custom_bottombar.dart';
