@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/tasks_service.dart';
+import '../../services/notification_service.dart';  // <-- Ajout import
 
 class TaskCard extends StatelessWidget {
   final String id;
@@ -42,30 +43,33 @@ class TaskCard extends StatelessWidget {
         ),
         child: ListTile(
           leading: const Icon(Icons.task, color: Colors.green),
-          title:
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(description),
           trailing: Icon(
             Icons.flag,
             color: priority == 'high'
                 ? Colors.red
                 : priority == 'medium'
-                    ? Colors.orange
-                    : Colors.green,
+                ? Colors.orange
+                : Colors.green,
           ),
         ),
       ),
     );
   }
 
-  /// Supprime la tâche via TasksService
+  /// Supprime la tâche et annule la notification
   Future<void> _deleteTask(BuildContext context) async {
     try {
       final taskService = TasksService(Supabase.instance.client);
+
+      // 1. Supprimer la tâche dans la base
       await taskService.deleteTask(id);
 
-      // IMPORTANT : Ne pas appeler refreshTasks tout de suite !
-      // Laisse le Dismissible terminer son animation avant de rebuild.
+      // 2. Annuler la notification liée à cette tâche
+      await NotificationService().cancelNotification(id.hashCode);
+
+      // 3. Refresh UI avec un léger délai pour laisser l'animation terminer
       Future.delayed(const Duration(milliseconds: 300), () {
         if (context.mounted) {
           refreshTasks();
@@ -83,7 +87,6 @@ class TaskCard extends StatelessWidget {
       }
     }
   }
-
 
   /// Confirmation avant suppression
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {

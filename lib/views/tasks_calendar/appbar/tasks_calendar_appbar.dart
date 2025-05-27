@@ -64,8 +64,8 @@ class _TasksCalendarAppBarState extends State<TasksCalendarAppBar> {
                       onPressed: () => showNotificationDialog(context),
                       icon: const Icon(Icons.notifications),
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white // Icône blanche en mode sombre
-                          : Colors.black, // Icône noire en mode clair
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   ),
                 ],

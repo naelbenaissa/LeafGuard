@@ -33,6 +33,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
 
   Future<void> _fetchTasks() async {
     setState(() => _isLoading = true);
+
     final user = supabase.auth.currentUser;
     if (user == null) {
       setState(() => _isLoading = false);
@@ -44,6 +45,10 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
       await supabase.from('tasks').select('*').eq('user_id', user.id);
 
       Map<DateTime, List<Map<String, dynamic>>> tasksMap = {};
+      List<Future<void>> pendingNotifications = [];
+
+      await NotificationService().cancelAllNotifications();
+
       for (var task in response) {
         if (task['due_date'] == null) continue;
 
@@ -52,22 +57,27 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
         DateTime(dueDate.year, dueDate.month, dueDate.day);
         tasksMap.putIfAbsent(normalizedDate, () => []).add(task);
 
-        /// PLANIFICATION DE LA NOTIFICATION
-        if (dueDate.isAfter(DateTime.now())) {
-          await NotificationService().scheduleNotificationForTask(
-            id: task['id'],
-            title: task['title'],
-            body: task['description'] ?? '',
-            date: dueDate,
-          );
-        }
+        DateTime nineAM = DateTime(dueDate.year, dueDate.month, dueDate.day, 9);
+
+        int notificationId = task['id'].toString().hashCode;
+
+        await NotificationService().scheduleNotificationForTask(
+          id: notificationId,
+          title: task['title'],
+          body: task['description'] ?? '',
+          date: nineAM,
+        );
       }
+
+      // Attend la planification de toutes les notifications en parallèle
+      await Future.wait(pendingNotifications);
 
       setState(() {
         _tasksByDate = tasksMap;
         _isLoading = false;
       });
     } catch (e) {
+      print("Erreur fetchTasks: $e");
       setState(() => _isLoading = false);
     }
   }
