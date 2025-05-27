@@ -24,6 +24,7 @@ class ScanResultDialog {
       bool isBookmarked = false;
       String? scanId;
       String? imageUrl;
+      bool tasksAdded = false;
 
       final session = Supabase.instance.client.auth.currentSession;
       bool isAuthenticated = session != null;
@@ -183,22 +184,48 @@ class ScanResultDialog {
                         ),
                         ElevatedButton.icon(
                           onPressed: () async {
-                            final tasksService = TasksService(Supabase.instance.client);
-                            try {
-                              await tasksService.addTasksForDisease(maladie);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Tâches ajoutées au calendrier !"))
-                              );
-                            } catch (e) {
-                              debugPrint("Erreur lors de l'ajout des tâches : $e");
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Erreur : ${e.toString()}"))
-                              );
+                            if (tasksAdded) {
+                              Navigator.pop(context);
+                              GoRouter.of(context).go('/calendar');
+                            } else {
+                              final tasksService =
+                                  TasksService(Supabase.instance.client);
+                              try {
+                                await tasksService.addTasksForDisease(maladie);
+                                setState(() {
+                                  tasksAdded = true;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Tâches ajoutées au calendrier !")),
+                                );
+                              } catch (e) {
+                                debugPrint(
+                                    "Erreur lors de l'ajout des tâches : $e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Erreur : ${e.toString()}")),
+                                );
+                              }
                             }
                           },
-                          icon: const Icon(Icons.calendar_today, color: Colors.white),
-                          label: const Text("Ajouter au calendrier"),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                          icon: Icon(
+                            tasksAdded
+                                ? Icons.calendar_month
+                                : Icons.calendar_today,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            tasksAdded
+                                ? "Voir le calendrier"
+                                : "Ajouter au calendrier",
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                tasksAdded ? Colors.blue : Colors.green,
+                          ),
                         ),
                       ],
                     )
@@ -206,10 +233,8 @@ class ScanResultDialog {
                     Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.pop(
-                              context);
-                          GoRouter.of(context).go(
-                              '/auth');
+                          Navigator.pop(context);
+                          GoRouter.of(context).go('/auth');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),
                         label: const Text("Se connecter"),
