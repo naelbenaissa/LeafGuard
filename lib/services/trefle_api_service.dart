@@ -5,7 +5,11 @@ class TrefleApiService {
   static const String _apiKey = "Li9T6Q-Z5p9ZfAeOyKKKJMUPUbI0sr7JFYWavXwJ2yk";
   static const String _baseUrl = "https://trefle.io/api/v1/plants";
 
-  /// Récupère une liste de plantes via `/search`
+  // Ajout d'un client http modifiable (par défaut http.Client)
+  http.Client httpClient;
+
+  TrefleApiService({http.Client? client}) : httpClient = client ?? http.Client();
+
   Future<Map<String, dynamic>> fetchPlants({int page = 1, String query = ""}) async {
     String url = query.isEmpty
         ? "$_baseUrl?token=$_apiKey&page=$page"
@@ -14,10 +18,9 @@ class TrefleApiService {
     return _getPlantsData(url);
   }
 
-  /// Méthode privée pour gérer les requêtes HTTP
   Future<Map<String, dynamic>> _getPlantsData(String url) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await httpClient.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -33,12 +36,11 @@ class TrefleApiService {
     }
   }
 
-  /// Récupère les détails d'une plante via son ID
   Future<Map<String, dynamic>?> fetchPlantDetails(int plantId) async {
     String url = "$_baseUrl/$plantId?token=$_apiKey";
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await httpClient.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
