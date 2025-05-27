@@ -158,20 +158,38 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : ListView(
-                      padding: const EdgeInsets.all(16.0),
-                      children: (_tasksByDate[DateTime(_selectedDay.year,
-                                  _selectedDay.month, _selectedDay.day)] ??
-                              [])
-                          .map((task) => TaskCard(
-                                id: task['id'].toString(),
-                                title: task['title'],
-                                description: task['description'],
-                                priority: task['priority'],
-                                refreshTasks: _fetchTasks,
-                              ))
-                          .toList(),
-                    ),
+                  : Builder(
+                builder: (context) {
+                  final dayTasks = _tasksByDate[DateTime(
+                    _selectedDay.year,
+                    _selectedDay.month,
+                    _selectedDay.day,
+                  )] ??
+                      [];
+
+                  if (dayTasks.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "Aucune tâche ce jour",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+
+                  return ListView(
+                    padding: const EdgeInsets.all(16.0),
+                    children: dayTasks
+                        .map((task) => TaskCard(
+                      id: task['id'].toString(),
+                      title: task['title'],
+                      description: task['description'],
+                      priority: task['priority'],
+                      refreshTasks: _fetchTasks,
+                    ))
+                        .toList(),
+                  );
+                },
+              ),
             ),
           ],
         ),
