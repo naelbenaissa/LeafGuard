@@ -6,20 +6,20 @@ class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  NotificationService._internal();
+  // Constructeur normal
+  NotificationService._internal()
+      : flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  // Constructeur pour les tests (mocké)
+  NotificationService.test(this.flutterLocalNotificationsPlugin);
 
   Future<void> init() async {
     tzData.initializeTimeZones();
 
-    const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-    );
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidSettings);
 
     await flutterLocalNotificationsPlugin.initialize(initSettings);
 
@@ -35,7 +35,6 @@ class NotificationService {
     required DateTime date,
   }) async {
     final scheduledDate = tz.TZDateTime.from(date, tz.local);
-
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) return;
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
