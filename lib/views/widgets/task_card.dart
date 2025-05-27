@@ -21,38 +21,30 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: Key(id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        padding: const EdgeInsets.only(right: 20),
-        alignment: Alignment.centerRight,
-        color: Colors.red,
-        child: const Icon(Icons.delete, color: Colors.white, size: 32),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-      confirmDismiss: (direction) async {
-        return await _showDeleteConfirmationDialog(context);
-      },
-      onDismissed: (direction) async {
-        await _deleteTask(context);
-      },
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+      child: ListTile(
+        leading: Icon(
+          Icons.flag,
+          color: priority == 'high'
+              ? Colors.red
+              : priority == 'medium'
+              ? Colors.orange
+              : Colors.green,
         ),
-        child: ListTile(
-          leading: const Icon(Icons.task, color: Colors.green),
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(description),
-          trailing: Icon(
-            Icons.flag,
-            color: priority == 'high'
-                ? Colors.red
-                : priority == 'medium'
-                ? Colors.orange
-                : Colors.green,
-          ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(description),
+        trailing: IconButton(
+          icon: const Icon(Icons.close, color: Colors.red),
+          onPressed: () async {
+            final confirmed = await _showDeleteConfirmationDialog(context);
+            if (confirmed == true) {
+              await _deleteTask(context);
+            }
+          },
         ),
       ),
     );
