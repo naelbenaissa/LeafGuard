@@ -76,17 +76,20 @@ class _MesScansSectionState extends State<MesPlantesSection> {
     return scans.isEmpty
         ? RefreshIndicator(
       onRefresh: _fetchScans,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: const Center(
-            child: Text("Aucune scan disponible", style: TextStyle(fontSize: 18)),
+      child: const SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.only(top: 32.0),
+          child: Center(
+            child: Text(
+              "Aucune scan disponible",
+              style: TextStyle(fontSize: 18),
+            ),
           ),
         ),
       ),
     )
-        : RefreshIndicator(
+    : RefreshIndicator(
       onRefresh: _fetchScans,
       child: GridView.builder(
         padding: EdgeInsets.zero,
