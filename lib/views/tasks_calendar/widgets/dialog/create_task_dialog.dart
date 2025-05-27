@@ -23,167 +23,181 @@ class CreateTask {
     showDialog(
       context: context,
       builder: (context) {
-        final theme = Theme.of(context);
-        final colorScheme = theme.colorScheme;
-        final textColor = theme.textTheme.bodyLarge!.color;
-        final fieldColor = colorScheme.surfaceContainerHighest;
+        DateTime selectedDateLocal = selectedDate;
+        String priorityLocal = priority;
 
-        return Dialog(
-          backgroundColor: colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: SizedBox(
-            width: 400,
-            height: 500,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Nouvelle tâche",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "Titre",
-                      labelStyle: TextStyle(color: textColor),
-                      filled: true,
-                      fillColor: fieldColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    style: TextStyle(color: textColor),
-                    onChanged: (value) => title = value,
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      labelText: "Description",
-                      labelStyle: TextStyle(color: textColor),
-                      filled: true,
-                      fillColor: fieldColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    style: TextStyle(color: textColor),
-                    onChanged: (value) => description = value,
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      "Date : ${DateFormat.yMMMMd('fr_CA').format(selectedDate)}",
-                      style: TextStyle(fontSize: 16, color: textColor),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.calendar_today, color: textColor),
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          selectedDate = pickedDate;
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    value: priority,
-                    decoration: InputDecoration(
-                      labelText: "Priorité",
-                      labelStyle: TextStyle(color: textColor),
-                      filled: true,
-                      fillColor: fieldColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    dropdownColor: fieldColor,
-                    style: TextStyle(color: textColor),
-                    items: [
-                      {"value": "low", "label": "Basse"},
-                      {"value": "medium", "label": "Moyenne"},
-                      {"value": "high", "label": "Haute"},
-                    ].map((item) {
-                      return DropdownMenuItem<String>(
-                        value: item["value"],
-                        child: Text(item["label"]!, style: TextStyle(color: textColor)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        priority = value;
-                      }
-                    },
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final theme = Theme.of(context);
+            final colorScheme = theme.colorScheme;
+            final textColor = theme.textTheme.bodyLarge!.color;
+            final fieldColor = colorScheme.surfaceContainerHighest;
+
+            return Dialog(
+              backgroundColor: colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: SizedBox(
+                width: 400,
+                height: 500,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: textColor,
-                          side: BorderSide(color: textColor!),
-                          shape: RoundedRectangleBorder(
+                      Text(
+                        "Nouvelle tâche",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        decoration: InputDecoration(
+                          labelText: "Titre",
+                          labelStyle: TextStyle(color: textColor),
+                          filled: true,
+                          fillColor: fieldColor,
+                          border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
                           ),
                         ),
-                        child: const Text("Annuler"),
+                        style: TextStyle(color: textColor),
+                        onChanged: (value) => title = value,
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (title.isEmpty || description.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Veuillez remplir tous les champs")),
+                      const SizedBox(height: 10),
+                      TextField(
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: "Description",
+                          labelStyle: TextStyle(color: textColor),
+                          filled: true,
+                          fillColor: fieldColor,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: TextStyle(color: textColor),
+                        onChanged: (value) => description = value,
+                      ),
+                      const SizedBox(height: 10),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          "Date : ${DateFormat.yMMMMd('fr_CA').format(selectedDateLocal)}",
+                          style: TextStyle(fontSize: 16, color: textColor),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.calendar_today, color: textColor),
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDateLocal,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
                             );
-                            return;
-                          }
-                          try {
-                            final taskService = TasksService(Supabase.instance.client);
-                            await taskService.addTask(user.id, title, description, selectedDate, priority);
-                            refreshTasks();
-                            Navigator.of(context).pop();
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Erreur: $e")),
-                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                selectedDateLocal = pickedDate;
+                                selectedDate = pickedDate;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: priorityLocal,
+                        decoration: InputDecoration(
+                          labelText: "Priorité",
+                          labelStyle: TextStyle(color: textColor),
+                          filled: true,
+                          fillColor: fieldColor,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        dropdownColor: fieldColor,
+                        style: TextStyle(color: textColor),
+                        items: [
+                          {"value": "low", "label": "Basse"},
+                          {"value": "medium", "label": "Moyenne"},
+                          {"value": "high", "label": "Haute"},
+                        ].map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item["value"],
+                            child: Text(item["label"]!, style: TextStyle(color: textColor)),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              priorityLocal = value;
+                              priority = value;
+                            });
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: fieldColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: textColor,
+                              side: BorderSide(color: textColor!),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Annuler"),
                           ),
-                        ),
-                        child: Text("Ajouter", style: TextStyle(color: textColor)),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (title.isEmpty || description.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Veuillez remplir tous les champs")),
+                                );
+                                return;
+                              }
+                              try {
+                                final taskService = TasksService(Supabase.instance.client);
+                                await taskService.addTask(user.id, title, description, selectedDateLocal, priorityLocal);
+                                refreshTasks();
+                                Navigator.of(context).pop();
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Erreur: $e")),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: fieldColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text("Ajouter", style: TextStyle(color: textColor)),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
+
   }
 }
