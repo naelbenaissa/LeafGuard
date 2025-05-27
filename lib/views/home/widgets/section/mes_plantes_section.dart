@@ -81,7 +81,7 @@ class _MesScansSectionState extends State<MesPlantesSection> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
           child: const Center(
-            child: Text("Aucun scan disponible", style: TextStyle(fontSize: 18)),
+            child: Text("Aucune scan disponible", style: TextStyle(fontSize: 18)),
           ),
         ),
       ),
