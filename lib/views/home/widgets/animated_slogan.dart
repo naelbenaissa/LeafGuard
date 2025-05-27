@@ -10,12 +10,18 @@ class AnimatedSlogan extends StatefulWidget {
 }
 
 class _AnimatedSloganState extends State<AnimatedSlogan> {
+  static bool _animationPlayed = false; // variable statique pour mémoriser
   int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _startAnimation();
+    if (!_animationPlayed) {
+      _startAnimation();
+    } else {
+      // Si animation déjà jouée, afficher tout d’un coup
+      currentIndex = widget.sloganWords.length;
+    }
   }
 
   void _startAnimation() async {
@@ -27,6 +33,7 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
         });
       }
     }
+    _animationPlayed = true;
   }
 
   @override
@@ -41,7 +48,7 @@ class _AnimatedSloganState extends State<AnimatedSlogan> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: List.generate(
         currentIndex,
-        (index) => Padding(
+            (index) => Padding(
           padding: const EdgeInsets.only(bottom: 5),
           child: Text(
             widget.sloganWords[index],
