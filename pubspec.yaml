@@ -30,9 +30,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  mocktail: ^1.0.4
   flutter_lints: ^4.0.0
-
+  http: any
+  
 flutter:
   uses-material-design: true
   assets:
