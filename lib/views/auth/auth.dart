@@ -31,8 +31,15 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _authenticate() async {
     try {
+      final password = passwordController.text;
+
+      if (!_isPasswordValid(password)) {
+        _showSnackbar("Le mot de passe doit contenir entre 8 et 15 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.");
+        return;
+      }
+
       if (!isLogin) {
-        if (passwordController.text != confirmPasswordController.text) {
+        if (password != confirmPasswordController.text) {
           _showSnackbar("Les mots de passe ne correspondent pas.");
           return;
         }
@@ -47,10 +54,12 @@ class _AuthPageState extends State<AuthPage> {
             return;
           }
         }
+
         final response = await supabase.auth.signUp(
           email: emailController.text.trim(),
-          password: passwordController.text,
+          password: password,
         );
+
         if (response.user != null) {
           await userService.addUserData(
             response.user!.id,
@@ -65,10 +74,13 @@ class _AuthPageState extends State<AuthPage> {
       } else {
         final response = await supabase.auth.signInWithPassword(
           email: emailController.text.trim(),
-          password: passwordController.text,
+          password: password,
         );
+
         if (response.session != null && mounted) {
           context.go('/');
+        } else {
+          _showSnackbar("Identifiants incorrects ou utilisateur introuvable.");
         }
       }
     } catch (e) {
@@ -76,6 +88,13 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
+  /// Vérifie si le mot de passe respecte les critères de sécurité
+  bool _isPasswordValid(String password) {
+    final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~%?^+=.,:;_\-])[A-Za-z\d!@#\$&*~%?^+=.,:;_\-]{8,15}$');
+    return regex.hasMatch(password);
+  }
+
+  /// Calcule l'âge à partir de la date de naissance
   int _calculateAge(DateTime birthDate) {
     final today = DateTime.now();
     int age = today.year - birthDate.year;

@@ -89,7 +89,6 @@ class UserService {
         password: oldPassword,
       );
 
-      // Si la connexion est réussie, le mot de passe est valide
       return response.user != null;
     } catch (error) {
       return false;
@@ -111,7 +110,6 @@ class UserService {
       await client.from('tasks').delete().eq('user_id', user.id);
       await client.from('favorites').delete().eq('user_id', user.id);
       await client.from('scans').delete().eq('user_id', user.id);
-
 
       // Supprime les données utilisateur de la table "users"
       await client.from('users').delete().eq('user_id', user.id);
