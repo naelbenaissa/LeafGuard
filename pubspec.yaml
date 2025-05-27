@@ -26,7 +26,12 @@ dependencies:
   cached_network_image: ^3.4.1
   provider: ^6.1.2
 
+  flutter_local_notifications: ^19.2.1
+  flutter_native_timezone: ^2.0.0
+  timezone: ^0.10.1
+
   shared_preferences: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
