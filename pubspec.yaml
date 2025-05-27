@@ -40,7 +40,14 @@ dev_dependencies:
   mocktail: ^1.0.4
   flutter_lints: ^4.0.0
   http: any
-  
+
+  flutter_launcher_icons: ^0.14.3
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
 flutter:
   uses-material-design: true
   assets:
