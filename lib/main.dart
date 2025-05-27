@@ -16,6 +16,18 @@ Future<void> requestNotificationPermission() async {
   }
 }
 
+Future<void> initializeApp() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://xweiounkhqtchlapjazt.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  );
+
+  await NotificationService().init();
+  await requestNotificationPermission();
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -27,6 +39,8 @@ void main() async {
   await NotificationService().init();
 
   await requestNotificationPermission();
+
+  await initializeApp();
 
   runApp(
     ChangeNotifierProvider(
