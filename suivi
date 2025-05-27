@@ -1,7 +1,7 @@
 # LeafGuard
 
 - Plus tard réaliser theme dark et light.✅
-- Notification a configurer.
+- Notification a configurer.✅
 - Problème au niveau de la suppression des images tâches sur storage supabase.
 - Tutoriel de début a faire.✅
 - Bug theme, réparer✅
@@ -53,6 +53,6 @@
 - notifications radio a configurer.✅
 - données supabase a mettre en lien.✅
 - configurer page pour creer compte et se connecter.✅
-- Notifications local flutter plugin a mettre en place.
+- Notifications local flutter plugin a mettre en place.✅
 - Ajouter choix de photo de profil✅
 
