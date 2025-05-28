@@ -112,39 +112,54 @@ class CreateTask {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      DropdownButtonFormField<String>(
-                        value: priorityLocal,
-                        decoration: InputDecoration(
-                          labelText: "Priorité",
-                          labelStyle: TextStyle(color: textColor),
-                          filled: true,
-                          fillColor: fieldColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Priorité",
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        dropdownColor: fieldColor,
-                        style: TextStyle(color: textColor),
-                        items: [
-                          {"value": "low", "label": "Basse"},
-                          {"value": "medium", "label": "Moyenne"},
-                          {"value": "high", "label": "Haute"},
-                        ].map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item["value"],
-                            child: Text(item["label"]!, style: TextStyle(color: textColor)),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              priorityLocal = value;
-                              priority = value;
-                            });
-                          }
-                        },
+                          const SizedBox(height: 6),
+                          DropdownButtonFormField<String>(
+                            value: priorityLocal,
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: fieldColor,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            dropdownColor: fieldColor,
+                            style: TextStyle(color: textColor),
+                            items: [
+                              {"value": "low", "label": "Basse"},
+                              {"value": "medium", "label": "Moyenne"},
+                              {"value": "high", "label": "Haute"},
+                            ].map((item) {
+                              return DropdownMenuItem<String>(
+                                value: item["value"],
+                                child: Text(item["label"]!, style: TextStyle(color: textColor)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  priorityLocal = value;
+                                  priority = value;
+                                });
+                              }
+                            },
+                          ),
+                        ],
                       ),
+
                       const Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
