@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/scan_service.dart';
 import '../../../widgets/delete_confirmation_dialog.dart';
@@ -109,12 +110,47 @@ class _MesScansSectionState extends State<MesScansSection> {
         physics: const AlwaysScrollableScrollPhysics(),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
-          child: const Center(
-            child: Text("Aucun scan disponible", style: TextStyle(fontSize: 18)),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 32),
+                  const Text(
+                    "Vous n'avez aucun scan.",
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Scannez dès maintenant vos plantes pour les voir apparaître ici !",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+
+                      context.go('/camera');
+                    },
+                    child: const Text(
+                      "Aller à la caméra",
+                      style: TextStyle(
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     )
+
         : RefreshIndicator(
       onRefresh: _fetchScans,
       child: ListView.builder(

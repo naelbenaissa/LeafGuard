@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/scan_service.dart';
+import 'package:go_router/go_router.dart'; // N'oublie pas cet import
 
 class MesPlantesSection extends StatefulWidget {
   final String? filter;
@@ -58,7 +59,7 @@ class _MesScansSectionState extends State<MesPlantesSection> {
     setState(() {
       if (widget.filter == "Confiance") {
         scans.sort(
-            (a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
+                (a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
       } else if (widget.filter == "Date") {
         scans.sort((a, b) {
           DateTime dateA =
@@ -81,93 +82,117 @@ class _MesScansSectionState extends State<MesPlantesSection> {
       padding: const EdgeInsets.only(top: 10),
       child: scans.isEmpty
           ? RefreshIndicator(
-              onRefresh: _fetchScans,
-              child: const SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 32.0),
-                  child: Center(
-                    child: Text(
-                      "Aucune scan disponible",
-                      style: TextStyle(fontSize: 18),
+        onRefresh: _fetchScans,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Aucun scan disponible.",
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Commencez à scanner vos plantes dès maintenant !",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    context.go('/camera');
+                  },
+                  child: const Text(
+                    "Ouvrir la caméra",
+                    style: TextStyle(
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
-              ),
-            )
+              ],
+            ),
+          ),
+        ),
+      )
           : RefreshIndicator(
-              onRefresh: _fetchScans,
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                physics: const BouncingScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: scans.length,
-                itemBuilder: (context, index) {
-                  final scan = scans[index];
-                  final confidence = (scan['confidence'] ?? 0).toDouble();
+        onRefresh: _fetchScans,
+        child: GridView.builder(
+          padding: EdgeInsets.zero,
+          physics: const BouncingScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: scans.length,
+          itemBuilder: (context, index) {
+            final scan = scans[index];
+            final confidence = (scan['confidence'] ?? 0).toDouble();
 
-                  Color confidenceColor;
-                  if (confidence > 0.7) {
-                    confidenceColor = Colors.green;
-                  } else if (confidence > 0.40) {
-                    confidenceColor = Colors.orange;
-                  } else {
-                    confidenceColor = Colors.red;
-                  }
-                  return Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              scan['image_url'],
-                              width: 160,
-                              height: 160,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.image, size: 50),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                value: confidence,
-                                backgroundColor: Colors.grey[300],
-                                color: confidenceColor,
-                                strokeWidth: 3,
-                              ),
-                            ),
-                          ),
-                        ],
+            Color confidenceColor;
+            if (confidence > 0.7) {
+              confidenceColor = Colors.green;
+            } else if (confidence > 0.40) {
+              confidenceColor = Colors.orange;
+            } else {
+              confidenceColor = Colors.red;
+            }
+            return Column(
+              children: [
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        scan['image_url'],
+                        width: 160,
+                        height: 160,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.image, size: 50),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        scan['predictions'],
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          value: confidence,
+                          backgroundColor: Colors.grey[300],
+                          color: confidenceColor,
+                          strokeWidth: 3,
                         ),
                       ),
-                      Text(
-                        "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  scan['predictions'],
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

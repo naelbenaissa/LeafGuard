@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/favorite_service.dart';
 import 'package:ui_leafguard/services/trefle_api_service.dart';
@@ -96,12 +97,46 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
         physics: const AlwaysScrollableScrollPhysics(),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
-          child: const Center(
-            child: Text("Pas de favoris", style: TextStyle(fontSize: 18)),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 32),
+                  const Text(
+                    "Vous n'avez aucun favori.",
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Découvrez des plantes intéressantes dans le guide et ajoutez-les à vos favoris !",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      context.go('/plantsguide');
+                    },
+                    child: const Text(
+                      "Aller au guide des plantes",
+                      style: TextStyle(
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     )
+
         : RefreshIndicator(
       onRefresh: _fetchFavorites,
       child: ListView.builder(
@@ -140,8 +175,28 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
               trailing: IconButton(
                 icon: const Icon(Icons.favorite, color: Colors.red),
                 onPressed: () async {
-                  await favoriteService.removeFavorite(userId!, plant['plant_id']);
-                  _fetchFavorites();
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Confirmer la suppression"),
+                      content: Text("Souhaitez-vous retirer \"${plant['plant_name']}\" de vos favoris ?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text("Annuler"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text("Supprimer", style: TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true) {
+                    await favoriteService.removeFavorite(userId!, plant['plant_id']);
+                    _fetchFavorites();
+                  }
                 },
               ),
             ),

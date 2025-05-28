@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:ui_leafguard/services/tasks_service.dart';
 import '../../../widgets/task_card.dart';
+import 'package:go_router/go_router.dart';
 
 class MesTachesSection extends StatefulWidget {
   const MesTachesSection({super.key});
@@ -44,7 +45,49 @@ class _MesTachesSectionState extends State<MesTachesSection> {
           return Center(child: Text("Erreur : ${snapshot.error}"));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("Aucune tâche trouvée"));
+          return RefreshIndicator(
+            onRefresh: () async {
+              _refreshTasks();
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Aucune tâche trouvée.",
+                      style: TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Planifiez vos tâches dans le calendrier pour mieux organiser vos plantes.",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/calendar');
+                      },
+                      child: const Text(
+                        "Ouvrir le calendrier",
+                        style: TextStyle(
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         }
 
         return FutureBuilder(
@@ -55,16 +98,28 @@ class _MesTachesSectionState extends State<MesTachesSection> {
             }
 
             final tasks = snapshot.data!;
-            final Map<String, List<Map<String, dynamic>>> groupedTasks = {};
             DateTime today = DateTime.now();
             today = DateTime(today.year, today.month, today.day);
+
+            List<Map<String, dynamic>> upcomingTasks = [];
+            List<Map<String, dynamic>> pastTasks = [];
 
             for (var task in tasks) {
               DateTime taskDate = DateTime.parse(task['due_date']);
               bool isPastTask =
                   taskDate.isBefore(today) && taskDate.day != today.day;
-              if (!showPastTasks && isPastTask) continue;
+              if (isPastTask) {
+                pastTasks.add(task);
+              } else {
+                upcomingTasks.add(task);
+              }
+            }
 
+            final filteredTasks = showPastTasks ? tasks : upcomingTasks;
+            final Map<String, List<Map<String, dynamic>>> groupedTasks = {};
+
+            for (var task in filteredTasks) {
+              DateTime taskDate = DateTime.parse(task['due_date']);
               String formattedDate =
                   DateFormat.yMMMMd('fr_CA').format(taskDate);
               if (!groupedTasks.containsKey(formattedDate)) {
@@ -112,6 +167,45 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                     ),
                   ),
                 ),
+
+                // Affiche le message si on a uniquement des tâches passées ET qu'on ne montre pas les passées
+                if (!showPastTasks &&
+                    upcomingTasks.isEmpty &&
+                    pastTasks.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Vous avez uniquement des tâches antérieures à aujourd'hui.",
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Pour ajouter de nouvelles tâches, rendez-vous dans le calendrier.",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: () {
+                            context.go('/calendar');
+                          },
+                          child: const Text(
+                            "Ouvrir le calendrier",
+                            style: TextStyle(
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -131,7 +225,10 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.bodyLarge!.color, // ✅ Corrigé
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color,
                                   ),
                                 ),
                               ),
