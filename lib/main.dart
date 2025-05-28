@@ -17,10 +17,6 @@ Future<void> requestNotificationPermission() async {
 }
 
 Future<void> initializeApp() async {
-  // Plus besoin d'appeler WidgetsFlutterBinding.ensureInitialized() ici
-
-  // Supabase est déjà initialisé dans main()
-
   await NotificationService().init();
   await requestNotificationPermission();
 }

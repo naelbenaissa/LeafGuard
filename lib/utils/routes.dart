@@ -6,7 +6,7 @@ import 'package:ui_leafguard/views/favorites/favorites.dart';
 import 'package:ui_leafguard/views/plant_guide/plant_guide.dart';
 import 'package:ui_leafguard/views/home/home.dart';
 import 'package:ui_leafguard/views/tasks_calendar/tasks_calendar.dart';
-import 'package:ui_leafguard/views/tutoriel/tutoriel_screen.dart'; // Ajoute l'import
+import 'package:ui_leafguard/views/tutoriel/tutoriel_screen.dart';
 
 class Routes {
   static GoRouter routerConfiguration({required bool showOnboarding}) {

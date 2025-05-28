@@ -113,8 +113,8 @@ class _FavoritesPageState extends State<FavoritesPage>
               controller: _tabController,
               labelStyle: const TextStyle(fontSize: 18),
               tabs: const [
-                Tab(text: "Mes Scans"),
                 Tab(text: "Mes Favoris"),
+                Tab(text: "Mes Scans"),
               ],
               labelColor: Colors.green,
               unselectedLabelColor: Colors.grey,
@@ -128,8 +128,8 @@ class _FavoritesPageState extends State<FavoritesPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                MesScansSection(filter: _selectedFilter),
                 MesFavorisSection(filter: _selectedFilter),
+                MesScansSection(filter: _selectedFilter),
               ],
             ),
           ),

@@ -116,83 +116,87 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : plants.isEmpty
-                      ? const Center(child: Text("Aucun résultat trouvé"))
-                      : Column(
-                          children: [
-                            Expanded(
-                              child: GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 12.0,
-                                  mainAxisSpacing: 12.0,
-                                  childAspectRatio: 0.75,
-                                ),
-                                itemCount: plants.length,
-                                itemBuilder: (context, index) {
-                                  final plant = plants[index];
+                  ? const Center(child: Text("Aucun résultat trouvé"))
+                  : ListView(
+                padding: const EdgeInsets.all(12),
+                children: [
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 12.0),
+                      child: Text(
+                        "Guide des plantes",
+                        style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12.0,
+                      mainAxisSpacing: 12.0,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: plants.length,
+                    itemBuilder: (context, index) {
+                      final plant = plants[index];
 
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetailPage(plant: plant),
-                                        ),
-                                      );
-                                    },
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          child: plant['image_url'] != null
-                                              ? Image.network(
-                                                  plant['image_url'],
-                                                  width: 180,
-                                                  height: 180,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Container(
-                                                  width: 180,
-                                                  height: 180,
-                                                  color: Colors.green[200],
-                                                  child: const Icon(
-                                                      Icons.local_florist,
-                                                      size: 60,
-                                                      color: Colors.green),
-                                                ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          plant['common_name'] ?? "Nom inconnu",
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          "ID: ${plant['id'] ?? 'Inconnu'}",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Theme.of(context).brightness == Brightness.dark
-                                                ? Colors.grey[400]
-                                                : Colors.grey[800],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPage(plant: plant),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: plant['image_url'] != null
+                                  ? Image.network(
+                                plant['image_url'],
+                                width: 180,
+                                height: 180,
+                                fit: BoxFit.cover,
+                              )
+                                  : Container(
+                                width: 180,
+                                height: 180,
+                                color: Colors.green[200],
+                                child: const Icon(Icons.local_florist,
+                                    size: 60, color: Colors.green),
                               ),
                             ),
-                            if (_searchQuery.isEmpty)
-                              _buildPaginationControls(),
+                            const SizedBox(height: 10),
+                            Text(
+                              plant['common_name'] ?? "Nom inconnu",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "ID: ${plant['id'] ?? 'Inconnu'}",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[800],
+                              ),
+                            ),
                           ],
                         ),
+                      );
+                    },
+                  ),
+                  if (_searchQuery.isEmpty) _buildPaginationControls(),
+                ],
+              ),
             ),
           ],
         ),

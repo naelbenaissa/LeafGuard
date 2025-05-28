@@ -117,8 +117,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 });
               },
               eventLoader: (day) {
-                DateTime normalizedDate =
-                    DateTime(day.year, day.month, day.day);
+                DateTime normalizedDate = DateTime(day.year, day.month, day.day);
                 return _tasksByDate[normalizedDate] ?? [];
               },
               calendarStyle: const CalendarStyle(
@@ -131,7 +130,26 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                   shape: BoxShape.circle,
                 ),
               ),
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  if (events.isNotEmpty) {
+                    return Positioned(
+                      bottom: 4,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent, // COULEUR DU POINT
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
             ),
+
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),

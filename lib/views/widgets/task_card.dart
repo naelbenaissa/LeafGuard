@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/services/tasks_service.dart';
-import '../../services/notification_service.dart';  // <-- Ajout import
+import '../../services/notification_service.dart';
 
 class TaskCard extends StatelessWidget {
   final String id;
