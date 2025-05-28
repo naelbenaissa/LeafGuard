@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../services/user_service.dart';
 
-class PlantDetailAppbar extends StatelessWidget implements PreferredSizeWidget {
+class PlantDetailAppbar extends StatefulWidget implements PreferredSizeWidget {
   const PlantDetailAppbar({super.key});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(60);
+
+  @override
+  State<PlantDetailAppbar> createState() => _PlantDetailAppbarState();
+}
+
+class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
+  String? profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+
+    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+      if (mounted) _loadUserProfile();
+    });
+  }
+
+  Future<void> _loadUserProfile() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      final userData = await UserService().fetchUserData(user.id);
+      if (mounted && userData != null && userData['profile_image'] != null) {
+        setState(() {
+          profileImageUrl = userData['profile_image'];
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +53,9 @@ class PlantDetailAppbar extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: const Size.fromHeight(60),
       child: Padding(
         padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 16,
-            right: 16
+          top: MediaQuery.of(context).padding.top + 10,
+          left: 16,
+          right: 16,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,25 +86,35 @@ class PlantDetailAppbar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: backgroundColor,
-                boxShadow: [
-                  BoxShadow(color: shadowColor, blurRadius: 5, spreadRadius: 1),
-                ],
-              ),
-              child: IconButton(
-                icon: Icon(
-                  user != null ? Icons.account_circle : Icons.login,
-                  color: foregroundColor,
-                  size: 28,
+            GestureDetector(
+              onTap: () {
+                context.pop();
+                Future.microtask(() => context.go(user != null ? '/account' : '/auth'));
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: backgroundColor,
+                  boxShadow: [
+                    BoxShadow(color: shadowColor, blurRadius: 5, spreadRadius: 1),
+                  ],
                 ),
-                onPressed: () {
-                  print('Navigation vers : ${user != null ? "/account" : "/auth"}');
-                  context.pop();
-                  context.go(user != null ? '/account' : '/auth');
-                },
+                child: profileImageUrl != null && profileImageUrl!.isNotEmpty
+                    ? ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: profileImageUrl!,
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                    const CircularProgressIndicator(strokeWidth: 2),
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.error, color: Colors.red),
+                  ),
+                )
+                    : Icon(Icons.person, color: foregroundColor, size: 28),
               ),
             ),
           ],
@@ -78,7 +122,4 @@ class PlantDetailAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(60);
 }
