@@ -134,16 +134,33 @@ class _MesScansSectionState extends State<MesPlantesSection> {
           itemCount: scans.length,
           itemBuilder: (context, index) {
             final scan = scans[index];
-            final confidence = (scan['confidence'] ?? 0).toDouble();
+            final int criticite = scan['criticite'] ?? 0;
 
-            Color confidenceColor;
-            if (confidence > 0.7) {
-              confidenceColor = Colors.green;
-            } else if (confidence > 0.40) {
-              confidenceColor = Colors.orange;
-            } else {
-              confidenceColor = Colors.red;
+            double criticiteProgress;
+            Color criticiteColor;
+
+            switch (criticite) {
+              case 0:
+                criticiteProgress = 1.0;
+                criticiteColor = Colors.green;
+                break;
+              case 1:
+                criticiteProgress = 0.66;
+                criticiteColor = Colors.yellow;
+                break;
+              case 2:
+                criticiteProgress = 0.33;
+                criticiteColor = Colors.orange;
+                break;
+              case 3:
+                criticiteProgress = 0.15;
+                criticiteColor = Colors.red;
+                break;
+              default:
+                criticiteProgress = 0.0;
+                criticiteColor = Colors.grey;
             }
+
             return Column(
               children: [
                 Stack(
@@ -166,9 +183,9 @@ class _MesScansSectionState extends State<MesPlantesSection> {
                         width: 30,
                         height: 30,
                         child: CircularProgressIndicator(
-                          value: confidence,
-                          backgroundColor: Colors.grey[300],
-                          color: confidenceColor,
+                          value: criticiteProgress,
+                          color: criticiteColor,
+                          // backgroundColor: Colors.grey[300],
                           strokeWidth: 3,
                         ),
                       ),

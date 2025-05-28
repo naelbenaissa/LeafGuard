@@ -11,6 +11,7 @@ class ScanService {
     required File imageFile,
     required String predictions,
     required double confidence,
+    required int criticite,
   }) async {
     try {
       final userId = supabase.auth.currentUser?.id;
@@ -26,10 +27,24 @@ class ScanService {
         'scan_time': DateTime.now().toIso8601String(),
         'confidence': confidence,
         'image_url': imageUrl,
+        'criticite': criticite,
       });
     } catch (e) {
       throw Exception("Erreur lors de l'ajout du scan: $e");
     }
+  }
+
+  Future<int?> getCriticiteForDisease(String diseaseName) async {
+    final response = await supabase
+        .from('diseases')
+        .select('criticite')
+        .eq('disease_name', diseaseName)
+        .maybeSingle();
+
+    if (response != null && response['criticite'] != null) {
+      return response['criticite'] as int;
+    }
+    return null;
   }
 
   /// Upload l'image et retourne son URL

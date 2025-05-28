@@ -17,6 +17,15 @@ class ScanResultDialog {
       final result = await iaService.predictDisease(selectedImage);
       final String maladie = result['maladies'] ?? 'Inconnu';
       final double? rawConfiance = result['confiance'];
+      int criticite = 0;
+      try {
+        final criticiteData = await ScanService(Supabase.instance.client).getCriticiteForDisease(maladie);
+        if (criticiteData != null) {
+          criticite = criticiteData;
+        }
+      } catch (e) {
+        debugPrint("Erreur récupération criticité : $e");
+      }
       final double? displayedConfiance =
       rawConfiance != null ? rawConfiance * 100 : null;
 
@@ -83,7 +92,7 @@ class ScanResultDialog {
                     ],
                   ),
                   content: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9, // 90% écran
+                    width: MediaQuery.of(context).size.width * 0.9,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(
                         maxHeight: 500,
@@ -289,6 +298,7 @@ class ScanResultDialog {
                                     imageFile: selectedImage,
                                     predictions: maladie,
                                     confidence: rawConfiance ?? 0.0,
+                                    criticite: criticite,
                                   );
                                   final scans = await scanService.getScans();
                                   final addedScan = scans.firstWhere(
@@ -337,10 +347,10 @@ class ScanResultDialog {
                               icon: Icon(
                                 tasksAdded ? Icons.calendar_month : Icons.calendar_today,
                                 color: Colors.green,
-                                size: 26,  // même taille que tu voulais
+                                size: 26,
                               ),
                               tooltip: tasksAdded ? "Voir le calendrier" : "Ajouter au calendrier",
-                              splashRadius: 20, // optionnel pour contrôler la zone de clic
+                              splashRadius: 20,
                             ),
                         ],
                       )
