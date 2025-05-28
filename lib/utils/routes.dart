@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ui_leafguard/views/account/account.dart';
 import 'package:ui_leafguard/views/auth/auth.dart';
 import 'package:ui_leafguard/views/camera/camera.dart';
@@ -9,6 +10,7 @@ import 'package:ui_leafguard/views/tasks_calendar/tasks_calendar.dart';
 import 'package:ui_leafguard/views/tutoriel/tutoriel_screen.dart';
 
 class Routes {
+
   static GoRouter routerConfiguration({required bool showOnboarding}) {
     return GoRouter(
       initialLocation: showOnboarding ? '/onboarding' : '/',
@@ -30,6 +32,8 @@ class Routes {
           builder: (context, state) => const TasksCalendarPage(),
           pageBuilder: (context, state) =>
               NoTransitionPage(child: const TasksCalendarPage()),
+          redirect: (context, state) =>
+          isUserAuthenticated() ? null : '/auth',
         ),
         GoRoute(
           path: '/camera',
@@ -42,6 +46,8 @@ class Routes {
           builder: (context, state) => const FavoritesPage(),
           pageBuilder: (context, state) =>
               NoTransitionPage(child: const FavoritesPage()),
+          redirect: (context, state) =>
+          isUserAuthenticated() ? null : '/auth',
         ),
         GoRoute(
           path: '/plantsguide',
@@ -54,6 +60,8 @@ class Routes {
           builder: (context, state) => const AccountPage(),
           pageBuilder: (context, state) =>
               NoTransitionPage(child: const AccountPage()),
+          redirect: (context, state) =>
+          isUserAuthenticated() ? null : '/auth',
         ),
         GoRoute(
           path: '/auth',
@@ -64,6 +72,11 @@ class Routes {
       ],
     );
   }
+}
+
+bool isUserAuthenticated() {
+  final session = Supabase.instance.client.auth.currentSession;
+  return session != null;
 }
 
 class NoTransitionPage extends CustomTransitionPage<void> {
