@@ -19,7 +19,8 @@ class ScanResultDialog {
       final double? rawConfiance = result['confiance'];
       int criticite = 0;
       try {
-        final criticiteData = await ScanService(Supabase.instance.client).getCriticiteForDisease(maladie);
+        final criticiteData =
+        await ScanService(Supabase.instance.client).getCriticiteForDisease(maladie);
         if (criticiteData != null) {
           criticite = criticiteData;
         }
@@ -51,8 +52,8 @@ class ScanResultDialog {
                 if (hasLoadedTasks) return;
                 hasLoadedTasks = true;
                 try {
-                  final tasks = await TasksService(Supabase.instance.client)
-                      .getTasksForDisease(maladie);
+                  final tasks =
+                  await TasksService(Supabase.instance.client).getTasksForDisease(maladie);
                   if (!isDialogOpen) return;
                   setState(() {
                     diseaseTasks = tasks;
@@ -76,16 +77,20 @@ class ScanResultDialog {
                   contentPadding: const EdgeInsets.all(16),
                   titlePadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  backgroundColor: Theme.of(context).cardColor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "Résultat du Scan",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.green),
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close,
+                            color: Theme.of(context).iconTheme.color),
                         onPressed: () => Navigator.pop(context),
                         tooltip: "Fermer",
                       ),
@@ -117,8 +122,11 @@ class ScanResultDialog {
                             Center(
                               child: Text(
                                 "Maladie détectée : $maladie",
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -126,16 +134,21 @@ class ScanResultDialog {
                             Center(
                               child: Text(
                                 "Confiance : ${displayedConfiance != null ? "${displayedConfiance.toStringAsFixed(2)}%" : "N/A"}",
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).textTheme.bodySmall?.color,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             const SizedBox(height: 15),
-                            const Text(
+                            Text(
                               "Tâches recommandées :",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
                             ),
                             const SizedBox(height: 5),
                             if (diseaseTasks.isEmpty)
@@ -144,15 +157,22 @@ class ScanResultDialog {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text("Aucune tâche trouvée pour cette maladie."),
+                                    Text(
+                                      "Aucune tâche trouvée pour cette maladie.",
+                                      style: TextStyle(
+                                        color:
+                                        Theme.of(context).textTheme.bodyMedium?.color,
+                                      ),
+                                    ),
                                     if (!isAuthenticated) ...[
                                       const SizedBox(height: 8),
-                                      const Text(
+                                      Text(
                                         "Connectez-vous afin d’ajouter des tâches personnalisées.",
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontStyle: FontStyle.italic,
-                                          color: Colors.black87,
+                                          color:
+                                          Theme.of(context).textTheme.bodyMedium?.color,
                                         ),
                                       ),
                                       TextButton(
@@ -160,11 +180,13 @@ class ScanResultDialog {
                                           Navigator.pop(context);
                                           context.go('/auth');
                                         },
-                                        child: const Text(
+                                        child: Text(
                                           "Se connecter",
                                           style: TextStyle(
                                             decoration: TextDecoration.underline,
                                             fontSize: 14,
+                                            color:
+                                            Theme.of(context).colorScheme.primary,
                                           ),
                                         ),
                                       ),
@@ -196,7 +218,15 @@ class ScanResultDialog {
                                               ? Colors.orange
                                               : Colors.green,
                                         ),
-                                        title: Text(task['title'] ?? 'Tâche'),
+                                        title: Text(
+                                          task['title'] ?? 'Tâche',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.color,
+                                          ),
+                                        ),
                                       );
                                     },
                                   ),
@@ -211,10 +241,13 @@ class ScanResultDialog {
                                               ? "Tâches ajoutées ! Cliquez sur le bouton ci-dessous pour voir le calendrier."
                                               : "Pour ajouter ces tâches, cliquez sur l'icône calendrier.")
                                               : "Pour ajouter ces tâches, cliquez sur l'icône ci-dessous pour vous connecter ou vous inscrire.",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 13,
                                             fontStyle: FontStyle.italic,
-                                            color: Colors.black87,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.color,
                                           ),
                                         ),
                                       ),
@@ -234,9 +267,7 @@ class ScanResultDialog {
                         children: [
                           IconButton(
                             icon: Icon(
-                              isBookmarked
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_border,
+                              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                               color: Colors.orange,
                             ),
                             tooltip: isBookmarked
@@ -256,19 +287,32 @@ class ScanResultDialog {
                                 final confirmDelete = await showDialog<bool>(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: const Text("Supprimer ce scan ?"),
-                                    content: const Text(
-                                        "Êtes-vous sûr de vouloir supprimer ce scan ? Cette action est irréversible."),
+                                    title: Text(
+                                      "Supprimer ce scan ?",
+                                      style: TextStyle(
+                                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      "Êtes-vous sûr de vouloir supprimer ce scan ? Cette action est irréversible.",
+                                      style: TextStyle(
+                                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                                      ),
+                                    ),
                                     actions: [
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: const Text("Annuler"),
+                                        onPressed: () => Navigator.pop(context, false),
+                                        child: Text(
+                                          "Annuler",
+                                          style: TextStyle(
+                                            color:
+                                            Theme.of(context).colorScheme.primary,
+                                          ),
+                                        ),
                                       ),
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: const Text(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        child: Text(
                                           "Supprimer",
                                           style: TextStyle(color: Colors.red),
                                         ),
@@ -285,8 +329,14 @@ class ScanResultDialog {
                                       imageUrl = null;
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Scan supprimé avec succès.")),
+                                      SnackBar(
+                                          content: Text(
+                                            "Scan supprimé avec succès.",
+                                            style: TextStyle(
+                                              color:
+                                              Theme.of(context).snackBarTheme.contentTextStyle?.color,
+                                            ),
+                                          )),
                                     );
                                   } catch (e) {
                                     debugPrint("Erreur suppression : $e");
@@ -313,7 +363,17 @@ class ScanResultDialog {
                                     imageUrl = addedScan['image_url']?.toString();
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Ajouté aux favoris !")),
+                                    SnackBar(
+                                      content: Text(
+                                        "Ajouté aux favoris !",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .snackBarTheme
+                                              .contentTextStyle
+                                              ?.color,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 } catch (e) {
                                   debugPrint("Erreur ajout favoris : $e");
@@ -329,12 +389,23 @@ class ScanResultDialog {
                                   GoRouter.of(context).go('/calendar');
                                 } else {
                                   try {
-                                    await TasksService(Supabase.instance.client).addTasksForDisease(maladie);
+                                    await TasksService(Supabase.instance.client)
+                                        .addTasksForDisease(maladie);
                                     setState(() {
                                       tasksAdded = true;
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text("Tâches ajoutées au calendrier !")),
+                                      SnackBar(
+                                        content: Text(
+                                          "Tâches ajoutées au calendrier !",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .snackBarTheme
+                                                .contentTextStyle
+                                                ?.color,
+                                          ),
+                                        ),
+                                      ),
                                     );
                                   } catch (e) {
                                     debugPrint("Erreur ajout tâches : $e");
@@ -349,7 +420,8 @@ class ScanResultDialog {
                                 color: Colors.green,
                                 size: 26,
                               ),
-                              tooltip: tasksAdded ? "Voir le calendrier" : "Ajouter au calendrier",
+                              tooltip:
+                              tasksAdded ? "Voir le calendrier" : "Ajouter au calendrier",
                               splashRadius: 20,
                             ),
                         ],
@@ -361,11 +433,12 @@ class ScanResultDialog {
                             Navigator.pop(context);
                             context.go('/auth');
                           },
-                          child: const Text(
+                          child: Text(
                             "Se connecter",
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                               fontSize: 16,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -378,7 +451,7 @@ class ScanResultDialog {
         },
       );
     } catch (e) {
-      debugPrint("Erreur lors de l'analyse de l'image: $e");
+      debugPrint('Erreur lors de la prédiction de la maladie : $e');
     }
   }
 }

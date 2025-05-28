@@ -3,8 +3,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class TasksService {
   final SupabaseClient supabase;
 
+  // Injection du client Supabase pour accès aux opérations backend
   TasksService(this.supabase);
 
+  /// Ajoute les tâches associées à une maladie pour l'utilisateur connecté.
+  /// Récupère la maladie, ses tâches liées, puis insère les tâches personnalisées en fonction.
   Future<void> addTasksForDisease(String diseaseName) async {
     final user = supabase.auth.currentUser;
     if (user == null) {
@@ -34,6 +37,7 @@ class TasksService {
 
     final taskIds = taskLinks.map((e) => e['task_id']).toList();
 
+    // Récupération des tâches IA liées et insertion dans la table 'tasks' utilisateur
     final tasks = await supabase
         .from('ia_tasks')
         .select('*')
@@ -50,6 +54,7 @@ class TasksService {
     }
   }
 
+  /// Récupère toutes les tâches d'un utilisateur triées par date d'échéance croissante.
   Future<List<Map<String, dynamic>>> fetchTasks(String? userId) async {
     if (userId == null) return [];
 
@@ -62,6 +67,8 @@ class TasksService {
     return response;
   }
 
+  /// Ajoute une tâche personnalisée pour un utilisateur donné.
+  /// Vérifie que l'insertion a bien eu lieu.
   Future<void> addTask(String userId, String title, String description, DateTime dueDate, String priority) async {
     final response = await Supabase.instance.client
         .from('tasks')
@@ -79,7 +86,8 @@ class TasksService {
     }
   }
 
-
+  /// Met à jour une tâche existante via son ID.
+  /// Lève une exception si une erreur survient.
   Future<void> updateTask(String taskId, String title, String description, DateTime dueDate, String priority) async {
     final response = await supabase.from('tasks').update({
       'title': title,
@@ -93,6 +101,7 @@ class TasksService {
     }
   }
 
+  /// Récupère les tâches liées à une maladie spécifique en se basant sur la table relationnelle.
   Future<List<Map<String, dynamic>>> getTasksForDisease(String diseaseName) async {
     final diseaseResponse = await supabase
         .from('diseases')
@@ -124,7 +133,8 @@ class TasksService {
     return List<Map<String, dynamic>>.from(tasks);
   }
 
-
+  /// Supprime une tâche par son ID.
+  /// Gestion des erreurs incluse.
   Future<void> deleteTask(String taskId) async {
     try {
       await supabase.from('tasks').delete().match({'id': taskId});

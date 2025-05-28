@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  // Couleurs principales de l'application
   static const Color primaryColor = Colors.green;
   static const Color accentColor = Colors.greenAccent;
   static const Color backgroundColorLight = Colors.white;
@@ -9,6 +10,7 @@ class AppTheme {
   static const Color textColorDark = Colors.white;
   static const Color greyColor = Colors.grey;
 
+  // Thème clair de l'application
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColorLight,
@@ -21,6 +23,7 @@ class AppTheme {
     elevatedButtonTheme: _elevatedButtonTheme(primaryColor),
   );
 
+  // Thème sombre basé sur ThemeData.dark() avec personnalisations
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColorDark,
@@ -32,6 +35,7 @@ class AppTheme {
     elevatedButtonTheme: _elevatedButtonTheme(primaryColor),
   );
 
+  // Configuration de l'AppBar
   static AppBarTheme _appBarTheme(Color bgColor, Color iconColor) {
     return AppBarTheme(
       backgroundColor: bgColor,
@@ -40,6 +44,7 @@ class AppTheme {
     );
   }
 
+  // Style du BottomNavigationBar
   static BottomNavigationBarThemeData _bottomNavBarTheme(Color bgColor, Color iconColor) {
     return BottomNavigationBarThemeData(
       backgroundColor: bgColor,
@@ -50,6 +55,7 @@ class AppTheme {
     );
   }
 
+  // Définition des styles de texte
   static TextTheme _textTheme(Color textColor) {
     return TextTheme(
       bodyLarge: TextStyle(fontSize: 18, color: textColor),
@@ -60,6 +66,7 @@ class AppTheme {
     );
   }
 
+  // Style des cartes (Cards)
   static CardTheme _cardTheme(Color color) {
     return CardTheme(
       elevation: 4,
@@ -69,6 +76,7 @@ class AppTheme {
     );
   }
 
+  // Style général des boutons (hérité des anciens ButtonTheme)
   static ButtonThemeData _buttonTheme(Color color) {
     return ButtonThemeData(
       buttonColor: color,
@@ -76,6 +84,7 @@ class AppTheme {
     );
   }
 
+  // Style du TabBar avec indicateur personnalisé
   static TabBarTheme _tabBarTheme(Color textColor, Color selectedColor) {
     return TabBarTheme(
       labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -87,6 +96,7 @@ class AppTheme {
     );
   }
 
+  // Style des ElevatedButtons avec coins arrondis et padding spécifique
   static ElevatedButtonThemeData _elevatedButtonTheme(Color color) {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -98,6 +108,4 @@ class AppTheme {
       ),
     );
   }
-
-
 }

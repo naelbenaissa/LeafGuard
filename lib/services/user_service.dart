@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class UserService {
   final SupabaseClient _client = Supabase.instance.client;
 
-  /// Récupère les informations de l'utilisateur à partir de son UUID
+  /// Récupère les données utilisateur à partir de son UUID unique
   Future<Map<String, dynamic>?> fetchUserData(String uuid) async {
     try {
       final response = await _client
@@ -19,7 +19,7 @@ class UserService {
     }
   }
 
-  /// Change le mot de passe de l'utilisateur
+  /// Modifie le mot de passe de l'utilisateur actuellement connecté
   Future<void> changePassword(String newPassword) async {
     final user = Supabase.instance.client.auth.currentUser;
 
@@ -36,14 +36,13 @@ class UserService {
     }
   }
 
-
-  /// Génère une URL d'image de profil aléatoire entre `user_1.jpg` et `user_10.jpg`
+  /// Génère une URL d'image de profil aléatoire parmi 10 images disponibles
   String _getRandomProfileImage() {
     final int randomIndex = Random().nextInt(10) + 1;
     return "https://xweiounkhqtchlapjazt.supabase.co/storage/v1/object/public/profil_picture/user_$randomIndex.jpg";
   }
 
-  /// Ajoute un nouvel utilisateur dans la table "users"
+  /// Insère un nouvel utilisateur dans la table 'users' avec une image de profil par défaut
   Future<void> addUserData(String userId, String email, String name, String surname, String? phone, String? birthdate) async {
     try {
       await _client.from('users').insert({
@@ -61,7 +60,7 @@ class UserService {
     }
   }
 
-  /// Récupère les URLs des 10 images de profil disponibles
+  /// Retourne la liste des URLs des images de profil disponibles
   List<String> getProfileImages() {
     return List.generate(
       10,
@@ -78,12 +77,12 @@ class UserService {
     }
   }
 
+  /// Vérifie que l'ancien mot de passe est correct en tentant une connexion
   Future<bool> verifyOldPassword(String oldPassword) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return false;
 
     try {
-      // Tentative de connexion avec l'ancien mot de passe
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: user.email!,
         password: oldPassword,
@@ -95,7 +94,7 @@ class UserService {
     }
   }
 
-  /// Supprime définitevement un compte
+  /// Supprime définitivement un compte utilisateur et toutes ses données associées
   Future<void> deleteAccount() async {
     final user = Supabase.instance.client.auth.currentUser;
 
@@ -106,18 +105,18 @@ class UserService {
     try {
       final client = Supabase.instance.client;
 
-      // Supprime les tâches associées à l'utilisateur
+      // Suppression des données liées dans différentes tables
       await client.from('tasks').delete().eq('user_id', user.id);
       await client.from('favorites').delete().eq('user_id', user.id);
       await client.from('scans').delete().eq('user_id', user.id);
 
-      // Supprime les données utilisateur de la table "users"
+      // Suppression des données utilisateur principales
       await client.from('users').delete().eq('user_id', user.id);
 
-      // Supprime le compte de auth.users en appelant la fonction SQL
+      // Suppression du compte d'authentification via une fonction stockée SQL
       await client.rpc('delete_user_account', params: {'user_id': user.id});
 
-      // Déconnecte l'utilisateur après suppression
+      // Déconnexion après suppression du compte
       await client.auth.signOut();
     } catch (error) {
       throw "Erreur lors de la suppression du compte : $error";

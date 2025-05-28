@@ -3,18 +3,21 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
 
 class NotificationService {
+  // Singleton instance pour garantir un unique gestionnaire de notifications
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  // Constructeur normal
+  // Constructeur privé utilisé pour l'instance singleton
   NotificationService._internal()
       : flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  // Constructeur pour les tests (mocké)
+  // Constructeur dédié pour les tests, permettant l'injection d'un mock
   NotificationService.test(this.flutterLocalNotificationsPlugin);
 
+  /// Initialise le plugin de notifications et demande les permissions nécessaires.
+  /// Configure notamment les paramètres Android et iOS.
   Future<void> init() async {
     tzData.initializeTimeZones();
 
@@ -23,11 +26,14 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(initSettings);
 
+    // Demande des permissions iOS (alertes, badges, sons)
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
+  /// Planifie une notification locale pour une tâche à une date donnée.
+  /// Ignore la programmation si la date est passée.
   Future<void> scheduleNotificationForTask({
     required int id,
     required String title,
@@ -35,6 +41,8 @@ class NotificationService {
     required DateTime date,
   }) async {
     final scheduledDate = tz.TZDateTime.from(date, tz.local);
+
+    // Ne programme pas la notification si la date est déjà passée
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) return;
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -56,10 +64,12 @@ class NotificationService {
     );
   }
 
+  /// Annule toutes les notifications programmées
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  /// Annule une notification spécifique par son ID
   Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
   }

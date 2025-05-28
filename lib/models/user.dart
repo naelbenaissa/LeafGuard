@@ -9,6 +9,7 @@ class User {
   final String username;
   final String profileImage;
 
+  /// Constructeur immuable pour l'objet User
   const User(
       this.userId,
       this.email,
@@ -21,6 +22,8 @@ class User {
       this.profileImage,
       );
 
+  /// Crée une instance de `User` à partir d’un JSON
+  /// Assure le parsing des dates au format ISO8601
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       json['user_id'] as String,

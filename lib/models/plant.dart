@@ -31,7 +31,8 @@ class Plant {
     required this.slug,
   });
 
-  /// Convertit un JSON en un objet `Plant`
+  /// Crée une instance de `Plant` à partir d’un JSON.
+  /// Assure des valeurs par défaut pour éviter les erreurs nulles.
   factory Plant.fromJson(Map<String, dynamic> json) {
     return Plant(
       id: json['id'] ?? 0,

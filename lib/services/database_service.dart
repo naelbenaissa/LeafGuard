@@ -3,21 +3,26 @@ import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DatabaseService {
+  // Singleton instance
   static final DatabaseService _instance = DatabaseService._internal();
   static Database? _database;
 
+  // Private constructor pour singleton
   DatabaseService._internal();
 
+  // Factory pour retourner l'instance unique
   factory DatabaseService() {
     return _instance;
   }
 
+  // Getter pour accéder à la base de données, initialisation lazy
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  // Initialisation de la base SQLite locale avec création des tables
   Future<Database> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'leafguard.db');
     return await openDatabase(
@@ -29,6 +34,7 @@ class DatabaseService {
     );
   }
 
+  // Création des tables nécessaires au projet
   Future<void> _createTables(Database db) async {
     await db.execute('''
       CREATE TABLE diseases (
@@ -57,12 +63,13 @@ class DatabaseService {
     ''');
   }
 
-  /// ✅ Synchronisation depuis Supabase vers SQLite
+  /// Synchronisation des données depuis Supabase vers la base locale SQLite.
+  /// Supprime les anciennes données avant insertion pour éviter les doublons.
   Future<void> syncFromSupabase() async {
     final db = await database;
     final supabase = Supabase.instance.client;
 
-    // 🔄 Récupérer les maladies depuis Supabase
+    // Récupérer toutes les maladies depuis Supabase et mettre à jour SQLite
     final diseases = await supabase.from('diseases').select();
     await db.transaction((txn) async {
       await txn.delete('diseases');
@@ -71,7 +78,7 @@ class DatabaseService {
       }
     });
 
-    // 🔄 Récupérer les tâches depuis Supabase
+    // Récupérer toutes les tâches depuis Supabase et mettre à jour SQLite
     final tasks = await supabase.from('tasks').select();
     await db.transaction((txn) async {
       await txn.delete('tasks');
@@ -80,7 +87,7 @@ class DatabaseService {
       }
     });
 
-    // 🔄 Récupérer les relations maladies ↔ tâches
+    // Récupérer les relations maladie ↔ tâche et mettre à jour SQLite
     final diseaseTasks = await supabase.from('disease_tasks').select();
     await db.transaction((txn) async {
       await txn.delete('disease_tasks');
@@ -90,7 +97,8 @@ class DatabaseService {
     });
   }
 
-  /// ✅ Récupérer les tâches associées à une maladie spécifique
+  /// Récupère la liste des tâches associées à une maladie identifiée par son nom.
+  /// Utilise une requête SQL avec jointures pour assurer l'intégrité des données.
   Future<List<Map<String, dynamic>>> getTasksForDisease(String diseaseName) async {
     final db = await database;
     return await db.rawQuery('''
@@ -101,7 +109,7 @@ class DatabaseService {
     ''', [diseaseName]);
   }
 
-  /// ✅ Fermer la base de données
+  /// Ferme proprement la connexion à la base de données SQLite
   Future<void> closeDatabase() async {
     final db = await database;
     await db.close();
