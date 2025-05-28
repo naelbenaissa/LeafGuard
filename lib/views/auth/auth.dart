@@ -34,62 +34,111 @@ class AuthPageState extends State<AuthPage> {
 
   Future<void> _authenticate() async {
     try {
+      final email = emailController.text.trim();
       final password = passwordController.text;
+      final confirmPassword = confirmPasswordController.text;
+      final name = nameController.text.trim();
+      final surname = surnameController.text.trim();
+      final phone = phoneController.text.trim();
+      final birthdate = birthdateController.text.trim();
 
-      if (!_isPasswordValid(password)) {
-        _showSnackbar("Le mot de passe doit contenir entre 8 et 15 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.");
+      // Vérification des champs vides
+      if (email.isEmpty || password.isEmpty) {
+        _showSnackbar("Veuillez remplir tous les champs obligatoires.");
+        return;
+      }
+
+      if (!email.contains('@') || !email.contains('.')) {
+        _showSnackbar("Veuillez saisir une adresse e-mail valide.");
         return;
       }
 
       if (!isLogin) {
-        if (password != confirmPasswordController.text) {
-          _showSnackbar("Les mots de passe ne correspondent pas.");
-          return;
-        }
-        if (nameController.text.isEmpty || surnameController.text.isEmpty) {
+        // Vérification des champs supplémentaires pour l'inscription
+        if (name.isEmpty || surname.isEmpty) {
           _showSnackbar("Le nom et le prénom sont obligatoires.");
           return;
         }
-        if (birthdateController.text.isNotEmpty) {
-          DateTime birthDate = DateFormat("dd/MM/yyyy").parse(birthdateController.text);
-          if (_calculateAge(birthDate) < 16) {
-            _showSnackbar("Vous devez avoir au moins 16 ans pour vous inscrire.");
+
+        if (confirmPassword.isEmpty) {
+          _showSnackbar("Veuillez confirmer votre mot de passe.");
+          return;
+        }
+
+        if (password != confirmPassword) {
+          _showSnackbar("Les mots de passe ne correspondent pas.");
+          return;
+        }
+
+        if (!_isPasswordValid(password)) {
+          _showSnackbar("Le mot de passe doit contenir entre 8 et 15 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.");
+          return;
+        }
+
+        if (birthdate.isNotEmpty) {
+          try {
+            final birthDateParsed = DateFormat("dd/MM/yyyy").parse(birthdate);
+            if (_calculateAge(birthDateParsed) < 16) {
+              _showSnackbar("Vous devez avoir au moins 16 ans pour vous inscrire.");
+              return;
+            }
+          } catch (e) {
+            _showSnackbar("Format de date de naissance invalide. Utilisez le format jj/mm/aaaa.");
             return;
           }
         }
 
+        // Création du compte
         final response = await supabase.auth.signUp(
-          email: emailController.text.trim(),
+          email: email,
           password: password,
         );
 
         if (response.user != null) {
           await userService.addUserData(
             response.user!.id,
-            emailController.text.trim(),
-            nameController.text.trim(),
-            surnameController.text.trim(),
-            phoneController.text.trim(),
-            birthdateController.text.trim().isNotEmpty ? birthdateController.text.trim() : null,
+            email,
+            name,
+            surname,
+            phone.isNotEmpty ? phone : null,
+            birthdate.isNotEmpty ? birthdate : null,
           );
           if (mounted) context.go('/');
-        }
-      } else {
-        final response = await supabase.auth.signInWithPassword(
-          email: emailController.text.trim(),
-          password: password,
-        );
-
-        if (response.session != null && mounted) {
-          context.go('/');
         } else {
-          _showSnackbar("Identifiants incorrects ou utilisateur introuvable.");
+          _showSnackbar("L'inscription a échoué. Veuillez réessayer.");
         }
+
+      } else {
+        try {
+          final response = await supabase.auth.signInWithPassword(
+            email: email,
+            password: password,
+          );
+
+          if (response.session != null && mounted) {
+            context.go('/');
+          } else {
+            _showSnackbar("Email ou mot de passe incorrect.");
+          }
+        } on AuthException catch (e) {
+          final message = e.message.toLowerCase();
+
+          if (message.contains("invalid login credentials")) {
+            _showSnackbar("Email ou mot de passe incorrect.");
+          } else if (message.contains("user not found")) {
+            _showSnackbar("Utilisateur non trouvé.");
+          } else {
+            _showSnackbar("Erreur : ${e.message}");
+          }
+        }
+
+
       }
     } catch (e) {
-      _showSnackbar("Erreur : ${e.toString()}");
+      _showSnackbar("Une erreur est survenue : ${e.toString()}");
     }
   }
+
 
   /// Vérifie si le mot de passe respecte les critères de sécurité
   bool _isPasswordValid(String password) {

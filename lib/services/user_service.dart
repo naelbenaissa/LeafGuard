@@ -44,14 +44,14 @@ class UserService {
   }
 
   /// Ajoute un nouvel utilisateur dans la table "users"
-  Future<void> addUserData(String userId, String email, String name, String surname, String phone, String? birthdate) async {
+  Future<void> addUserData(String userId, String email, String name, String surname, String? phone, String? birthdate) async {
     try {
       await _client.from('users').insert({
         'user_id': userId,
         'email': email,
         'last_name': name,
         'first_name': surname,
-        'phone_number': phone.isNotEmpty ? phone : null,
+        'phone_number': phone,
         'birthdate': birthdate,
         'username': name,
         'profile_image': _getRandomProfileImage(),
