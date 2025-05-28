@@ -18,7 +18,7 @@ class TasksCalendarPage extends StatefulWidget {
 
 class _TasksCalendarPageState extends State<TasksCalendarPage> {
   final SupabaseClient supabase = Supabase.instance.client;
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   Map<DateTime, List<Map<String, dynamic>>> _tasksByDate = {};
@@ -109,6 +109,18 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
               lastDay: DateTime.utc(2100, 12, 31),
               focusedDay: _focusedDay,
               calendarFormat: _calendarFormat,
+              availableCalendarFormats: const {
+                CalendarFormat.month: 'Mois',
+                CalendarFormat.twoWeeks: '2 semaines',
+                CalendarFormat.week: 'Semaine',
+              },
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
@@ -120,13 +132,13 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                 DateTime normalizedDate = DateTime(day.year, day.month, day.day);
                 return _tasksByDate[normalizedDate] ?? [];
               },
-              calendarStyle: const CalendarStyle(
-                todayDecoration: BoxDecoration(
+              calendarStyle: CalendarStyle(
+                todayDecoration: const BoxDecoration(
                   color: Colors.green,
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green[300],
                   shape: BoxShape.circle,
                 ),
               ),
@@ -138,8 +150,8 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                       child: Container(
                         width: 7,
                         height: 7,
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent, // COULEUR DU POINT
+                        decoration: BoxDecoration(
+                          color: Colors.teal[600],
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -166,7 +178,7 @@ class _TasksCalendarPageState extends State<TasksCalendarPage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_circle,
-                        color: Colors.blue, size: 30),
+                        color: Colors.green, size: 30),
                     onPressed: () =>
                         CreateTask.show(context, () => _fetchTasks()),
                   ),
