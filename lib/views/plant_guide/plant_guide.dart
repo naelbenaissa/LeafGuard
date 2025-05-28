@@ -24,8 +24,13 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   @override
   void initState() {
     super.initState();
-    _fetchAllPlants(); // Chargement initial complet pour la recherche locale
-    _fetchPlants(); // Chargement initial paginé pour l'affichage principal
+    _loadInitialData(); // méthode asynchrone pour garantir l’ordre
+  }
+
+  Future<void> _loadInitialData() async {
+    _fetchAllPlants(); // async sans attendre
+    await _fetchPlants(); // charge la page visible
+
   }
 
   /// Charge toutes les plantes disponibles en paginant jusqu'à épuisement des données
@@ -45,11 +50,17 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
           allPlants.addAll(newPlants);
           page++;
         } else {
-          hasMoreData = false; // Plus de données à récupérer, fin de la boucle
+          hasMoreData = false;
         }
       }
+
+      // Important : appliquer le filtre s’il y avait une requête en attente
+      if (_searchQuery.isNotEmpty) {
+        _applyFilter(_searchQuery);
+      }
+
     } catch (e) {
-      // TODO: Gestion d'erreur (ex: affichage message utilisateur, logs)
+      // TODO: Gestion d'erreur
     } finally {
       _setLoading(false);
     }
@@ -64,17 +75,16 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
       final response = await _plantService.fetchPlants(page: _currentPage);
       final totalPlants = response['total'] ?? 0;
 
-      if (!mounted) return; // Vérification que le widget est toujours monté
+      if (!mounted) return;
 
       setState(() {
         plants = response['data'] ?? [];
-        _totalPages = (totalPlants / 20).ceil(); // Calcul du nombre total de pages
-        if (_totalPages < 1) _totalPages = 1; // Minimum 1 page
-
-        _currentPage = _currentPage.clamp(1, _totalPages); // Clamp page courante dans les bornes
+        _totalPages = (totalPlants / 20).ceil();
+        if (_totalPages < 1) _totalPages = 1;
+        _currentPage = _currentPage.clamp(1, _totalPages);
       });
     } catch (e) {
-      // TODO: Gestion d'erreur
+      // TODO: gestion erreur
     } finally {
       _setLoading(false);
     }
@@ -83,19 +93,30 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   /// Applique le filtre de recherche localement sur allPlants
   /// Si la recherche est vide, recharge la page paginée depuis l'API
   void _applyFilter(String query) {
-    setState(() {
-      _searchQuery = query;
+    _searchQuery = query;
 
-      if (query.isEmpty) {
-        _fetchPlants();
-      } else {
-        // Filtrage local sur le nom commun (insensible à la casse)
+    if (query.isEmpty) {
+      // Simplement appeler _fetchPlants() et laisser la gestion de loading là-bas
+      _fetchPlants();
+    } else if (allPlants.isEmpty) {
+      _setLoading(true);
+      _fetchAllPlants().then((_) {
+        setState(() {
+          plants = allPlants.where((plant) {
+            final name = plant['common_name']?.toLowerCase() ?? "";
+            return name.contains(query.toLowerCase());
+          }).toList();
+          _setLoading(false);
+        });
+      });
+    } else {
+      setState(() {
         plants = allPlants.where((plant) {
-          final name = plant['common_name']?.toString().toLowerCase() ?? "";
+          final name = plant['common_name']?.toLowerCase() ?? "";
           return name.contains(query.toLowerCase());
         }).toList();
-      }
-    });
+      });
+    }
   }
 
   /// Change la page affichée uniquement si la recherche est vide (pas de pagination sur filtre local)
