@@ -71,7 +71,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
     required TextEditingController controller,
     required String label,
     required bool isPasswordVisible,
-    required Function(bool) onVisibilityChanged,
+    required VoidCallback onToggleVisibility,
   }) {
     return TextField(
       controller: controller,
@@ -79,8 +79,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
       decoration: InputDecoration(
         labelText: label,
         suffixIcon: GestureDetector(
-          onLongPress: () => onVisibilityChanged(true),
-          onLongPressUp: () => onVisibilityChanged(false),
+          onTap: onToggleVisibility,
           child: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off),
         ),
       ),
@@ -112,9 +111,9 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
                   controller: oldPasswordController,
                   label: "Ancien mot de passe",
                   isPasswordVisible: _isOldPasswordVisible,
-                  onVisibilityChanged: (visible) {
+                  onToggleVisibility: () {
                     setState(() {
-                      _isOldPasswordVisible = visible;
+                      _isOldPasswordVisible = !_isOldPasswordVisible;
                     });
                   },
                 ),
@@ -122,9 +121,9 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
                   controller: newPasswordController,
                   label: "Nouveau mot de passe",
                   isPasswordVisible: _isNewPasswordVisible,
-                  onVisibilityChanged: (visible) {
+                  onToggleVisibility: () {
                     setState(() {
-                      _isNewPasswordVisible = visible;
+                      _isNewPasswordVisible = !_isNewPasswordVisible;
                     });
                   },
                 ),
@@ -132,9 +131,9 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
                   controller: confirmPasswordController,
                   label: "Confirmer le mot de passe",
                   isPasswordVisible: _isConfirmPasswordVisible,
-                  onVisibilityChanged: (visible) {
+                  onToggleVisibility: () {
                     setState(() {
-                      _isConfirmPasswordVisible = visible;
+                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                     });
                   },
                 ),

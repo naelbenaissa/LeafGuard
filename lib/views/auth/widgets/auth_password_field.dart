@@ -32,14 +32,9 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
         filled: true,
         fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
         suffixIcon: GestureDetector(
-          onLongPress: () {
+          onTap: () {
             setState(() {
-              _isPasswordVisible = true;
-            });
-          },
-          onLongPressUp: () {
-            setState(() {
-              _isPasswordVisible = false;
+              _isPasswordVisible = !_isPasswordVisible; // toggle
             });
           },
           child: Icon(

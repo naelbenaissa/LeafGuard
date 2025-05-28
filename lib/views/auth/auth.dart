@@ -13,10 +13,10 @@ class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
   @override
-  _AuthPageState createState() => _AuthPageState();
+  AuthPageState createState() => AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class AuthPageState extends State<AuthPage> {
   bool isLogin = true;
   final SupabaseClient supabase = Supabase.instance.client;
   final UserService userService = UserService();
@@ -28,6 +28,9 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController surnameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController birthdateController = TextEditingController();
+  bool hasPartialInput() => _hasPartialInput();
+
+  Future<bool> confirmLeavePage() => _confirmLeavePage();
 
   Future<void> _authenticate() async {
     try {
@@ -124,6 +127,39 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
+  Future<bool> _confirmLeavePage() async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Quitter la page ?"),
+        content: const Text("Vous avez commencé à remplir le formulaire. Si vous quittez cette page, les informations saisies seront perdues."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("Rester"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("Quitter"),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
+
+  bool _hasPartialInput() {
+    return [
+      emailController,
+      passwordController,
+      confirmPasswordController,
+      nameController,
+      surnameController,
+      phoneController,
+      birthdateController,
+    ].any((controller) => controller.text.trim().isNotEmpty);
+  }
+
   @override
   void dispose() {
     emailController.dispose();
@@ -142,7 +178,14 @@ class _AuthPageState extends State<AuthPage> {
     final colorScheme = theme.colorScheme;
     final textColor = theme.textTheme.bodyLarge!.color;
 
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      if (_hasPartialInput()) {
+        return await _confirmLeavePage();
+      }
+      return true;
+    },
+    child: Scaffold(
       backgroundColor: colorScheme.surface,
       body: Center(
         child: SingleChildScrollView(
@@ -199,6 +242,7 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
       bottomNavigationBar: const CustomBottomBar(),
+    )
     );
   }
 }
