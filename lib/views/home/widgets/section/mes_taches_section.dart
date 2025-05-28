@@ -35,6 +35,8 @@ class _MesTachesSectionState extends State<MesTachesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final user = supabase.auth.currentUser; // Récupération utilisateur connecté
+
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _futureTasks,
       builder: (context, snapshot) {
@@ -71,18 +73,42 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        context.go('/calendar');
-                      },
-                      child: const Text(
-                        "Ouvrir le calendrier",
-                        style: TextStyle(
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
+                    user == null
+                        ? Column(
+                            children: [
+                              const Text(
+                                "Veuillez vous connecter pour accéder au calendrier et gérer vos tâches.",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.redAccent),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 12),
+                              TextButton(
+                                onPressed: () {
+                                  context.go('/auth');
+                                },
+                                child: const Text(
+                                  "Se connecter",
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : TextButton(
+                            onPressed: () {
+                              context.go('/calendar');
+                            },
+                            child: const Text(
+                              "Ouvrir le calendrier",
+                              style: TextStyle(
+                                fontSize: 16,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -190,18 +216,42 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
-                        TextButton(
-                          onPressed: () {
-                            context.go('/calendar');
-                          },
-                          child: const Text(
-                            "Ouvrir le calendrier",
-                            style: TextStyle(
-                              fontSize: 16,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
+                        user == null
+                            ? Column(
+                                children: [
+                                  const Text(
+                                    "Veuillez vous connecter pour accéder au calendrier et gérer vos tâches.",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.redAccent),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  TextButton(
+                                    onPressed: () {
+                                      context.go('/auth');
+                                    },
+                                    child: const Text(
+                                      "Se connecter",
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : TextButton(
+                                onPressed: () {
+                                  context.go('/calendar');
+                                },
+                                child: const Text(
+                                  "Ouvrir le calendrier",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
                       ],
                     ),
                   ),

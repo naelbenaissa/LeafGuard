@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecentScansGrid extends StatelessWidget {
@@ -21,14 +22,32 @@ class RecentScansGrid extends StatelessWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Text(
-            "Veuillez vous connecter pour voir vos scans enregistrés.",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.red[300] : Colors.red,
-            ),
-            textAlign: TextAlign.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Veuillez vous connecter pour voir vos scans enregistrés.",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.red[300] : Colors.red,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () {
+                  context.go('/auth');
+                },
+                child: const Text(
+                  "Se connecter",
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );

@@ -93,6 +93,47 @@ class TasksService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getTasksForDisease(String diseaseName) async {
+    final diseaseResponse = await supabase
+        .from('diseases')
+        .select('id')
+        .eq('disease_name', diseaseName)
+        .maybeSingle();
+
+    print('Disease Response: $diseaseResponse');
+
+    if (diseaseResponse == null) {
+      return [];
+    }
+    final diseaseId = diseaseResponse['id'];
+
+    final taskLinks = await supabase
+        .from('disease_tasks')
+        .select('task_id')
+        .eq('disease_id', diseaseId);
+
+    print('Task Links: $taskLinks');
+
+    if (taskLinks.isEmpty) {
+      return [];
+    }
+
+    final taskIds = taskLinks.map((e) => e['task_id']).toList();
+    print('Task IDs: $taskIds');
+
+    // Essayer .in_ à la place de .filter()
+    final tasks = await supabase
+        .from('ia_tasks')
+        .select('*')
+        .filter('id', 'in', taskIds.cast<dynamic>());
+
+
+    print('Tasks: $tasks');
+
+    return List<Map<String, dynamic>>.from(tasks);
+  }
+
+
   Future<void> deleteTask(String taskId) async {
     try {
       await supabase.from('tasks').delete().match({'id': taskId});

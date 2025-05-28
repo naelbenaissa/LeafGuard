@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class BottomMenuWidget extends StatefulWidget {
@@ -16,23 +18,52 @@ class BottomMenuWidget extends StatefulWidget {
 
 class _BottomMenuWidgetState extends State<BottomMenuWidget> {
   bool _isScanning = false;
+  Color _indicatorColor = Colors.white;
+  Timer? _colorTimer;
 
   Future<void> _handleScanPressed() async {
-    if (_isScanning) return; // sécurité anti double clic
+    if (_isScanning) return;
 
     setState(() {
       _isScanning = true;
+      _indicatorColor = Colors.white;
+    });
+
+    // Lancement des timers de changement de couleur
+    _colorTimer?.cancel(); // au cas où un timer est encore actif
+    _colorTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _indicatorColor = Colors.orange;
+        });
+      }
+    });
+
+    _colorTimer = Timer(const Duration(seconds: 10), () {
+      if (mounted) {
+        setState(() {
+          _indicatorColor = Colors.red;
+        });
+      }
     });
 
     try {
       await widget.onScanPressed();
     } finally {
       if (mounted) {
+        _colorTimer?.cancel();
         setState(() {
           _isScanning = false;
+          _indicatorColor = Colors.white;
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _colorTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -45,11 +76,11 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
         children: [
           _buildMenuButton(Icons.camera_alt, "Caméra"),
           _isScanning
-              ? const SizedBox(
+              ? SizedBox(
             width: 56,
             height: 56,
             child: CircularProgressIndicator(
-              color: Colors.white,
+              color: _indicatorColor,
               strokeWidth: 3,
             ),
           )
