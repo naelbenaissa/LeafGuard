@@ -24,7 +24,6 @@ class ScanResultDialog {
       String? scanId;
       String? imageUrl;
       bool tasksAdded = false;
-      bool calendarIconClicked = false;
 
       final session = Supabase.instance.client.auth.currentSession;
       final bool isAuthenticated = session != null;
@@ -131,9 +130,38 @@ class ScanResultDialog {
                             ),
                             const SizedBox(height: 5),
                             if (diseaseTasks.isEmpty)
-                              const Padding(
-                                padding: EdgeInsets.only(top: 8),
-                                child: Text("Aucune tâche trouvée pour cette maladie."),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text("Aucune tâche trouvée pour cette maladie."),
+                                    if (!isAuthenticated) ...[
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        "Connectez-vous afin d’ajouter des tâches personnalisées.",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontStyle: FontStyle.italic,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          context.go('/auth');
+                                        },
+                                        child: const Text(
+                                          "Se connecter",
+                                          style: TextStyle(
+                                            decoration: TextDecoration.underline,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
                               )
                             else
                               Column(
