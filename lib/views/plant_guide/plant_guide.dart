@@ -47,10 +47,10 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
         }
       }
     } catch (e) {
-      return;
+      // Gestion d'erreur ici si besoin
+    } finally {
+      _setLoading(false);
     }
-
-    _setLoading(false);
   }
 
   Future<void> _fetchPlants() async {
@@ -58,19 +58,22 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
 
     try {
       final response = await _plantService.fetchPlants(page: _currentPage);
-      final totalPlants = response['total'] ?? 1;
+      final totalPlants = response['total'] ?? 0;
 
       if (!mounted) return;
 
       setState(() {
         plants = response['data'] ?? [];
         _totalPages = (totalPlants / 20).ceil();
+        if (_totalPages < 1) _totalPages = 1;
+
+        _currentPage = _currentPage.clamp(1, _totalPages);
       });
     } catch (e) {
-      return;
+      // Gestion d'erreur ici si besoin
+    } finally {
+      _setLoading(false);
     }
-
-    _setLoading(false);
   }
 
   void _applyFilter(String query) {
@@ -88,8 +91,10 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
   }
 
   void _changePage(int page) {
-    if (page > 0 && page <= _totalPages && _searchQuery.isEmpty) {
-      setState(() => _currentPage = page);
+    if (page >= 1 && page <= _totalPages && _searchQuery.isEmpty) {
+      setState(() {
+        _currentPage = page.clamp(1, _totalPages);
+      });
       _fetchPlants();
     }
   }
@@ -109,40 +114,33 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
       extendBodyBehindAppBar: true,
       appBar: PlantGuideAppBar(onSearchChanged: _onSearchChanged),
       body: Padding(
-        padding: const EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.only(top: 140),
         child: Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Center(
+                child: Text(
+                  "Guide des plantes",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : plants.isEmpty
                   ? const Center(child: Text("Aucun résultat trouvé"))
-                  : ListView(
-                padding: const EdgeInsets.all(12),
-                children: [
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 12.0),
-                      child: Text(
-                        "Guide des plantes",
-                        style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12.0,
-                      mainAxisSpacing: 12.0,
-                      childAspectRatio: 0.75,
-                    ),
-                    itemCount: plants.length,
-                    itemBuilder: (context, index) {
-                      final plant = plants[index];
-
+                  : SingleChildScrollView(
+                padding: const EdgeInsets.all(8),
+                child: Center(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: plants.map((plant) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -152,52 +150,88 @@ class _PlantGuidePageState extends State<PlantGuidePage> {
                             ),
                           );
                         },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: plant['image_url'] != null
-                                  ? Image.network(
-                                plant['image_url'],
-                                width: 180,
-                                height: 180,
-                                fit: BoxFit.cover,
+                        child: Container(
+                          width: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Theme.of(context).cardColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               )
-                                  : Container(
-                                width: 180,
-                                height: 180,
-                                color: Colors.green[200],
-                                child: const Icon(Icons.local_florist,
-                                    size: 60, color: Colors.green),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                ),
+                                child: AspectRatio(
+                                  aspectRatio: 1, // carré
+                                  child: plant['image_url'] != null
+                                      ? Image.network(
+                                    plant['image_url'],
+                                    fit: BoxFit.cover,
+                                  )
+                                      : Container(
+                                    color: Colors.green[200],
+                                    child: const Icon(
+                                      Icons.local_florist,
+                                      size: 60,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              plant['common_name'] ?? "Nom inconnu",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "ID: ${plant['id'] ?? 'Inconnu'}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[800],
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  plant['common_name'] ?? "Nom inconnu",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Text(
+                                  "ID: ${plant['id'] ?? 'Inconnu'}",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[700],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
-                    },
+                    }).toList(),
                   ),
-                  if (_searchQuery.isEmpty) _buildPaginationControls(),
-                ],
+                ),
               ),
             ),
+            if (_searchQuery.isEmpty && plants.isNotEmpty && _totalPages > 1)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: _buildPaginationControls(),
+              ),
           ],
         ),
       ),
