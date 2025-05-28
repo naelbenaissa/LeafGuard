@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Widget affichant une grille des scans récents de l’utilisateur connecté.
+///
+/// Affiche un message invitant à se connecter si l’utilisateur n’est pas authentifié.
+/// Affiche un message si aucune donnée n’est disponible.
+/// Chaque scan affiche une image, la prédiction, et le niveau de confiance.
+/// Le callback [onScanTap] est déclenché lors de la sélection d’un scan.
 class RecentScansGrid extends StatelessWidget {
   final List<Map<String, dynamic>> recentScans;
   final VoidCallback onScanTap;
@@ -19,6 +25,7 @@ class RecentScansGrid extends StatelessWidget {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     if (!isAuthenticated) {
+      // Invite à se connecter si l’utilisateur n’est pas connecté
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -36,9 +43,7 @@ class RecentScansGrid extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () {
-                  context.go('/auth');
-                },
+                onPressed: () => context.go('/auth'),
                 child: const Text(
                   "Se connecter",
                   style: TextStyle(
@@ -54,6 +59,7 @@ class RecentScansGrid extends StatelessWidget {
     }
 
     if (recentScans.isEmpty) {
+      // Message si aucun scan disponible
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -70,6 +76,7 @@ class RecentScansGrid extends StatelessWidget {
       );
     }
 
+    // Affichage de la grille de scans
     return SingleChildScrollView(
       child: GridView.builder(
         padding: const EdgeInsets.all(10),

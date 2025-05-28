@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../bar/widgets/profile_button.dart';
 
+/// AppBar personnalisée pour la page du guide des plantes.
+///
+/// Intègre un bouton profil et une barre de recherche avec un style arrondi,
+/// adaptant ses couleurs au thème clair ou sombre.
 class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
+  /// Callback appelé à chaque modification du texte dans le champ de recherche.
   final Function(String) onSearchChanged;
 
   const PlantGuideAppBar({super.key, required this.onSearchChanged});
 
+  // Hauteur fixe de l'AppBar
   @override
   Size get preferredSize => const Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Couleurs adaptées au thème clair/sombre
     final Color backgroundColor = isDarkMode ? Colors.grey[900]! : Colors.white;
     final Color textFieldColor = isDarkMode ? Colors.grey[800]! : Colors.grey.shade100;
     final Color hintTextColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
@@ -21,10 +29,12 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: const Size.fromHeight(80),
       child: Stack(
         children: [
+          // Bar transparente pour gérer la hauteur et l'espace de la status bar
           AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
+          // Container principal avec champ de recherche et bouton profil
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,
@@ -44,8 +54,9 @@ class PlantGuideAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
-                  const ProfileButton(),
+                  const ProfileButton(), // Bouton profil utilisateur
                   const SizedBox(width: 10),
+                  // Champ de recherche expansible
                   Expanded(
                     child: TextField(
                       onChanged: onSearchChanged,

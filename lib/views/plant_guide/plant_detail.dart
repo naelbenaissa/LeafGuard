@@ -7,6 +7,7 @@ import 'package:ui_leafguard/views/plant_guide/widgets/build_info_card.dart';
 class DetailPage extends StatefulWidget {
   final Map<String, dynamic> plant;
 
+  /// Constructeur de la page détail d'une plante, requiert une map contenant les informations de la plante
   const DetailPage({super.key, required this.plant});
 
   @override
@@ -14,19 +15,20 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  bool isFavorite = false;
-  final SupabaseClient supabase = Supabase.instance.client;
-  late final FavoriteService favoriteService;
-  String? userId;
+  bool isFavorite = false; // Indique si la plante est marquée comme favorite par l'utilisateur
+  final SupabaseClient supabase = Supabase.instance.client; // Instance Supabase pour accéder aux services backend
+  late final FavoriteService favoriteService; // Service dédié à la gestion des favoris
+  String? userId; // ID utilisateur connecté, null si non connecté
 
   @override
   void initState() {
     super.initState();
     favoriteService = FavoriteService(supabase);
-    _fetchUserId();
+    _fetchUserId(); // Récupération de l'ID utilisateur et vérification des favoris
   }
 
-  /// Récupère l'ID de l'utilisateur connecté
+  /// Récupère l'ID de l'utilisateur actuellement connecté via Supabase
+  /// Si l'utilisateur est connecté, met à jour l'état local et vérifie si la plante est en favori
   void _fetchUserId() {
     final user = supabase.auth.currentUser;
     if (user != null) {
@@ -37,16 +39,20 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
-  /// Vérifie si la plante est en favori
+  /// Interroge le service favoris pour déterminer si la plante est déjà ajoutée aux favoris
+  /// Met à jour l'état local en conséquence
   Future<void> _checkIfFavorite() async {
-    if (userId == null) return;
+    if (userId == null) return; // Pas d'utilisateur connecté, pas de vérification possible
     bool favorite = await favoriteService.isFavorite(userId!, widget.plant['id']);
     setState(() {
       isFavorite = favorite;
     });
   }
 
-  /// Ajoute ou supprime une plante des favoris
+  /// Bascule l'état favori de la plante :
+  /// - si l'utilisateur n'est pas connecté, affiche un message d'erreur
+  /// - sinon, ajoute ou supprime la plante des favoris selon l'état actuel
+  /// Met à jour l'interface utilisateur après modification
   Future<void> _toggleFavorite() async {
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -70,6 +76,7 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Détection du mode sombre pour adapter les couleurs dynamiquement
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final subtitleColor = isDarkMode ? Colors.grey[400] ?? Colors.grey : Colors.grey[700]!;
@@ -77,8 +84,8 @@ class _DetailPageState extends State<DetailPage> {
     final backgroundColor = isDarkMode ? Colors.black : Colors.white;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: const PlantDetailAppbar(),
+      extendBodyBehindAppBar: true, // Permet à la vue de s'étendre derrière l'app bar
+      appBar: const PlantDetailAppbar(), // Barre d'app personnalisée pour la page détail plante
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Column(
@@ -86,6 +93,7 @@ class _DetailPageState extends State<DetailPage> {
           children: [
             Stack(
               children: [
+                // Image principale de la plante avec coins arrondis en bas
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
@@ -100,10 +108,15 @@ class _DetailPageState extends State<DetailPage> {
                       height: 350,
                       width: double.infinity,
                       color: isDarkMode ? Colors.grey[800] : Colors.green[200],
-                      child: Icon(Icons.local_florist, size: 100, color: isDarkMode ? Colors.green[300] : Colors.green),
+                      child: Icon(
+                        Icons.local_florist,
+                        size: 100,
+                        color: isDarkMode ? Colors.green[300] : Colors.green,
+                      ),
                     ),
                   ),
                 ),
+                // Overlay dégradé noir en haut de l'image pour améliorer la lisibilité
                 Container(
                   height: 350,
                   decoration: BoxDecoration(
@@ -125,6 +138,7 @@ class _DetailPageState extends State<DetailPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Bloc texte affichant nom commun et nom scientifique de la plante
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -139,6 +153,7 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                     ],
                   ),
+                  // Bouton favori avec icône changeant selon l'état
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -151,6 +166,7 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // Liste des informations détaillées affichées sous forme de cartes personnalisées
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(

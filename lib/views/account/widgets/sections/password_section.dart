@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../services/user_service.dart';
 
+/// Section pour gérer le changement de mot de passe utilisateur avec validation et retour utilisateur.
 class ChangePasswordSection extends StatefulWidget {
   final bool isExpanded;
   final VoidCallback onTap;
@@ -13,6 +14,7 @@ class ChangePasswordSection extends StatefulWidget {
 
 class _ChangePasswordSectionState extends State<ChangePasswordSection> {
   final UserService userService = UserService();
+
   final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
@@ -21,11 +23,13 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+  /// Valide et effectue le changement de mot de passe via le service utilisateur.
   Future<void> changePassword() async {
     final oldPassword = oldPasswordController.text;
     final newPassword = newPasswordController.text;
     final confirmPassword = confirmPasswordController.text;
 
+    // Vérifications simples des champs obligatoires
     if (newPassword.isEmpty || confirmPassword.isEmpty || oldPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tous les champs sont obligatoires.")),
@@ -33,6 +37,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
       return;
     }
 
+    // Le nouveau mot de passe doit être différent de l'ancien
     if (newPassword == oldPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Le nouveau mot de passe doit être différent de l'ancien.")),
@@ -40,6 +45,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
       return;
     }
 
+    // Confirmation du nouveau mot de passe
     if (newPassword != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Les nouveaux mots de passe ne correspondent pas.")),
@@ -48,6 +54,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
     }
 
     try {
+      // Vérifie que l'ancien mot de passe est correct avant mise à jour
       bool isOldPasswordValid = await userService.verifyOldPassword(oldPassword);
       if (!isOldPasswordValid) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -56,17 +63,20 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
         return;
       }
 
+      // Effectue le changement de mot de passe
       await userService.changePassword(newPassword);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Mot de passe mis à jour avec succès !")),
       );
     } catch (error) {
+      // Gestion d'erreur globale
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Erreur : $error")),
       );
     }
   }
 
+  /// Champ de saisie masquée avec toggle de visibilité.
   Widget _buildPasswordField({
     required TextEditingController controller,
     required String label,
@@ -90,6 +100,7 @@ class _ChangePasswordSectionState extends State<ChangePasswordSection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // En-tête avec icône et toggle d'expansion
         ListTile(
           leading: Icon(
             Icons.lock,

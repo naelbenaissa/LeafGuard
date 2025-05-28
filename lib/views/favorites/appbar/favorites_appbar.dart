@@ -6,34 +6,37 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   const FavoritesAppbar({super.key, required this.onFilterPressed});
 
+  // Hauteur préférée de l'AppBar personnalisée
   @override
   Size get preferredSize => const Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
-    final Color backgroundColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.grey[900]! // Gris foncé en mode sombre
-        : Colors.white; // Blanc en mode clair
+    // Couleur de fond selon le thème (mode sombre ou clair)
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor = isDarkMode ? Colors.grey[900]! : Colors.white;
 
     return PreferredSize(
-      preferredSize: const Size.fromHeight(80),
+      preferredSize: preferredSize,
       child: Stack(
         children: [
+          // AppBar transparente pour gérer la zone du statut bar et l'ombre
           AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
+          // Conteneur personnalisé positionné sous la status bar avec ombre et arrondi
           Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
+            top: MediaQuery.of(context).padding.top + 10, // décallage sous la status bar
             left: 16,
             right: 16,
             child: Container(
               decoration: BoxDecoration(
                 color: backgroundColor,
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30), // coins arrondis
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.1), // ombre légère
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -42,8 +45,8 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
-                  const ProfileButton(),
-                  const Spacer(),
+                  const ProfileButton(), // Bouton profil à gauche
+                  const Spacer(),          // Espace flexible pour pousser le bouton filtre à droite
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -59,9 +62,8 @@ class FavoritesAppbar extends StatelessWidget implements PreferredSizeWidget {
                     child: IconButton(
                       onPressed: onFilterPressed,
                       icon: const Icon(Icons.filter_list),
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white // Icône blanche en mode sombre
-                          : Colors.black, // Icône noire en mode clair
+                      color: isDarkMode ? Colors.white : Colors.black, // couleur de l'icône selon thème
+                      tooltip: 'Filtrer', // accessibilité
                     ),
                   ),
                 ],

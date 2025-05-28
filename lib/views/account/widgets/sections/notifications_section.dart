@@ -3,6 +3,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../services/notification_service.dart';
 import '../../../widgets/notification_settings.dart';
 
+/// Section permettant de gérer les paramètres de notifications utilisateur.
 class NotificationsSection extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onTap;
@@ -13,13 +14,16 @@ class NotificationsSection extends StatelessWidget {
     required this.onTap,
   });
 
+  /// Affiche une notification de test après vérification et demande des permissions.
   Future<void> _showTestNotification(BuildContext context) async {
     var status = await Permission.notification.status;
 
+    // Demande de permission si nécessaire
     if (status.isDenied || status.isPermanentlyDenied) {
       var result = await Permission.notification.request();
 
       if (!result.isGranted) {
+        // Feedback utilisateur en cas de refus
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -33,6 +37,7 @@ class NotificationsSection extends StatelessWidget {
       }
     }
 
+    // Planifie une notification de test après 3 secondes
     final scheduledDate = DateTime.now().add(const Duration(seconds: 3));
     NotificationService().scheduleNotificationForTask(
       id: 0,
@@ -46,6 +51,7 @@ class NotificationsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Titre de la section avec expansion
         ListTile(
           leading: Icon(
             Icons.notifications,
@@ -63,8 +69,9 @@ class NotificationsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                const NotificationSettings(),
+                const NotificationSettings(), // Composant des paramètres personnalisés
                 const SizedBox(height: 16),
+                // Bouton pour déclencher la notification de test
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: ElevatedButton(

@@ -2,8 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImageSelectionWidget extends StatelessWidget {
+  // Image sélectionnée à afficher, null si aucune
   final File? selectedImage;
+
+  // Callback pour ouvrir le sélecteur d'image
   final VoidCallback pickImage;
+
+  // Callback pour effacer l'image sélectionnée
   final VoidCallback clearImage;
 
   const ImageSelectionWidget({
@@ -19,6 +24,8 @@ class ImageSelectionWidget extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Positioned.fill(
+          // Affiche une image par défaut avec un bouton pour choisir une image si aucune sélectionnée,
+          // sinon affiche l'image sélectionnée en plein écran.
           child: selectedImage == null
               ? Container(
             decoration: const BoxDecoration(
@@ -35,8 +42,7 @@ class ImageSelectionWidget extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -47,6 +53,7 @@ class ImageSelectionWidget extends StatelessWidget {
               : Image.file(selectedImage!, fit: BoxFit.cover),
         ),
         if (selectedImage != null)
+        // Bouton pour effacer l'image sélectionnée, visible uniquement quand une image est affichée
           Positioned(
             bottom: 20,
             child: GestureDetector(

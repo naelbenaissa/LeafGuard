@@ -6,6 +6,8 @@ import '../../../widgets/delete_confirmation_dialog.dart';
 
 class MesScansSection extends StatefulWidget {
   final String? filter;
+
+  /// Constructeur avec un filtre optionnel pour trier les scans
   const MesScansSection({super.key, this.filter});
 
   @override
@@ -15,17 +17,19 @@ class MesScansSection extends StatefulWidget {
 class _MesScansSectionState extends State<MesScansSection> {
   final SupabaseClient supabase = Supabase.instance.client;
   late final ScanService scanService;
+
   List<Map<String, dynamic>> scans = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Initialisation du service de scans avec le client Supabase
     scanService = ScanService(supabase);
     _fetchScans();
   }
 
-  /// Détecte le changement de filtre et actualise la liste
+  /// Détecte un changement dans le filtre pour mettre à jour l'ordre des scans
   @override
   void didUpdateWidget(covariant MesScansSection oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -34,7 +38,7 @@ class _MesScansSectionState extends State<MesScansSection> {
     }
   }
 
-  /// Récupère les scans de l'utilisateur
+  /// Charge la liste des scans depuis le service, avec gestion du chargement
   Future<void> _fetchScans() async {
     setState(() => isLoading = true);
     try {
@@ -52,9 +56,10 @@ class _MesScansSectionState extends State<MesScansSection> {
     }
   }
 
-  /// Trie les scans en fonction du filtre sélectionné
+  /// Trie la liste des scans selon le filtre sélectionné (Confiance ou Date)
   void _sortScans() {
     if (widget.filter == null) {
+      // Si aucun filtre, recharge la liste complète
       _fetchScans();
       return;
     }
@@ -72,7 +77,7 @@ class _MesScansSectionState extends State<MesScansSection> {
     });
   }
 
-  /// Affiche une boîte de dialogue pour confirmer la suppression
+  /// Affiche une boîte de dialogue demandant la confirmation de suppression
   Future<void> _confirmDelete(String scanId, String imageUrl) async {
     bool confirmDelete = await showDeleteConfirmationDialog(context);
     if (confirmDelete) {
@@ -80,7 +85,7 @@ class _MesScansSectionState extends State<MesScansSection> {
     }
   }
 
-  /// Supprime un scan et rafraîchit la liste
+  /// Supprime un scan via le service et rafraîchit la liste des scans
   Future<void> _deleteScan(String scanId, String imageUrl) async {
     setState(() => isLoading = true);
     try {
@@ -100,58 +105,62 @@ class _MesScansSectionState extends State<MesScansSection> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
+      // Affiche un indicateur de chargement pendant le fetch
       return const Center(child: CircularProgressIndicator());
     }
 
-    return scans.isEmpty
-        ? RefreshIndicator(
-      onRefresh: _fetchScans,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 32),
-                  const Text(
-                    "Vous n'avez aucun scan.",
-                    style: TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Scannez dès maintenant vos plantes pour les voir apparaître ici !",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-
-                      context.go('/camera');
-                    },
-                    child: const Text(
-                      "Aller à la caméra",
-                      style: TextStyle(
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
+    // Affiche un message si aucun scan n'est présent
+    if (scans.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _fetchScans,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 32),
+                    const Text(
+                      "Vous n'avez aucun scan.",
+                      style: TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Scannez dès maintenant vos plantes pour les voir apparaître ici !",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () {
+                        // Redirection vers la caméra pour scanner une plante
+                        context.go('/camera');
+                      },
+                      child: const Text(
+                        "Aller à la caméra",
+                        style: TextStyle(
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    )
+      );
+    }
 
-        : RefreshIndicator(
+    // Affiche la liste des scans avec possibilité de rafraîchir
+    return RefreshIndicator(
       onRefresh: _fetchScans,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),

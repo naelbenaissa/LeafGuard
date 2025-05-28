@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
+  // Callback appelé lors de la sélection d'une option dans le menu popup
   final Function(String) onOptionSelected;
 
   const CameraAppBar({super.key, required this.onOptionSelected});
@@ -12,25 +13,26 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
+      preferredSize: const Size.fromHeight(60), // Hauteur fixe de la barre d'applications
       child: Padding(
+        // Padding en haut prenant en compte la zone de statut (SafeArea)
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10, left: 16, right: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Bouton "Accueil" avec icône retour, style adapté au mode sombre/clair
             ElevatedButton(
-              onPressed: () => context.go("/"),
+              onPressed: () => context.go("/"), // Navigation vers la page d'accueil
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
                 foregroundColor: isDarkMode ? Colors.white : Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 elevation: 2,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
               child: Row(
                 children: [
+                  // Cercle contenant l'icône de retour
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -44,6 +46,7 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
+            // Menu popup avec options personnalisées, stylisé selon thème clair/sombre
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -79,5 +82,5 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  Size get preferredSize => const Size.fromHeight(60); // Taille fixe nécessaire pour AppBar
 }

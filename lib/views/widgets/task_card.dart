@@ -22,13 +22,14 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 4, // Ombre portée autour de la carte
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10), // Coins arrondis
       ),
       child: ListTile(
         leading: Icon(
           Icons.flag,
+          // Couleur de l'icône selon la priorité
           color: priority == 'high'
               ? Colors.red
               : priority == 'medium'
@@ -40,9 +41,10 @@ class TaskCard extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Icons.close, color: Colors.red),
           onPressed: () async {
+            // Demander confirmation avant suppression
             final confirmed = await _showDeleteConfirmationDialog(context);
             if (confirmed == true) {
-              await _deleteTask(context);
+              await _deleteTask(context); // Supprimer si confirmé
             }
           },
         ),
@@ -50,21 +52,21 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  /// Supprime la tâche et annule la notification
+  /// Supprime la tâche de la base et annule la notification associée
   Future<void> _deleteTask(BuildContext context) async {
     try {
       final taskService = TasksService(Supabase.instance.client);
 
-      // 1. Supprimer la tâche dans la base
+      // 1. Supprimer la tâche dans la base de données
       await taskService.deleteTask(id);
 
-      // 2. Annuler la notification liée à cette tâche
+      // 2. Annuler la notification liée (identifiée par hashCode de l'id)
       await NotificationService().cancelNotification(id.hashCode);
 
-      // 3. Refresh UI avec un léger délai pour laisser l'animation terminer
+      // 3. Rafraîchir la liste des tâches après un court délai (animation terminée)
       Future.delayed(const Duration(milliseconds: 300), () {
         if (context.mounted) {
-          refreshTasks();
+          refreshTasks(); // Callback pour recharger la liste
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Tâche supprimée")),
@@ -72,6 +74,7 @@ class TaskCard extends StatelessWidget {
         }
       });
     } catch (e) {
+      // Afficher une erreur en cas d'exception
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Erreur : $e")),
@@ -80,7 +83,7 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  /// Confirmation avant suppression
+  /// Affiche une boîte de dialogue demandant la confirmation de suppression
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,
@@ -89,11 +92,11 @@ class TaskCard extends StatelessWidget {
         content: const Text("Voulez-vous vraiment supprimer cette tâche ?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.of(context).pop(false), // Annuler
             child: const Text("Annuler"),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.of(context).pop(true), // Confirmer
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text("Supprimer"),
           ),

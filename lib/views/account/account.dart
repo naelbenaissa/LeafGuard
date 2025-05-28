@@ -10,6 +10,9 @@ import 'package:ui_leafguard/views/account/widgets/sections/profile_section.dart
 import '../../services/user_service.dart';
 import '../bar/custom_bottombar.dart';
 
+/// Page du compte utilisateur affichant les sections de profil, paramètres et actions.
+/// Gère le chargement des données utilisateur, l'état d'expansion des sections,
+/// ainsi que la navigation et l'affichage conditionnel des composants.
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
@@ -18,17 +21,18 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  String? _expandedSection;
-  Map<String, dynamic>? _userData;
-  bool _isLoading = true;
+  String? _expandedSection; // Section actuellement déployée
+  Map<String, dynamic>? _userData; // Données utilisateur récupérées
+  bool _isLoading = true; // Indicateur de chargement
   final UserService _userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUserData(); // Chargement initial des données utilisateur
   }
 
+  /// Récupère les données utilisateur à partir du service Supabase
   Future<void> _loadUserData() async {
     final user = Supabase.instance.client.auth.currentUser;
 
@@ -43,6 +47,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
+  /// Gère l'ouverture/fermeture des sections extensibles
   void _toggleSection(String section) {
     setState(() {
       _expandedSection = _expandedSection == section ? null : section;
@@ -54,9 +59,9 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       appBar: const AccountAppBar(),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator()) // Affichage pendant le chargement
           : _userData == null
-          ? const Center(child: Text("Utilisateur non trouvé"))
+          ? const Center(child: Text("Utilisateur non trouvé")) // Gestion erreur utilisateur non trouvé
           : SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Bouton personnalisé utilisé dans les écrans d’authentification.
+/// Adapte ses couleurs en fonction du thème (mode clair/sombre)
+/// pour une meilleure intégration visuelle.
 class AuthButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final String text;
+  final VoidCallback onPressed; // Callback déclenché au clic
+  final String text; // Texte affiché sur le bouton
 
   const AuthButton({
     super.key,

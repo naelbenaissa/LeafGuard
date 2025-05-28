@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// Champ de saisie générique avec support du type clavier, mode lecture seule,
+/// et personnalisation optionnelle d'une icône suffixe.
+/// S’adapte automatiquement au thème clair/sombre pour une meilleure lisibilité.
 class AuthTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final TextInputType keyboardType;
-  final bool readOnly;
-  final Widget? suffixIcon;
+  final TextEditingController controller; // Contrôleur du champ texte
+  final String label; // Libellé affiché au-dessus du champ
+  final TextInputType keyboardType; // Type du clavier (texte, email, nombre, etc.)
+  final bool readOnly; // Indique si le champ est en lecture seule
+  final Widget? suffixIcon; // Icône personnalisée affichée à droite du champ
 
   const AuthTextField({
     super.key,

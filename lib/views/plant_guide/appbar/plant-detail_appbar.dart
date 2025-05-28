@@ -4,9 +4,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../services/user_service.dart';
 
+/// AppBar personnalisée pour la page détail d'une plante.
+///
+/// Affiche un bouton "Retour" avec navigation pop, et un avatar utilisateur cliquable
+/// menant à la page compte ou authentification selon l'état connecté.
+/// Supporte l'affichage conditionnel de l'image de profil récupérée depuis Supabase.
 class PlantDetailAppbar extends StatefulWidget implements PreferredSizeWidget {
   const PlantDetailAppbar({super.key});
 
+  // Hauteur fixe de l'AppBar
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
@@ -15,18 +21,21 @@ class PlantDetailAppbar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
-  String? profileImageUrl;
+  String? profileImageUrl; // URL de l'image de profil utilisateur
 
   @override
   void initState() {
     super.initState();
+    // Charge initialement les données de l'utilisateur
     _loadUserProfile();
 
+    // Écoute les changements d'état d'authentification pour recharger le profil
     Supabase.instance.client.auth.onAuthStateChange.listen((event) {
       if (mounted) _loadUserProfile();
     });
   }
 
+  /// Récupère les données utilisateur depuis Supabase via le service utilisateur
   Future<void> _loadUserProfile() async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user != null) {
@@ -44,6 +53,7 @@ class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
     final user = Supabase.instance.client.auth.currentUser;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
+    // Couleurs adaptées au thème clair/sombre
     final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.white;
     final foregroundColor = isDarkMode ? Colors.white : Colors.black;
     final buttonColor = isDarkMode ? Colors.grey[800] : Colors.grey[200]!;
@@ -52,6 +62,7 @@ class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: Padding(
+        // Padding en haut pour gérer la barre de statut + espacement horizontal
         padding: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top + 10,
           left: 16,
@@ -60,6 +71,7 @@ class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Bouton "Retour" avec icône et texte
             ElevatedButton(
               onPressed: () => context.pop(),
               style: ElevatedButton.styleFrom(
@@ -86,6 +98,8 @@ class _PlantDetailAppbarState extends State<PlantDetailAppbar> {
                 ],
               ),
             ),
+
+            // Avatar utilisateur cliquable, navigue vers compte ou page auth
             GestureDetector(
               onTap: () {
                 context.pop();

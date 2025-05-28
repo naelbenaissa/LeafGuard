@@ -37,61 +37,55 @@ class _CameraPageState extends State<CameraPage> {
     _fetchScans();
   }
 
+  /// Initialise la caméra et met à jour l'état
   Future<void> initializeCamera() async {
     try {
       cameras = await availableCameras();
       if (cameras != null && cameras!.isNotEmpty) {
         _controller = CameraController(cameras![0], ResolutionPreset.high);
         await _controller!.initialize();
-        if (mounted) {
-          setState(() {});
-        }
+        if (mounted) setState(() {});
       }
     } catch (e) {
       debugPrint("Erreur lors de l'initialisation de la caméra: $e");
     }
   }
 
+  /// Ouvre la galerie pour sélectionner une image
   Future<void> pickImage() async {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
+        setState(() => _selectedImage = File(image.path));
       }
     } catch (e) {
       debugPrint("Erreur lors de la sélection d'une image: $e");
     }
   }
 
+  /// Prend une photo avec la caméra active
   Future<void> takePicture() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
     try {
       final XFile image = await _controller!.takePicture();
-      setState(() {
-        _selectedImage = File(image.path);
-      });
+      setState(() => _selectedImage = File(image.path));
     } catch (e) {
       debugPrint("Erreur lors de la capture de la photo: $e");
     }
   }
 
-  /// ** Analyse l'image et affiche les résultats**
+  /// Lance l'analyse de la maladie sur l'image sélectionnée et affiche les résultats
   Future<void> scanDisease() async {
     if (_selectedImage == null) return;
-    await ScanResultDialog.show(
-        context, _selectedImage!, _iaService, _scanService);
-    _fetchScans();
+    await ScanResultDialog.show(context, _selectedImage!, _iaService, _scanService);
+    _fetchScans(); // Rafraîchir la liste des scans récents après analyse
   }
 
-  /// ** Récupère les scans récents**
+  /// Charge les scans récents depuis la base de données
   Future<void> _fetchScans() async {
     try {
       final scans = await _scanService.getScans();
-      setState(() {
-        _recentScans = scans.toList();
-      });
+      setState(() => _recentScans = scans.toList());
     } catch (e) {
       debugPrint("Erreur lors du chargement des scans : $e");
     }
@@ -109,12 +103,14 @@ class _CameraPageState extends State<CameraPage> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CameraAppBar(onOptionSelected: (option) {
-        setState(() {
-          _selectedOption = option;
-          _selectedImage = null;
-        });
-      }),
+      appBar: CameraAppBar(
+        onOptionSelected: (option) {
+          setState(() {
+            _selectedOption = option;
+            _selectedImage = null;
+          });
+        },
+      ),
       body: Column(
         children: [
           Expanded(

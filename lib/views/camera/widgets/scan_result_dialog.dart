@@ -6,7 +6,16 @@ import '../../../services/leafguard_api_service.dart';
 import '../../../services/scan_service.dart';
 import '../../../services/tasks_service.dart';
 
+/// Dialog to display scan results including detected disease,
+/// confidence, and recommended tasks.
+/// Allows user to bookmark scans and add tasks to calendar if authenticated.
 class ScanResultDialog {
+  /// Shows the scan result dialog.
+  ///
+  /// [context] - BuildContext to display the dialog.
+  /// [selectedImage] - The image file that was scanned.
+  /// [iaService] - Service to predict disease from the image.
+  /// [scanService] - Service to manage scans (add/delete).
   static Future<void> show(
       BuildContext context,
       File selectedImage,
@@ -14,30 +23,34 @@ class ScanResultDialog {
       ScanService scanService,
       ) async {
     try {
+      // Predict disease and confidence from selected image
       final result = await iaService.predictDisease(selectedImage);
       final String maladie = result['maladies'] ?? 'Inconnu';
       final double? rawConfiance = result['confiance'];
+
+      // Retrieve disease severity (criticité) from the backend
       int criticite = 0;
       try {
         final criticiteData =
         await ScanService(Supabase.instance.client).getCriticiteForDisease(maladie);
-        if (criticiteData != null) {
-          criticite = criticiteData;
-        }
+        if (criticiteData != null) criticite = criticiteData;
       } catch (e) {
         debugPrint("Erreur récupération criticité : $e");
       }
-      final double? displayedConfiance =
-      rawConfiance != null ? rawConfiance * 100 : null;
 
+      final double? displayedConfiance = rawConfiance != null ? rawConfiance * 100 : null;
+
+      // Initialize UI state variables
       bool isBookmarked = false;
       String? scanId;
       String? imageUrl;
       bool tasksAdded = false;
 
+      // Check if user is authenticated
       final session = Supabase.instance.client.auth.currentSession;
       final bool isAuthenticated = session != null;
 
+      // Display the dialog
       await showDialog(
         context: context,
         barrierDismissible: false,
@@ -48,6 +61,7 @@ class ScanResultDialog {
 
           return StatefulBuilder(
             builder: (context, setState) {
+              // Load tasks only once after dialog is built
               Future<void> loadTasks() async {
                 if (hasLoadedTasks) return;
                 hasLoadedTasks = true;
@@ -55,14 +69,13 @@ class ScanResultDialog {
                   final tasks =
                   await TasksService(Supabase.instance.client).getTasksForDisease(maladie);
                   if (!isDialogOpen) return;
-                  setState(() {
-                    diseaseTasks = tasks;
-                  });
+                  setState(() => diseaseTasks = tasks);
                 } catch (e) {
                   debugPrint("Erreur chargement tâches: $e");
                 }
               }
 
+              // Trigger task loading after frame build
               WidgetsBinding.instance.addPostFrameCallback((_) => loadTasks());
 
               return WillPopScope(
@@ -75,8 +88,7 @@ class ScanResultDialog {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   contentPadding: const EdgeInsets.all(16),
-                  titlePadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  titlePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   backgroundColor: Theme.of(context).cardColor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,8 +101,7 @@ class ScanResultDialog {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close,
-                            color: Theme.of(context).iconTheme.color),
+                        icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color),
                         onPressed: () => Navigator.pop(context),
                         tooltip: "Fermer",
                       ),
@@ -99,10 +110,7 @@ class ScanResultDialog {
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxHeight: 500,
-                        minHeight: 100,
-                      ),
+                      constraints: const BoxConstraints(maxHeight: 500, minHeight: 100),
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -160,8 +168,7 @@ class ScanResultDialog {
                                     Text(
                                       "Aucune tâche trouvée pour cette maladie.",
                                       style: TextStyle(
-                                        color:
-                                        Theme.of(context).textTheme.bodyMedium?.color,
+                                        color: Theme.of(context).textTheme.bodyMedium?.color,
                                       ),
                                     ),
                                     if (!isAuthenticated) ...[
@@ -171,8 +178,7 @@ class ScanResultDialog {
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontStyle: FontStyle.italic,
-                                          color:
-                                          Theme.of(context).textTheme.bodyMedium?.color,
+                                          color: Theme.of(context).textTheme.bodyMedium?.color,
                                         ),
                                       ),
                                       TextButton(
@@ -185,8 +191,7 @@ class ScanResultDialog {
                                           style: TextStyle(
                                             decoration: TextDecoration.underline,
                                             fontSize: 14,
-                                            color:
-                                            Theme.of(context).colorScheme.primary,
+                                            color: Theme.of(context).colorScheme.primary,
                                           ),
                                         ),
                                       ),
@@ -221,10 +226,7 @@ class ScanResultDialog {
                                         title: Text(
                                           task['title'] ?? 'Tâche',
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.color,
+                                            color: Theme.of(context).textTheme.bodyMedium?.color,
                                           ),
                                         ),
                                       );
@@ -244,10 +246,7 @@ class ScanResultDialog {
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontStyle: FontStyle.italic,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.color,
+                                            color: Theme.of(context).textTheme.bodyMedium?.color,
                                           ),
                                         ),
                                       ),
@@ -265,6 +264,7 @@ class ScanResultDialog {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Bookmark button: add or remove scan from favorites
                           IconButton(
                             icon: Icon(
                               isBookmarked ? Icons.bookmark : Icons.bookmark_border,
@@ -275,6 +275,7 @@ class ScanResultDialog {
                                 : "Ajouter aux favoris",
                             onPressed: () async {
                               if (isBookmarked) {
+                                // Remove from favorites
                                 if (scanId == null || imageUrl == null) {
                                   final scans = await scanService.getScans();
                                   if (scans.isNotEmpty) {
@@ -305,14 +306,13 @@ class ScanResultDialog {
                                         child: Text(
                                           "Annuler",
                                           style: TextStyle(
-                                            color:
-                                            Theme.of(context).colorScheme.primary,
+                                            color: Theme.of(context).colorScheme.primary,
                                           ),
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () => Navigator.pop(context, true),
-                                        child: Text(
+                                        child: const Text(
                                           "Supprimer",
                                           style: TextStyle(color: Colors.red),
                                         ),
@@ -330,19 +330,23 @@ class ScanResultDialog {
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content: Text(
-                                            "Scan supprimé avec succès.",
-                                            style: TextStyle(
-                                              color:
-                                              Theme.of(context).snackBarTheme.contentTextStyle?.color,
-                                            ),
-                                          )),
+                                        content: Text(
+                                          "Scan supprimé avec succès.",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .snackBarTheme
+                                                .contentTextStyle
+                                                ?.color,
+                                          ),
+                                        ),
+                                      ),
                                     );
                                   } catch (e) {
                                     debugPrint("Erreur suppression : $e");
                                   }
                                 }
                               } else {
+                                // Add to favorites
                                 try {
                                   await scanService.addScan(
                                     imageFile: selectedImage,
@@ -381,6 +385,8 @@ class ScanResultDialog {
                               }
                             },
                           ),
+
+                          // Button to add tasks to calendar or navigate to calendar
                           if (diseaseTasks.isNotEmpty)
                             IconButton(
                               onPressed: () async {
@@ -391,9 +397,7 @@ class ScanResultDialog {
                                   try {
                                     await TasksService(Supabase.instance.client)
                                         .addTasksForDisease(maladie);
-                                    setState(() {
-                                      tasksAdded = true;
-                                    });
+                                    setState(() => tasksAdded = true);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -427,6 +431,7 @@ class ScanResultDialog {
                         ],
                       )
                     else
+                    // If not authenticated, show button to prompt login
                       Center(
                         child: TextButton(
                           onPressed: () {

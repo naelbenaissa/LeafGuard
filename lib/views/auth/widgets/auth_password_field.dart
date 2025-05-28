@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Champ de saisie sécurisé pour mot de passe avec visibilité basculable.
+/// Adapté au thème clair/sombre pour une meilleure ergonomie visuelle.
 class AuthPasswordField extends StatefulWidget {
-  final TextEditingController controller;
-  final String label;
+  final TextEditingController controller; // Contrôleur du champ texte
+  final String label; // Libellé du champ
 
   const AuthPasswordField({
     super.key,
@@ -15,7 +17,7 @@ class AuthPasswordField extends StatefulWidget {
 }
 
 class _AuthPasswordFieldState extends State<AuthPasswordField> {
-  bool _isPasswordVisible = false;
+  bool _isPasswordVisible = false; // Gestion visibilité du mot de passe
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
         suffixIcon: GestureDetector(
           onTap: () {
             setState(() {
-              _isPasswordVisible = !_isPasswordVisible; // toggle
+              _isPasswordVisible = !_isPasswordVisible; // bascule visibilité
             });
           },
           child: Icon(

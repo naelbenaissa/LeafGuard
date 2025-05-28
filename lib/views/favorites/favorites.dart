@@ -21,7 +21,9 @@ class _FavoritesPageState extends State<FavoritesPage>
   @override
   void initState() {
     super.initState();
+    // Initialisation du contrôleur d'onglets avec 2 tabs
     _tabController = TabController(length: 2, vsync: this);
+    // Reset du filtre sélectionné à chaque changement d'onglet
     _tabController.addListener(() {
       setState(() {
         _selectedFilter = null;
@@ -29,23 +31,28 @@ class _FavoritesPageState extends State<FavoritesPage>
     });
   }
 
+  /// Active/désactive l'affichage des options de filtre
   void _toggleFilterOptions() {
     setState(() {
       _showFilterOptions = !_showFilterOptions;
     });
   }
 
+  /// Sélectionne ou désélectionne un filtre donné
   void _selectFilter(String filter) {
     setState(() {
       _selectedFilter = _selectedFilter == filter ? null : filter;
     });
   }
 
+  /// Retourne la liste des widgets filtres selon l'onglet actif
   List<Widget> _getFilterOptions() {
+    // Filtres différents selon l'onglet "Mes Favoris" ou "Mes Scans"
     List<String> filters = _tabController.index == 0
         ? ["Confiance", "Date"]
         : ["A - Z", "Z - A", "Date", "ID"];
 
+    // Génère un bouton filtrage stylisé pour chaque filtre
     return filters.map((filter) {
       bool isSelected = _selectedFilter == filter;
       return GestureDetector(
@@ -81,6 +88,7 @@ class _FavoritesPageState extends State<FavoritesPage>
 
   @override
   void dispose() {
+    // Libération des ressources du contrôleur d'onglets
     _tabController.dispose();
     super.dispose();
   }
@@ -88,9 +96,11 @@ class _FavoritesPageState extends State<FavoritesPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Barre d'applications personnalisée avec bouton filtre
       appBar: FavoritesAppbar(onFilterPressed: _toggleFilterOptions),
       body: Column(
         children: [
+          // Titre de la page
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
@@ -99,6 +109,7 @@ class _FavoritesPageState extends State<FavoritesPage>
               textAlign: TextAlign.center,
             ),
           ),
+          // Affiche les options de filtrage si activées
           if (_showFilterOptions)
             Container(
               padding: const EdgeInsets.all(16.0),
@@ -107,6 +118,7 @@ class _FavoritesPageState extends State<FavoritesPage>
                 children: _getFilterOptions(),
               ),
             ),
+          // Onglets avec indicateur personnalisé (DotIndicator)
           SizedBox(
             width: 250,
             child: TabBar(
@@ -124,6 +136,7 @@ class _FavoritesPageState extends State<FavoritesPage>
               labelPadding: const EdgeInsets.symmetric(horizontal: 10),
             ),
           ),
+          // Affiche le contenu associé à chaque onglet
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -135,6 +148,7 @@ class _FavoritesPageState extends State<FavoritesPage>
           ),
         ],
       ),
+      // Barre de navigation personnalisée en bas
       bottomNavigationBar: const CustomBottomBar(),
     );
   }
