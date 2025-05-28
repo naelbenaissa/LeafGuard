@@ -100,8 +100,6 @@ class TasksService {
         .eq('disease_name', diseaseName)
         .maybeSingle();
 
-    print('Disease Response: $diseaseResponse');
-
     if (diseaseResponse == null) {
       return [];
     }
@@ -112,23 +110,16 @@ class TasksService {
         .select('task_id')
         .eq('disease_id', diseaseId);
 
-    print('Task Links: $taskLinks');
-
     if (taskLinks.isEmpty) {
       return [];
     }
 
     final taskIds = taskLinks.map((e) => e['task_id']).toList();
-    print('Task IDs: $taskIds');
 
-    // Essayer .in_ à la place de .filter()
     final tasks = await supabase
         .from('ia_tasks')
         .select('*')
         .filter('id', 'in', taskIds.cast<dynamic>());
-
-
-    print('Tasks: $tasks');
 
     return List<Map<String, dynamic>>.from(tasks);
   }
