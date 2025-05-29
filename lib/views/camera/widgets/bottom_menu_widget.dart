@@ -20,57 +20,73 @@ class BottomMenuWidget extends StatefulWidget {
 }
 
 class _BottomMenuWidgetState extends State<BottomMenuWidget> {
-  bool _isScanning = false; // Indique si une opération de scan est en cours
-  Color _indicatorColor = Colors.white; // Couleur de l'indicateur de progression
-  Timer? _colorTimer; // Timer pour gérer les changements de couleur progressifs
+  bool _isScanning = false;
+  Color _indicatorColor = Colors.white;
+  Timer? _warningTimer;
+  Timer? _timeoutTimer;
+  bool _scanTermine = false;
 
   Future<void> _handleScanPressed() async {
-    if (_isScanning) return; // Empêche le lancement multiple simultané
+    if (_isScanning) return;
 
     setState(() {
       _isScanning = true;
-      _indicatorColor = Colors.white; // Couleur initiale de l'indicateur
+      _indicatorColor = Colors.white;
     });
 
-    // Annule tout timer précédent pour éviter chevauchement
-    _colorTimer?.cancel();
+    _warningTimer?.cancel();
+    _timeoutTimer?.cancel();
 
-    // Change la couleur de l'indicateur après 5s en orange pour signaler attente prolongée
-    _colorTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted) {
-        setState(() {
-          _indicatorColor = Colors.orange;
-        });
+    _scanTermine = false;  // reset au début du scan
+
+    _warningTimer = Timer(const Duration(seconds: 5), () {
+      if (!_scanTermine && mounted) {
+        setState(() => _indicatorColor = Colors.orange);
       }
     });
 
-    // Change la couleur en rouge après 10s pour signaler un délai critique
-    _colorTimer = Timer(const Duration(seconds: 10), () {
-      if (mounted) {
-        setState(() {
-          _indicatorColor = Colors.red;
-        });
+    _timeoutTimer = Timer(const Duration(seconds: 10), () {
+      if (!_scanTermine && mounted) {
+        setState(() => _indicatorColor = Colors.red);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                "Certaines opérations peuvent prendre un peu plus de temps. Merci de patienter..."),
+            duration: Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.orange,
+          ),
+        );
       }
     });
 
     try {
-      // Exécution du scan asynchrone fourni par le parent
-      await widget.onScanPressed();
-    } finally {
-      // Réinitialisation de l'état à la fin du scan, en annulant les timers
+      // Annule timers et état AVANT d'appeler la fonction qui ouvre le dialog
+      _warningTimer?.cancel();
+      _timeoutTimer?.cancel();
+
       if (mounted) {
-        _colorTimer?.cancel();
         setState(() {
           _isScanning = false;
           _indicatorColor = Colors.white;
         });
       }
+
+      await widget.onScanPressed();
+
+      _scanTermine = true;
+
+    } catch (e) {
+      _scanTermine = true;
     }
   }
 
+
+
   @override
   void dispose() {
-    _colorTimer?.cancel(); // Nettoyage des timers lors de la destruction du widget
+    _warningTimer?.cancel();
+    _timeoutTimer?.cancel();
     super.dispose();
   }
 
@@ -87,22 +103,22 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
           // Affiche indicateur de progression coloré pendant le scan, sinon bouton scan
           _isScanning
               ? SizedBox(
-            width: 56,
-            height: 56,
-            child: CircularProgressIndicator(
-              color: _indicatorColor,
-              strokeWidth: 3,
-            ),
-          )
+                  width: 56,
+                  height: 56,
+                  child: CircularProgressIndicator(
+                    color: _indicatorColor,
+                    strokeWidth: 3,
+                  ),
+                )
               : FloatingActionButton(
-            onPressed: _handleScanPressed,
-            backgroundColor: Colors.white,
-            child: const Icon(
-              Icons.document_scanner,
-              color: Colors.black,
-              size: 30,
-            ),
-          ),
+                  onPressed: _handleScanPressed,
+                  backgroundColor: Colors.white,
+                  child: const Icon(
+                    Icons.document_scanner,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
           // Bouton ajout d'image
           _buildMenuButton(Icons.image, "Ajouter une image"),
         ],
@@ -110,7 +126,7 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
     );
   }
 
-  // Génère un bouton menu simple avec icône et gestion du tap
+// Génère un bouton menu simple avec icône et gestion du tap
   Widget _buildMenuButton(IconData icon, String option) {
     return GestureDetector(
       onTap: () => widget.onOptionSelected(option),

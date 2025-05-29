@@ -69,59 +69,66 @@ class _MesTachesSectionState extends State<MesTachesSection> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Aucune tâche trouvée.",
-                      style: TextStyle(fontSize: 18),
-                      textAlign: TextAlign.center,
+                child: Align(
+                  alignment: Alignment.topCenter, // aligne horizontalement au centre, vertical en haut
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 600, // limite la largeur max sur grand écran/tablette (optionnel)
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Planifiez vos tâches dans le calendrier pour mieux organiser vos plantes.",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    // Affiche un message et bouton de connexion si l'utilisateur n'est pas connecté
-                    user == null
-                        ? Column(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center, // centre horizontalement les enfants
                       children: [
                         const Text(
-                          "Veuillez vous connecter pour accéder au calendrier et gérer vos tâches.",
-                          style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                          "Aucune tâche trouvée.",
+                          style: TextStyle(fontSize: 18),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 12),
-                        TextButton(
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Planifiez vos tâches dans le calendrier pour mieux organiser vos plantes.",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        user == null
+                            ? Column(
+                          children: [
+                            const Text(
+                              "Veuillez vous connecter pour accéder au calendrier et gérer vos tâches.",
+                              style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+                            TextButton(
+                              onPressed: () {
+                                context.go('/auth');
+                              },
+                              child: const Text(
+                                "Se connecter",
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                            : TextButton(
                           onPressed: () {
-                            context.go('/auth'); // Redirection vers la page de connexion
+                            context.go('/calendar');
                           },
                           child: const Text(
-                            "Se connecter",
+                            "Ouvrir le calendrier",
                             style: TextStyle(
-                              decoration: TextDecoration.underline,
                               fontSize: 16,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),
                       ],
-                    )
-                        : TextButton(
-                      onPressed: () {
-                        context.go('/calendar'); // Redirection vers le calendrier si connecté
-                      },
-                      child: const Text(
-                        "Ouvrir le calendrier",
-                        style: TextStyle(
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -252,11 +259,12 @@ class _MesTachesSectionState extends State<MesTachesSection> {
                           onPressed: () {
                             context.go('/calendar');
                           },
-                          child: const Text(
+                          child: Text(
                             "Ouvrir le calendrier",
                             style: TextStyle(
                               fontSize: 16,
                               decoration: TextDecoration.underline,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),

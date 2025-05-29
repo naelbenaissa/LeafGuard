@@ -142,11 +142,12 @@ class _MesScansSectionState extends State<MesScansSection> {
                         // Redirection vers la caméra pour scanner une plante
                         context.go('/camera');
                       },
-                      child: const Text(
+                      child: Text(
                         "Aller à la caméra",
                         style: TextStyle(
                           fontSize: 16,
                           decoration: TextDecoration.underline,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),

@@ -144,11 +144,12 @@ class _MesFavorisSectionState extends State<MesFavorisSection> {
                       // Navigation vers le guide des plantes
                       context.go('/plantsguide');
                     },
-                    child: const Text(
+                    child: Text(
                       "Aller au guide des plantes",
                       style: TextStyle(
                         fontSize: 16,
                         decoration: TextDecoration.underline,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
