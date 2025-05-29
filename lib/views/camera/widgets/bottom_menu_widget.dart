@@ -16,15 +16,22 @@ class BottomMenuWidget extends StatefulWidget {
   });
 
   @override
-  _BottomMenuWidgetState createState() => _BottomMenuWidgetState();
+  BottomMenuWidgetState createState() => BottomMenuWidgetState();
 }
 
-class _BottomMenuWidgetState extends State<BottomMenuWidget> {
+class BottomMenuWidgetState extends State<BottomMenuWidget> {
   bool _isScanning = false;
   Color _indicatorColor = Colors.white;
   Timer? _warningTimer;
   Timer? _timeoutTimer;
   bool _scanTermine = false;
+
+  void cancelTimers() {
+    _warningTimer?.cancel();
+    _timeoutTimer?.cancel();
+    _warningTimer = null;
+    _timeoutTimer = null;
+  }
 
   Future<void> _handleScanPressed() async {
     if (_isScanning) return;
@@ -61,15 +68,17 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
     });
 
     try {
-      // **STOP timers avant d’ouvrir le dialogue dans onScanPressed**
+      await widget.onScanPressed();
+      _scanTermine = true;
+      
+      // Annulation des timers après la réception de la réponse
       _warningTimer?.cancel();
       _timeoutTimer?.cancel();
-
-      await widget.onScanPressed();
-
-      _scanTermine = true;
     } catch (e) {
       _scanTermine = true;
+      // Annulation des timers en cas d'erreur également
+      _warningTimer?.cancel();
+      _timeoutTimer?.cancel();
     } finally {
       if (mounted) {
         setState(() {

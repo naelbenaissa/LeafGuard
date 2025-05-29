@@ -28,6 +28,7 @@ class _CameraPageState extends State<CameraPage> {
   File? _selectedImage;
   final IaLeafguardService _iaService = IaLeafguardService();
   final ScanService _scanService = ScanService(Supabase.instance.client);
+  final GlobalKey<BottomMenuWidgetState> _bottomMenuKey = GlobalKey<BottomMenuWidgetState>();
 
   List<Map<String, dynamic>> _recentScans = [];
 
@@ -82,8 +83,18 @@ class _CameraPageState extends State<CameraPage> {
   /// Lance l'analyse de la maladie sur l'image sélectionnée et affiche les résultats
   Future<void> scanDisease() async {
     if (_selectedImage == null) return;
-    await ScanResultDialog.show(context, _selectedImage!, _iaService, _scanService);
-    _fetchScans(); // Rafraîchir la liste des scans récents après analyse
+
+    // Stoppe les timers si le menu est monté
+    _bottomMenuKey.currentState?.cancelTimers();
+
+    await ScanResultDialog.show(
+      context,
+      _selectedImage!,
+      _iaService,
+      _scanService,
+    );
+
+    _fetchScans();
   }
 
   /// Charge les scans récents depuis la base de données
@@ -144,6 +155,7 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
           BottomMenuWidget(
+            key: _bottomMenuKey, // Ajoute la clé ici
             onOptionSelected: (option) {
               setState(() {
                 _selectedOption = option;
