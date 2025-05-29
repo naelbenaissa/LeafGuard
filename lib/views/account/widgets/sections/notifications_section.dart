@@ -58,8 +58,8 @@ class NotificationsSection extends StatelessWidget {
             color: isExpanded
                 ? Colors.green
                 : Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black,
+                    ? Colors.white
+                    : Colors.black,
           ),
           title: const Text("Gérer les notifications"),
           onTap: onTap,
@@ -69,16 +69,24 @@ class NotificationsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                const NotificationSettings(), // Composant des paramètres personnalisés
+                const NotificationSettings(),
+                // Composant des paramètres personnalisés
                 const SizedBox(height: 16),
                 // Bouton pour déclencher la notification de test
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: ElevatedButton(
-                    onPressed: () => _showTestNotification(context),
-                    child: const Text("Tester l'envoi de notification"),
-                  ),
-                ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: TextButton(
+                      onPressed: () => _showTestNotification(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.green,
+                        padding: EdgeInsets.zero,
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      child: const Text("Tester l'envoi de notification"),
+                    )),
               ],
             ),
           ),
