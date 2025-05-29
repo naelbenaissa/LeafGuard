@@ -34,10 +34,10 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
       _indicatorColor = Colors.white;
     });
 
+    _scanTermine = false;
+
     _warningTimer?.cancel();
     _timeoutTimer?.cancel();
-
-    _scanTermine = false;  // reset au début du scan
 
     _warningTimer = Timer(const Duration(seconds: 5), () {
       if (!_scanTermine && mounted) {
@@ -61,27 +61,24 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
     });
 
     try {
-      // Annule timers et état AVANT d'appeler la fonction qui ouvre le dialog
+      // **STOP timers avant d’ouvrir le dialogue dans onScanPressed**
       _warningTimer?.cancel();
       _timeoutTimer?.cancel();
 
+      await widget.onScanPressed();
+
+      _scanTermine = true;
+    } catch (e) {
+      _scanTermine = true;
+    } finally {
       if (mounted) {
         setState(() {
           _isScanning = false;
           _indicatorColor = Colors.white;
         });
       }
-
-      await widget.onScanPressed();
-
-      _scanTermine = true;
-
-    } catch (e) {
-      _scanTermine = true;
     }
   }
-
-
 
   @override
   void dispose() {
@@ -93,7 +90,7 @@ class _BottomMenuWidgetState extends State<BottomMenuWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green, // Couleur de fond du menu
+      color: Colors.green,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
