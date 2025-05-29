@@ -19,7 +19,7 @@ class CustomBottomBar extends StatelessWidget {
       case '/plantsguide':
         return 3;
       default:
-        return 0;
+        return -1;
     }
   }
 
