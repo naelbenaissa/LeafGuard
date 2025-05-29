@@ -1,82 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../services/scan_service.dart';
 
-/// Widget affichant une grille des scans récents de l’utilisateur connecté.
-///
-/// Affiche un message invitant à se connecter si l’utilisateur n’est pas authentifié.
-/// Affiche un message si aucune donnée n’est disponible.
-/// Chaque scan affiche une image, la prédiction, et le niveau de confiance.
-/// Le callback [onScanTap] est déclenché lors de la sélection d’un scan.
-class RecentScansGrid extends StatelessWidget {
+class RecentScansGrid extends StatefulWidget {
   final List<Map<String, dynamic>> recentScans;
   final VoidCallback onScanTap;
+  final ScanService scanService;
+  final VoidCallback onScanDeleted;
 
   const RecentScansGrid({
     super.key,
     required this.recentScans,
     required this.onScanTap,
+    required this.scanService,
+    required this.onScanDeleted,
   });
 
   @override
+  State<RecentScansGrid> createState() => _RecentScansGridState();
+}
+
+class _RecentScansGridState extends State<RecentScansGrid> {
+  late List<Map<String, dynamic>> scans;
+
+  @override
+  void initState() {
+    super.initState();
+    scans = List.from(widget.recentScans);
+  }
+
+  @override
+  void didUpdateWidget(covariant RecentScansGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.recentScans != widget.recentScans) {
+      scans = List.from(widget.recentScans);
+    }
+  }
+
+  /// Affiche une boîte de dialogue pour confirmer la suppression d'un scan.
+  /// Si confirmé, supprime le scan via le service et notifie le parent pour mise à jour.
+  Future<void> _confirmAndDelete(BuildContext context, String scanId, String imageUrl) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirmer la suppression'),
+        content: const Text('Voulez-vous vraiment supprimer ce scan ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await widget.scanService.deleteScan(scanId, imageUrl);
+        widget.onScanDeleted();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Scan supprimé avec succès')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors de la suppression: $e')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final session = Supabase.instance.client.auth.currentSession;
-    final bool isAuthenticated = session != null;
-    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    if (!isAuthenticated) {
-      // Invite à se connecter si l’utilisateur n’est pas connecté
+    if (scans.isEmpty) {
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Veuillez vous connecter pour voir vos scans enregistrés.",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.red[300] : Colors.red,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.go('/auth'),
-                child: const Text(
-                  "Se connecter",
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
+        child: Text(
+          "Vous n'avez aucun scan enregistré",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.grey[400] : Colors.grey,
           ),
+          textAlign: TextAlign.center,
         ),
       );
     }
 
-    if (recentScans.isEmpty) {
-      // Message si aucun scan disponible
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(
-            "Vous n'avez aucun scan enregistré",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.grey[400] : Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-
-    // Affichage de la grille de scans
     return SingleChildScrollView(
       child: GridView.builder(
         padding: const EdgeInsets.all(10),
@@ -88,64 +101,87 @@ class RecentScansGrid extends StatelessWidget {
         ),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: recentScans.length,
+        itemCount: scans.length,
         itemBuilder: (context, index) {
-          final scan = recentScans[index];
+          final scan = scans[index];
 
-          return GestureDetector(
-            onTap: onScanTap,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+          return Stack(
+            children: [
+              GestureDetector(
+                onTap: widget.onScanTap,
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Image.network(
-                        scan['image_url'],
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.image,
-                          size: 50,
-                          color: isDarkMode ? Colors.grey[500] : Colors.grey,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            scan['image_url'],
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                              Icons.image,
+                              size: 50,
+                              color: isDarkMode ? Colors.grey[500] : Colors.grey,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            scan['predictions'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                scan['predictions'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDarkMode ? Colors.white : Colors.black,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDarkMode ? Colors.grey[400] : Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Confiance: ${(scan['confidence'] * 100).toStringAsFixed(1)}%",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: isDarkMode ? Colors.grey[400] : Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              Positioned(
+                top: 6,
+                right: 6,
+                child: GestureDetector(
+                  onTap: () => _confirmAndDelete(context, scan['id'], scan['image_url']),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Icon(
+                      Icons.close,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),

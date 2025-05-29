@@ -181,20 +181,6 @@ class ScanResultDialog {
                                           color: Theme.of(context).textTheme.bodyMedium?.color,
                                         ),
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          context.go('/auth');
-                                        },
-                                        child: Text(
-                                          "Se connecter",
-                                          style: TextStyle(
-                                            decoration: TextDecoration.underline,
-                                            fontSize: 14,
-                                            color: Theme.of(context).colorScheme.primary,
-                                          ),
-                                        ),
-                                      ),
                                     ],
                                   ],
                                 ),

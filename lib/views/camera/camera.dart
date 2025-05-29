@@ -148,6 +148,8 @@ class _CameraPageState extends State<CameraPage> {
               child: RecentScansGrid(
                 recentScans: _recentScans,
                 onScanTap: scanDisease,
+                scanService: _scanService,
+                onScanDeleted: _fetchScans,
               ),
             ),
           ),
