@@ -257,7 +257,7 @@ class ScanResultDialog {
                           IconButton(
                             icon: Icon(
                               isBookmarked ? Icons.favorite : Icons.favorite_border,
-                              color: isBookmarked ? Colors.green : subtitleColor,
+                              color: Colors.green,
                             ),
                             tooltip: isBookmarked
                                 ? "Retirer des favoris"
