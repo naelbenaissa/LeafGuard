@@ -31,6 +31,7 @@ dependencies:
   permission_handler: ^12.0.0+1
 
   shared_preferences: any
+  flutter_svg: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -63,4 +64,6 @@ flutter:
     - assets/img/tutoriel/task.png
     - assets/img/tutoriel/diagnostic.png
     - assets/img/tutoriel/guide.png
+
+    - assets/icons/calendar_add_on.svg
 

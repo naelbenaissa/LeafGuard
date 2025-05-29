@@ -157,7 +157,7 @@ class _DetailPageState extends State<DetailPage> {
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : subtitleColor,
+                      color: isFavorite ? Colors.green : subtitleColor,
                       size: 32,
                     ),
                     onPressed: _toggleFavorite,

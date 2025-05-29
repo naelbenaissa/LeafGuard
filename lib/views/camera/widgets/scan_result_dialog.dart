@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/leafguard_api_service.dart';
@@ -25,6 +26,8 @@ class ScanResultDialog {
     try {
       // Predict disease and confidence from selected image
       final result = await iaService.predictDisease(selectedImage);
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+      final subtitleColor = isDarkMode ? Colors.grey[400] ?? Colors.grey : Colors.grey[700]!;
       final String maladie = result['maladies'] ?? 'Inconnu';
       final double? rawConfiance = result['confiance'];
 
@@ -253,8 +256,8 @@ class ScanResultDialog {
                           // Bookmark button: add or remove scan from favorites
                           IconButton(
                             icon: Icon(
-                              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                              color: Colors.orange,
+                              isBookmarked ? Icons.favorite : Icons.favorite_border,
+                              color: isBookmarked ? Colors.green : subtitleColor,
                             ),
                             tooltip: isBookmarked
                                 ? "Retirer des favoris"
@@ -405,15 +408,22 @@ class ScanResultDialog {
                                   }
                                 }
                               },
-                              icon: Icon(
-                                tasksAdded ? Icons.calendar_month : Icons.calendar_today,
+                              icon: tasksAdded
+                                  ? const Icon(
+                                Icons.calendar_month,
                                 color: Colors.green,
                                 size: 26,
+                              )
+                                  : SvgPicture.asset(
+                                'assets/icons/calendar_add_on.svg',
+                                width: 26,
+                                height: 26,
+                                color: Colors.green, // Pour le teinter si le SVG est en noir ou mono
                               ),
                               tooltip:
                               tasksAdded ? "Voir le calendrier" : "Ajouter au calendrier",
                               splashRadius: 20,
-                            ),
+                            )
                         ],
                       )
                     else
