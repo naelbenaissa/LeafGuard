@@ -231,7 +231,7 @@ class ScanResultDialog {
                                               ? (tasksAdded
                                               ? "Tâches ajoutées ! Cliquez sur le bouton ci-dessous pour voir le calendrier."
                                               : "Pour ajouter ces tâches, cliquez sur l'icône calendrier.")
-                                              : "Pour ajouter ces tâches, cliquez sur l'icône ci-dessous pour vous connecter ou vous inscrire.",
+                                              : "Pour ajouter ces tâches, cliquez sur le bouton ci-dessous pour vous connecter ou vous inscrire.",
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontStyle: FontStyle.italic,

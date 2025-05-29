@@ -11,6 +11,7 @@ import 'package:ui_leafguard/views/camera/widgets/scan_result_dialog.dart';
 import '../../services/leafguard_api_service.dart';
 import '../../services/scan_service.dart';
 import 'appbar/camera_appbar.dart';
+import 'package:flutter/services.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -33,6 +34,10 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     initializeCamera();
     _fetchScans();
   }
@@ -93,6 +98,12 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitDown,
+    ]);
     _controller?.dispose();
     super.dispose();
   }

@@ -3,16 +3,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class CameraPreviewWidget extends StatelessWidget {
-  // Contrôleur de la caméra (nullable, car l'initialisation est asynchrone)
   final CameraController? controller;
-
-  // Image sélectionnée affichée à la place de la preview caméra
   final File? selectedImage;
-
-  // Callback déclenché pour prendre une photo
   final VoidCallback takePicture;
-
-  // Callback déclenché pour annuler la photo sélectionnée
   final VoidCallback clearImage;
 
   const CameraPreviewWidget({
@@ -29,14 +22,25 @@ class CameraPreviewWidget extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Positioned.fill(
-          // Affiche la preview caméra si aucune image sélectionnée et que le contrôleur est prêt,
-          // sinon affiche un message d’erreur ou l’image sélectionnée.
           child: selectedImage == null
               ? (controller != null && controller!.value.isInitialized
-              ? CameraPreview(controller!)
+              ? Center(
+            child: RotatedBox(
+              quarterTurns: _quarterTurns(controller!.description.sensorOrientation),
+              child: AspectRatio(
+                aspectRatio: controller!.value.aspectRatio,
+                child: CameraPreview(controller!),
+              ),
+            ),
+          )
               : const Center(child: Text("Caméra non disponible")))
-              : Image.file(selectedImage!, fit: BoxFit.cover),
+              : Image.file(
+            selectedImage!,
+            fit: BoxFit.contain,
+          ),
         ),
+
+        // Bouton contextuel : prendre photo ou annuler
         Positioned(
           bottom: 20,
           child: Container(
@@ -47,7 +51,6 @@ class CameraPreviewWidget extends StatelessWidget {
                 BoxShadow(color: Colors.black12, blurRadius: 5, spreadRadius: 1),
               ],
             ),
-            // Bouton action contextuel : prend une photo ou annule l’image sélectionnée
             child: IconButton(
               onPressed: selectedImage == null ? takePicture : clearImage,
               icon: Icon(
@@ -55,10 +58,26 @@ class CameraPreviewWidget extends StatelessWidget {
                 color: Colors.black,
                 size: 30,
               ),
+              tooltip: selectedImage == null ? 'Prendre une photo' : 'Annuler la photo',
             ),
           ),
         ),
       ],
     );
+  }
+
+  /// Convertit l’orientation capteur (en degrés) en quart de tour
+  int _quarterTurns(int orientation) {
+    switch (orientation) {
+      case 90:
+        return 1; // 90° → 1 quart
+      case 270:
+        return 3; // 270° → 3 quarts
+      case 180:
+        return 2;
+      case 0:
+      default:
+        return 0;
+    }
   }
 }
