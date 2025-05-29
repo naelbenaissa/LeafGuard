@@ -1,49 +1,56 @@
 # LeafGuard
 
-LeafGuard is a mobile application designed to assist with plant care by integrating artificial intelligence to diagnose plant diseases from a simple photo. The application is built to provide an intuitive and accessible experience for gardening enthusiasts by offering tailored and personalized advice.
+**LeafGuard** is a mobile application designed to assist users in plant care by leveraging artificial intelligence to diagnose plant diseases from a simple photo. It delivers a smooth, intuitive experience tailored for gardening enthusiasts, providing actionable and personalized advice.
 
 ## Key Features
 
 ### AI-Powered Image Analysis
-- Take a photo and analyze plants using an AI model.
-- Identify diseases in potatoes, peppers, and tomatoes.
-- Display results and keep a history of analyses.
+
+* Capture and analyze photos of your plants using an AI model.
+* Identify diseases in potatoes, peppers, and tomatoes.
+* Display results and maintain a history of past analyses.
 
 ### Personalized Care Suggestions
-- Recommendations based on AI diagnosis (watering, fertilization, treatments, etc.).
-- Access to a knowledge base on plant care.
+
+* Care recommendations based on AI diagnoses (watering, fertilizing, treatments, etc.).
+* Access a rich knowledge base for general plant care.
 
 ### Reminder System
-- Manage reminders for plant maintenance.
-- Notifications for watering, fertilization, and treatments.
-- Intuitive interface to schedule reminders.
+
+* Create and manage plant care reminders.
+* Receive notifications for watering, fertilizing, and treatments.
+* Simple, intuitive scheduling interface.
 
 ### Plant Guide
-- Search and display detailed information on various plants.
-- Favorites system to save plants and analyses.
-- Optimized pagination for smooth navigation.
+
+* Search and explore detailed information on various plants.
+* Save plants and analyses to your favorites.
+* Enjoy smooth navigation with optimized pagination.
 
 ### User Account Management
-- Registration and login via Supabase.
-- User profile customization.
-- Save and manage favorites and reminders.
+
+* Register and log in via Supabase.
+* Customize your profile.
+* Save and manage your favorite plants and reminders.
 
 ## Technologies Used
 
-- **Flutter** (Dart) - Mobile development framework.
-- **TensorFlow** (Python) - AI model for disease recognition.
-- **Supabase** - Database management and authentication.
-- **Google Cloud** - Hosting for the AI API.
-- **Flutter Local Notifications** - Local notification management.
+* **Flutter** (Dart) – Cross-platform mobile development.
+* **TensorFlow** (Python) – AI model for disease recognition.
+* **Supabase** – Backend services for authentication and database.
+* **Google Cloud** – Hosting for the AI API.
+* **Flutter Local Notifications** – Handling local push notifications.
 
 ## Installation and Execution
 
 ### Prerequisites
-- Flutter installed on your machine ([official guide](https://flutter.dev/docs/get-started/install)).
-- A Supabase account for user and data management.
-- Proper configuration of Android/iOS permissions for camera and storage.
 
-### Installation
+* Flutter installed on your machine ([Official Flutter Guide](https://flutter.dev/docs/get-started/install)).
+* A Supabase account for managing users and data.
+* Proper configuration of camera and storage permissions for Android/iOS.
+
+### Installation Steps
+
 ```bash
 # Clone the repository
 git clone https://github.com/naelbenaissa/leafguard.git
@@ -56,22 +63,20 @@ flutter pub get
 flutter run
 ```
 
-## Project Progress
+## Project Status
 
-- ✅ Finalized interface and design (Light/Dark Mode, onboarding tutorial, optimized navigation).
-- ✅ Implemented image scanning and AI analysis feature.
-- ✅ Operational user account and favorites management via Supabase.
-- ✅ Reminder system and calendar in place.
-- ✅ AI hosted on Google Cloud.
-- 🔄 Bug fixes and UX improvements underway.
-
-## Remaining Objectives
-- [ ] Finalizing local notifications.
-- [ ] Final testing and optimization.
+* ✅ Finalized UI and design (Light/Dark mode, onboarding, smooth navigation)
+* ✅ AI-powered image analysis fully integrated
+* ✅ Supabase-based account and favorite management complete
+* ✅ Reminder system and calendar working
+* ✅ AI API deployed on Google Cloud
+* ✅ Local notifications fully implemented
+* ✅ Final testing and optimization complete
 
 ## Contributing
-Contributions are welcome! If you would like to suggest improvements, open an issue or submit a pull request on [the GitHub repository](https://github.com/naelbenaissa/leafguard).
+
+We welcome contributions! If you'd like to help improve LeafGuard, feel free to open an issue or submit a pull request on [GitHub](https://github.com/naelbenaissa/leafguard).
 
 ---
 
-💡 **LeafGuard - Take care of your plants with the help of AI!** 🌿
+💡 **LeafGuard – Take care of your plants with the help of AI!** 🌿
